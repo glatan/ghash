@@ -43,11 +43,12 @@ impl Md2Ctx {
         */
         let message_length = self.word_block.len();
         let padding_byte = (BLOCKSIZE - (message_length % BLOCKSIZE)) as u8;
-        self.word_block.append(&mut vec![padding_byte; padding_byte as usize]);
+        self.word_block
+            .append(&mut vec![padding_byte; padding_byte as usize]);
         self
     }
     fn add_check_sum(&mut self) -> &mut Md2Ctx {
-        let word_block_length = self.word_block.len()/ BLOCKSIZE;
+        let word_block_length = self.word_block.len() / BLOCKSIZE;
         let mut checksum = vec![0; 16];
         let (mut c, mut l) = (0, 0);
 
