@@ -1,7 +1,5 @@
-use std::io;
-use std::io::BufRead;
+const BLKSIZE: usize = 16;
 
-const BLOCKSIZE: usize = 16;
 const STABLE: [u8; 256] = [
     41, 46, 67, 201, 162, 216, 124, 1, 61, 54, 84, 161, 236, 240, 6, 19, 98, 167, 5, 243, 192, 199,
     115, 140, 152, 147, 43, 217, 188, 76, 130, 202, 30, 155, 87, 60, 253, 212, 224, 22, 103, 66,
@@ -18,7 +16,7 @@ const STABLE: [u8; 256] = [
     219, 153, 141, 51, 159, 17, 131, 20,
 ];
 
-struct Md2Ctx {
+pub struct Md2Ctx {
     /*
     word_block {
         input + padding_byte : 16*n bytes
@@ -31,39 +29,39 @@ struct Md2Ctx {
 }
 
 impl Md2Ctx {
-    fn new(input: Vec<u8>) -> Md2Ctx {
+    pub fn new(input: Vec<u8>) -> Md2Ctx {
         Md2Ctx {
             word_block: input,
             state: [0; 48],
         }
     }
-    fn padding(&mut self) -> &mut Md2Ctx {
+    pub fn padding(&mut self) -> &mut Md2Ctx {
         /*
         padding_byte: self.dataを16の整数倍長に調整するための値
         */
-        let message_length = self.word_block.len();
-        let padding_byte = (BLOCKSIZE - (message_length % BLOCKSIZE)) as u8;
+        let message_length: usize = self.word_block.len();
+        let padding_byte: u8 = (BLKSIZE - (message_length % BLKSIZE)) as u8;
         self.word_block
             .append(&mut vec![padding_byte; padding_byte as usize]);
         self
     }
-    fn add_check_sum(&mut self) -> &mut Md2Ctx {
-        let word_block_length = self.word_block.len() / BLOCKSIZE;
-        let mut checksum = vec![0; 16];
-        let (mut c, mut l) = (0, 0);
-
+    pub fn add_check_sum(&mut self) -> &mut Md2Ctx {
+        let word_block_length: usize = self.word_block.len() / BLKSIZE;
+        let mut checksum: Vec<u8> = vec![0; 16];
+        let mut c: usize;
+        let mut l: usize = 0;
         for i in 0..word_block_length {
             for j in 0..16 {
                 c = self.word_block[16 * i + j] as usize;
                 checksum[j] ^= STABLE[c ^ l];
                 l = checksum[j] as usize;
-                self.word_block.push(checksum[j] as u8);
             }
         }
+        self.word_block.append(&mut checksum);
         self
     }
-    fn round(&mut self) -> &mut Md2Ctx {
-        let word_block_length = self.word_block.len() / BLOCKSIZE;
+    pub fn round(&mut self) -> &mut Md2Ctx {
+        let word_block_length = self.word_block.len() / BLKSIZE;
 
         for i in 0..word_block_length {
             for j in 0..16 {
@@ -81,25 +79,11 @@ impl Md2Ctx {
         }
         self
     }
-    fn print_hash(&mut self) {
+    pub fn print_hash(&mut self) {
         let hash: Vec<String> = self.state[0..16]
             .iter()
             .map(|byte| format!("{:02x}", byte))
             .collect();
         println!("md2hash: \"{}\"", hash.join(""));
     }
-}
-
-fn main() {
-    let input_data = {
-        let mut input_data = String::new();
-        io::stdin().lock().read_line(&mut input_data).unwrap();
-        input_data.trim_right().as_bytes().to_vec()
-    };
-    println!("input_data: {:?} bytes", input_data.len());
-    Md2Ctx::new(input_data)
-        .padding()
-        .add_check_sum()
-        .round()
-        .print_hash();
 }

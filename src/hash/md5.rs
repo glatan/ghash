@@ -1,10 +1,5 @@
-use std::io;
-use std::io::BufRead;
-
-mod typecast;
-use typecast::TypeCast;
-
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
+#[rustfmt::skip]
 const T: [u32; 64] = [
     // Round 1
     0xD76A_A478, 0xE8C7_B756, 0x2420_70DB, 0xC1BD_CEEE, 0xF57C_0FAF, 0x4787_C62A, 0xA830_4613, 0xFD46_9501,
@@ -68,21 +63,21 @@ impl Round {
     }
 }
 
-struct Md5Ctx {
+pub struct Md5Ctx {
     input_cache: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
 
 impl Md5Ctx {
-    fn new(input: Vec<u8>) -> Md5Ctx {
+    pub fn new(input: Vec<u8>) -> Md5Ctx {
         Md5Ctx {
             input_cache: input,
             word_block: Vec::new(),
             status: WORD_BUFFER,
         }
     }
-    fn padding(&mut self) -> &mut Md5Ctx {
+    pub fn padding(&mut self) -> &mut Md5Ctx {
         // word_block末尾に0x80を追加
         let input_length = self.input_cache.len();
         self.input_cache.push(0x80);
@@ -101,17 +96,17 @@ impl Md5Ctx {
         let mut word_block: Vec<u32> = Vec::new();
         // iは4の倍数となる (0, 4, 8..60..)
         for i in (0..self.input_cache.len()).filter(|i| i % 4 == 0) {
-            word_block.push(TypeCast::u8x4_u32(
+            word_block.push(u32::from_le_bytes([
                 self.input_cache[i],
                 self.input_cache[i + 1],
                 self.input_cache[i + 2],
                 self.input_cache[i + 3],
-            ));
+            ]));
         }
         self.word_block = word_block;
         self
     }
-    fn round(&mut self) -> &mut Md5Ctx {
+    pub fn round(&mut self) -> &mut Md5Ctx {
         let word_block_length = self.word_block.len() / 16;
         let (mut a, mut b, mut c, mut d);
         let mut x: [u32; 16] = [0; 16];
@@ -206,7 +201,7 @@ impl Md5Ctx {
         ];
         self
     }
-    fn print_hash(&mut self) {
+    pub fn print_hash(&mut self) {
         let hash: Vec<String> = self.status[0..4]
             .iter()
             .map(|byte| format!("{:02x}", byte))
@@ -214,14 +209,4 @@ impl Md5Ctx {
         println!("{:?}", hash);
         println!("md5hash: \"{}\"", hash.join(""));
     }
-}
-
-fn main() {
-    let input_data = {
-        let mut input_data = String::new();
-        io::stdin().lock().read_line(&mut input_data).unwrap();
-        input_data.trim_end().as_bytes().to_vec()
-    };
-    println!("input_data: {:?}", input_data);
-    Md5Ctx::new(input_data).padding().round().print_hash();
 }
