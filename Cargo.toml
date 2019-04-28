@@ -1,7 +1,7 @@
 [package]
 name = "ghash"
-version = "0.1.0"
-authors = ["glatan <glatan@protonmail.com>"]
+version = "0.0.1"
+authors = ["glatan <glatan.edu@gmail.com>"]
 edition = "2018"
 
 [dependencies]

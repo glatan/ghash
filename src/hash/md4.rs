@@ -1,12 +1,6 @@
-use std::io;
-use std::io::BufRead;
-
-mod typecast;
-use typecast::TypeCast;
-
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
-struct Round {}
+struct Round;
 impl Round {
     fn f(x: u32, y: u32, z: u32) -> u32 {
         (x & y) | (!x & z)
@@ -36,21 +30,21 @@ impl Round {
     }
 }
 
-struct Md4Ctx {
+pub struct Md4Ctx {
     input_cache: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
 
 impl Md4Ctx {
-    fn new(input: Vec<u8>) -> Md4Ctx {
+    pub fn new(input: Vec<u8>) -> Md4Ctx {
         Md4Ctx {
             input_cache: input,
             word_block: Vec::new(),
             status: WORD_BUFFER,
         }
     }
-    fn padding(&mut self) -> &mut Md4Ctx {
+    pub fn padding(&mut self) -> &mut Md4Ctx {
         // word_block末尾に0x80を追加
         let input_length = self.input_cache.len();
         self.input_cache.push(0x80);
@@ -69,17 +63,17 @@ impl Md4Ctx {
         let mut word_block: Vec<u32> = Vec::new();
         // iは4の倍数となる (0, 4, 8..60..)
         for i in (0..self.input_cache.len()).filter(|i| i % 4 == 0) {
-            word_block.push(TypeCast::u8x4_u32(
+            word_block.push(u32::from_le_bytes([
                 self.input_cache[i],
                 self.input_cache[i + 1],
                 self.input_cache[i + 2],
                 self.input_cache[i + 3],
-            ));
+            ]));
         }
         self.word_block = word_block;
         self
     }
-    fn round(&mut self) -> &mut Md4Ctx {
+    pub fn round(&mut self) -> &mut Md4Ctx {
         let word_block_length = self.word_block.len() / 16;
         let (mut a, mut b, mut c, mut d);
         let mut x: [u32; 16] = [0; 16];
@@ -127,21 +121,11 @@ impl Md4Ctx {
         ];
         self
     }
-    fn print_hash(&mut self) {
+    pub fn print_hash(&mut self) {
         let hash: Vec<String> = self.status[0..4]
             .iter()
             .map(|byte| format!("{:02x}", byte))
             .collect();
         println!("md4hash: \"{}\"", hash.join(""));
     }
-}
-
-fn main() {
-    let input_data = {
-        let mut input_data = String::new();
-        io::stdin().lock().read_line(&mut input_data).unwrap();
-        input_data.trim_end().as_bytes().to_vec()
-    };
-    println!("input_data: {:?}", input_data);
-    Md4Ctx::new(input_data).padding().round().print_hash();
 }
