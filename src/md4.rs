@@ -1,29 +1,28 @@
+use crate::shared::io::{Hash, New};
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
 struct Round;
 impl Round {
-    fn f(x: u32, y: u32, z: u32) -> u32 {
-        (x & y) | (!x & z)
-    }
-    fn g(x: u32, y: u32, z: u32) -> u32 {
-        (x & y) | (x & z) | (y & z)
-    }
-    fn h(x: u32, y: u32, z: u32) -> u32 {
-        x ^ y ^ z
-    }
     fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
-        a.wrapping_add(Round::f(b, c, d))
-            .wrapping_add(k)
-            .rotate_left(s)
+        fn f(x: u32, y: u32, z: u32) -> u32 {
+            (x & y) | (!x & z)
+        }
+        a.wrapping_add(f(b, c, d)).wrapping_add(k).rotate_left(s)
     }
     fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
-        a.wrapping_add(Round::g(b, c, d))
+        fn g(x: u32, y: u32, z: u32) -> u32 {
+            (x & y) | (x & z) | (y & z)
+        }
+        a.wrapping_add(g(b, c, d))
             .wrapping_add(k)
             .wrapping_add(0x5A82_7999)
             .rotate_left(s)
     }
     fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
-        a.wrapping_add(Round::h(b, c, d))
+        fn h(x: u32, y: u32, z: u32) -> u32 {
+            x ^ y ^ z
+        }
+        a.wrapping_add(h(b, c, d))
             .wrapping_add(k)
             .wrapping_add(0x6ED9_EBA1)
             .rotate_left(s)
@@ -37,14 +36,7 @@ pub struct Md4Ctx {
 }
 
 impl Md4Ctx {
-    pub fn new(input: Vec<u8>) -> Md4Ctx {
-        Md4Ctx {
-            input_cache: input,
-            word_block: Vec::new(),
-            status: WORD_BUFFER,
-        }
-    }
-    pub fn padding(&mut self) -> &mut Md4Ctx {
+    fn padding(&mut self) {
         // word_block末尾に0x80を追加
         let input_length = self.input_cache.len();
         self.input_cache.push(0x80);
@@ -71,9 +63,8 @@ impl Md4Ctx {
             ]));
         }
         self.word_block = word_block;
-        self
     }
-    pub fn round(&mut self) -> &mut Md4Ctx {
+    fn round(&mut self) {
         let word_block_length = self.word_block.len() / 16;
         let (mut a, mut b, mut c, mut d);
         let mut x: [u32; 16] = [0; 16];
@@ -113,19 +104,31 @@ impl Md4Ctx {
                 self.status[3].wrapping_add(d),
             ];
         }
-        self.status = [
-            self.status[0].swap_bytes(),
-            self.status[1].swap_bytes(),
-            self.status[2].swap_bytes(),
-            self.status[3].swap_bytes(),
-        ];
-        self
+        for i in 0..4 {
+            self.status[i] = self.status[i].swap_bytes();
+        }
     }
-    pub fn print_hash(&mut self) {
-        let hash: Vec<String> = self.status[0..4]
+}
+
+impl New for Md4Ctx {
+    fn new(input: &[u8]) -> Md4Ctx {
+        Md4Ctx {
+            input_cache: input.to_vec(),
+            word_block: Vec::new(),
+            status: WORD_BUFFER,
+        }
+    }
+}
+
+impl Hash for Md4Ctx {
+    fn hash(input: &[u8]) -> String {
+        let mut md4ctx = Md4Ctx::new(&input);
+        Md4Ctx::padding(&mut md4ctx);
+        Md4Ctx::round(&mut md4ctx);
+
+        md4ctx.status[0..4]
             .iter()
             .map(|byte| format!("{:02x}", byte))
-            .collect();
-        println!("md4hash: \"{}\"", hash.join(""));
+            .collect()
     }
 }
