@@ -1,4 +1,6 @@
+use crate::shared::io::{Hash, New};
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
+
 #[rustfmt::skip]
 const T: [u32; 64] = [
     // Round 1
@@ -63,23 +65,10 @@ impl Round {
     }
 }
 
-pub struct Md5Ctx {
-    input_cache: Vec<u8>,
-    word_block: Vec<u32>,
-    status: [u32; 4],
-}
-
 impl Md5Ctx {
-    pub fn new(input: Vec<u8>) -> Md5Ctx {
-        Md5Ctx {
-            input_cache: input,
-            word_block: Vec::new(),
-            status: WORD_BUFFER,
-        }
-    }
-    pub fn padding(&mut self) -> &mut Md5Ctx {
+    fn padding(&mut self) {
         // word_block末尾に0x80を追加
-        let input_length = self.input_cache.len();
+        let input_length: usize = self.input_cache.len();
         self.input_cache.push(0x80);
         let message_length: usize = self.input_cache.len();
         // (self.word_block.len() % 64)が56になるよう0を追加する数
@@ -104,10 +93,9 @@ impl Md5Ctx {
             ]));
         }
         self.word_block = word_block;
-        self
     }
-    pub fn round(&mut self) -> &mut Md5Ctx {
-        let word_block_length = self.word_block.len() / 16;
+    fn round(&mut self) {
+        let word_block_length: usize = self.word_block.len() / 16;
         let (mut a, mut b, mut c, mut d);
         let mut x: [u32; 16] = [0; 16];
         for i in 0..word_block_length {
@@ -118,6 +106,7 @@ impl Md5Ctx {
             b = self.status[1];
             c = self.status[2];
             d = self.status[3];
+
             // Round 1
             a = Round::round1(a, b, c, d, x[0], 7, T[0]);
             d = Round::round1(d, a, b, c, x[1], 12, T[1]);
@@ -193,20 +182,37 @@ impl Md5Ctx {
                 self.status[3].wrapping_add(d),
             ];
         }
-        self.status = [
-            self.status[0].swap_bytes(),
-            self.status[1].swap_bytes(),
-            self.status[2].swap_bytes(),
-            self.status[3].swap_bytes(),
-        ];
-        self
+        for i in 0..4 {
+            self.status[i] = self.status[i].swap_bytes();
+        }
     }
-    pub fn print_hash(&mut self) {
-        let hash: Vec<String> = self.status[0..4]
+}
+
+pub struct Md5Ctx {
+    input_cache: Vec<u8>,
+    word_block: Vec<u32>,
+    status: [u32; 4],
+}
+
+impl New for Md5Ctx {
+    fn new(input: &[u8]) -> Md5Ctx {
+        Md5Ctx {
+            input_cache: input.to_vec(),
+            word_block: Vec::new(),
+            status: WORD_BUFFER,
+        }
+    }
+}
+
+impl Hash for Md5Ctx {
+    fn hash(input: &[u8]) -> String {
+        let mut md5ctx = Md5Ctx::new(&input);
+        Md5Ctx::padding(&mut md5ctx);
+        Md5Ctx::round(&mut md5ctx);
+
+        md5ctx.status[0..4]
             .iter()
             .map(|byte| format!("{:02x}", byte))
-            .collect();
-        println!("{:?}", hash);
-        println!("md5hash: \"{}\"", hash.join(""));
+            .collect()
     }
 }

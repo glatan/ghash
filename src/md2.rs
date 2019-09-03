@@ -1,5 +1,6 @@
-const BLKSIZE: usize = 16;
+use crate::shared::io::{Hash, New};
 
+const BLOCK_SIZE: usize = 16;
 const STABLE: [u8; 256] = [
     41, 46, 67, 201, 162, 216, 124, 1, 61, 54, 84, 161, 236, 240, 6, 19, 98, 167, 5, 243, 192, 199,
     115, 140, 152, 147, 43, 217, 188, 76, 130, 202, 30, 155, 87, 60, 253, 212, 224, 22, 103, 66,
@@ -29,24 +30,15 @@ pub struct Md2Ctx {
 }
 
 impl Md2Ctx {
-    pub fn new(input: Vec<u8>) -> Md2Ctx {
-        Md2Ctx {
-            word_block: input,
-            state: [0; 48],
-        }
-    }
-    pub fn padding(&mut self) -> &mut Md2Ctx {
-        /*
-        padding_byte: self.dataを16の整数倍長に調整するための値
-        */
+    fn padding(&mut self) {
+        // padding_byte: self.dataを16の整数倍長に調整するための値
         let message_length: usize = self.word_block.len();
-        let padding_byte: u8 = (BLKSIZE - (message_length % BLKSIZE)) as u8;
+        let padding_byte: u8 = (BLOCK_SIZE - (message_length % BLOCK_SIZE)) as u8;
         self.word_block
             .append(&mut vec![padding_byte; padding_byte as usize]);
-        self
     }
-    pub fn add_check_sum(&mut self) -> &mut Md2Ctx {
-        let word_block_length: usize = self.word_block.len() / BLKSIZE;
+    fn add_check_sum(&mut self) {
+        let word_block_length: usize = self.word_block.len() / BLOCK_SIZE;
         let mut checksum: Vec<u8> = vec![0; 16];
         let mut c: usize;
         let mut l: usize = 0;
@@ -58,10 +50,9 @@ impl Md2Ctx {
             }
         }
         self.word_block.append(&mut checksum);
-        self
     }
-    pub fn round(&mut self) -> &mut Md2Ctx {
-        let word_block_length = self.word_block.len() / BLKSIZE;
+    fn round(&mut self) {
+        let word_block_length = self.word_block.len() / BLOCK_SIZE;
 
         for i in 0..word_block_length {
             for j in 0..16 {
@@ -77,13 +68,28 @@ impl Md2Ctx {
                 t = (t + j) % 256;
             }
         }
-        self
     }
-    pub fn print_hash(&mut self) {
-        let hash: Vec<String> = self.state[0..16]
+}
+
+impl New for Md2Ctx {
+    fn new(input: &[u8]) -> Md2Ctx {
+        Md2Ctx {
+            word_block: input.to_vec(),
+            state: [0; 48],
+        }
+    }
+}
+
+impl Hash for Md2Ctx {
+    fn hash(input: &[u8]) -> String {
+        let mut md2ctx = Md2Ctx::new(&input);
+        Md2Ctx::padding(&mut md2ctx);
+        Md2Ctx::add_check_sum(&mut md2ctx);
+        Md2Ctx::round(&mut md2ctx);
+
+        md2ctx.state[0..16]
             .iter()
             .map(|byte| format!("{:02x}", byte))
-            .collect();
-        println!("md2hash: \"{}\"", hash.join(""));
+            .collect()
     }
 }
