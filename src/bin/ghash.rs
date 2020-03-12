@@ -1,5 +1,4 @@
-use ghash::shared::io::Hash;
-use ghash::{Md2, Md4, Md5};
+use ghash::{Md2Ctx, Md4Ctx, Md5Ctx};
 use std::io;
 use std::io::BufRead;
 
@@ -10,9 +9,9 @@ fn main() {
         input.trim_end().as_bytes().to_owned()
     };
     println!("input: {:?}", input);
-    let md2_result: String = Md2::hash(&input);
-    let md4_result: String = Md4::hash(&input);
-    let md5_result: String = Md5::hash(&input);
+    let md2_result: String = Md2Ctx::hash(&input);
+    let md4_result: String = Md4Ctx::hash(&input);
+    let md5_result: String = Md5Ctx::hash(&input);
 
     println!("MD2: {:}", md2_result);
     println!("MD4: {:}", md4_result);

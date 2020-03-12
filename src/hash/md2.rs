@@ -1,5 +1,3 @@
-use crate::shared::io::{Hash, New};
-
 const BLOCK_SIZE: usize = 16;
 const STABLE: [u8; 256] = [
     41, 46, 67, 201, 162, 216, 124, 1, 61, 54, 84, 161, 236, 240, 6, 19, 98, 167, 5, 243, 192, 199,
@@ -30,6 +28,12 @@ pub struct Md2Ctx {
 }
 
 impl Md2Ctx {
+    fn new(input: &[u8]) -> Md2Ctx {
+        Md2Ctx {
+            word_block: input.to_vec(),
+            state: [0; 48],
+        }
+    }
     fn padding(&mut self) {
         // padding_byte: self.dataを16の整数倍長に調整するための値
         let message_length: usize = self.word_block.len();
@@ -69,19 +73,7 @@ impl Md2Ctx {
             }
         }
     }
-}
-
-impl New for Md2Ctx {
-    fn new(input: &[u8]) -> Md2Ctx {
-        Md2Ctx {
-            word_block: input.to_vec(),
-            state: [0; 48],
-        }
-    }
-}
-
-impl Hash for Md2Ctx {
-    fn hash(input: &[u8]) -> String {
+    pub fn hash(input: &[u8]) -> String {
         let mut md2ctx = Md2Ctx::new(&input);
         Md2Ctx::padding(&mut md2ctx);
         Md2Ctx::add_check_sum(&mut md2ctx);

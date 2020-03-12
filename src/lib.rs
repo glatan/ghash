@@ -1,6 +1,3 @@
-mod md2;
-mod md4;
-mod md5;
-pub mod shared;
+mod hash;
 
-pub use self::{md2::Md2Ctx as Md2, md4::Md4Ctx as Md4, md5::Md5Ctx as Md5};
+pub use self::hash::{Md2Ctx, Md4Ctx, Md5Ctx};

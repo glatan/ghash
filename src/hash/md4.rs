@@ -1,4 +1,3 @@
-use crate::shared::io::{Hash, New};
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
 struct Round;
@@ -36,6 +35,13 @@ pub struct Md4Ctx {
 }
 
 impl Md4Ctx {
+    fn new(input: &[u8]) -> Md4Ctx {
+        Md4Ctx {
+            input_cache: input.to_vec(),
+            word_block: Vec::new(),
+            status: WORD_BUFFER,
+        }
+    }
     fn padding(&mut self) {
         // word_block末尾に0x80を追加
         let input_length = self.input_cache.len();
@@ -108,20 +114,7 @@ impl Md4Ctx {
             self.status[i] = self.status[i].swap_bytes();
         }
     }
-}
-
-impl New for Md4Ctx {
-    fn new(input: &[u8]) -> Md4Ctx {
-        Md4Ctx {
-            input_cache: input.to_vec(),
-            word_block: Vec::new(),
-            status: WORD_BUFFER,
-        }
-    }
-}
-
-impl Hash for Md4Ctx {
-    fn hash(input: &[u8]) -> String {
+    pub fn hash(input: &[u8]) -> String {
         let mut md4ctx = Md4Ctx::new(&input);
         Md4Ctx::padding(&mut md4ctx);
         Md4Ctx::round(&mut md4ctx);
