@@ -65,43 +65,43 @@ impl Round {
 }
 
 pub struct Md5Ctx {
-    input_cache: Vec<u8>,
+    input: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
 
 impl Md5Ctx {
-    fn new(input: &[u8]) -> Md5Ctx {
+    pub const fn new() -> Md5Ctx {
         Md5Ctx {
-            input_cache: input.to_vec(),
+            input: Vec::new(),
             word_block: Vec::new(),
             status: WORD_BUFFER,
         }
     }
     fn padding(&mut self) {
         // word_block末尾に0x80を追加
-        let input_length: usize = self.input_cache.len();
-        self.input_cache.push(0x80);
-        let message_length: usize = self.input_cache.len();
+        let input_length: usize = self.input.len();
+        self.input.push(0x80);
+        let message_length: usize = self.input.len();
         // (self.word_block.len() % 64)が56になるよう0を追加する数
         let padding_range = 56 - (message_length % 64);
         if padding_range != 0 {
-            self.input_cache.append(&mut vec![0; padding_range]);
+            self.input.append(&mut vec![0; padding_range]);
         } else {
-            self.input_cache.append(&mut vec![0; 64]);
+            self.input.append(&mut vec![0; 64]);
         }
         // 入力データの長さを追加
         let mut padding_length = { (8 * input_length).to_le_bytes().to_vec() };
-        self.input_cache.append(&mut padding_length);
+        self.input.append(&mut padding_length);
         // word_block用に値をu32に拡張する
         let mut word_block: Vec<u32> = Vec::new();
         // iは4の倍数となる (0, 4, 8..60..)
-        for i in (0..self.input_cache.len()).filter(|i| i % 4 == 0) {
+        for i in (0..self.input.len()).filter(|i| i % 4 == 0) {
             word_block.push(u32::from_le_bytes([
-                self.input_cache[i],
-                self.input_cache[i + 1],
-                self.input_cache[i + 2],
-                self.input_cache[i + 3],
+                self.input[i],
+                self.input[i + 1],
+                self.input[i + 2],
+                self.input[i + 3],
             ]));
         }
         self.word_block = word_block;
@@ -199,10 +199,10 @@ impl Md5Ctx {
         }
     }
     pub fn hash(input: &[u8]) -> String {
-        let mut md5ctx = Md5Ctx::new(&input);
-        Md5Ctx::padding(&mut md5ctx);
-        Md5Ctx::round(&mut md5ctx);
-    
+        let mut md5ctx = Md5Ctx::new();
+        md5ctx.input = input.to_vec();
+        md5ctx.padding();
+        md5ctx.round();
         md5ctx.status[0..4]
             .iter()
             .map(|byte| format!("{:02x}", byte))

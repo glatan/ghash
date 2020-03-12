@@ -28,9 +28,9 @@ pub struct Md2Ctx {
 }
 
 impl Md2Ctx {
-    fn new(input: &[u8]) -> Md2Ctx {
+    pub const fn new() -> Self {
         Md2Ctx {
-            word_block: input.to_vec(),
+            word_block: Vec::new(),
             state: [0; 48],
         }
     }
@@ -74,11 +74,11 @@ impl Md2Ctx {
         }
     }
     pub fn hash(input: &[u8]) -> String {
-        let mut md2ctx = Md2Ctx::new(&input);
-        Md2Ctx::padding(&mut md2ctx);
-        Md2Ctx::add_check_sum(&mut md2ctx);
-        Md2Ctx::round(&mut md2ctx);
-
+        let mut md2ctx = Self::new();
+        md2ctx.word_block = input.to_vec();
+        md2ctx.padding();
+        md2ctx.add_check_sum();
+        md2ctx.round();
         md2ctx.state[0..16]
             .iter()
             .map(|byte| format!("{:02x}", byte))
