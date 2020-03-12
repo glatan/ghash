@@ -9,11 +9,7 @@ fn main() {
         input.trim_end().as_bytes().to_owned()
     };
     println!("input: {:?}", input);
-    let md2_result: String = Md2Ctx::hash(&input);
-    let md4_result: String = Md4Ctx::hash(&input);
-    let md5_result: String = Md5Ctx::hash(&input);
-
-    println!("MD2: {:}", md2_result);
-    println!("MD4: {:}", md4_result);
-    println!("MD5: {:}", md5_result);
+    println!("MD2: {:}", Md2Ctx::hash(&input));
+    println!("MD4: {:}", Md4Ctx::hash(&input));
+    println!("MD5: {:}", Md5Ctx::hash(&input));
 }
