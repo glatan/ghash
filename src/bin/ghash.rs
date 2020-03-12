@@ -1,4 +1,4 @@
-use ghash::{Md2Ctx, Md4Ctx, Md5Ctx};
+use ghash::{Md2, Md4, Md5};
 use std::io;
 use std::io::BufRead;
 
@@ -9,7 +9,7 @@ fn main() {
         input.trim_end().as_bytes().to_owned()
     };
     println!("input: {:?}", input);
-    println!("MD2: {:}", Md2Ctx::hash(&input));
-    println!("MD4: {:}", Md4Ctx::hash(&input));
-    println!("MD5: {:}", Md5Ctx::hash(&input));
+    println!("MD2: {:}", Md2::hash(&input));
+    println!("MD4: {:}", Md4::hash(&input));
+    println!("MD5: {:}", Md5::hash(&input));
 }

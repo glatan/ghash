@@ -28,15 +28,15 @@ impl Round {
     }
 }
 
-pub struct Md4Ctx {
+pub struct Md4 {
     input: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
 
-impl Md4Ctx {
-    pub const fn new() -> Md4Ctx {
-        Md4Ctx {
+impl Md4 {
+    pub const fn new() -> Md4 {
+        Md4 {
             input: Vec::new(),
             word_block: Vec::new(),
             status: WORD_BUFFER,
@@ -115,11 +115,11 @@ impl Md4Ctx {
         }
     }
     pub fn hash(input: &[u8]) -> String {
-        let mut md4ctx = Md4Ctx::new();
-        md4ctx.input = input.to_vec();
-        md4ctx.padding();
-        md4ctx.round();
-        md4ctx.status[0..4]
+        let mut md4 = Md4::new();
+        md4.input = input.to_vec();
+        md4.padding();
+        md4.round();
+        md4.status[0..4]
             .iter()
             .map(|byte| format!("{:02x}", byte))
             .collect()

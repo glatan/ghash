@@ -15,7 +15,7 @@ const STABLE: [u8; 256] = [
     219, 153, 141, 51, 159, 17, 131, 20,
 ];
 
-pub struct Md2Ctx {
+pub struct Md2 {
     /*
     word_block {
         input + padding_byte : 16*n bytes
@@ -27,9 +27,9 @@ pub struct Md2Ctx {
     state: [u8; 48],
 }
 
-impl Md2Ctx {
+impl Md2 {
     pub const fn new() -> Self {
-        Md2Ctx {
+        Md2 {
             word_block: Vec::new(),
             state: [0; 48],
         }
@@ -74,12 +74,12 @@ impl Md2Ctx {
         }
     }
     pub fn hash(input: &[u8]) -> String {
-        let mut md2ctx = Self::new();
-        md2ctx.word_block = input.to_vec();
-        md2ctx.padding();
-        md2ctx.add_check_sum();
-        md2ctx.round();
-        md2ctx.state[0..16]
+        let mut md2 = Self::new();
+        md2.word_block = input.to_vec();
+        md2.padding();
+        md2.add_check_sum();
+        md2.round();
+        md2.state[0..16]
             .iter()
             .map(|byte| format!("{:02x}", byte))
             .collect()

@@ -64,15 +64,15 @@ impl Round {
     }
 }
 
-pub struct Md5Ctx {
+pub struct Md5 {
     input: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
 
-impl Md5Ctx {
-    pub const fn new() -> Md5Ctx {
-        Md5Ctx {
+impl Md5 {
+    pub const fn new() -> Md5 {
+        Md5 {
             input: Vec::new(),
             word_block: Vec::new(),
             status: WORD_BUFFER,
@@ -199,11 +199,11 @@ impl Md5Ctx {
         }
     }
     pub fn hash(input: &[u8]) -> String {
-        let mut md5ctx = Md5Ctx::new();
-        md5ctx.input = input.to_vec();
-        md5ctx.padding();
-        md5ctx.round();
-        md5ctx.status[0..4]
+        let mut md5 = Md5::new();
+        md5.input = input.to_vec();
+        md5.padding();
+        md5.round();
+        md5.status[0..4]
             .iter()
             .map(|byte| format!("{:02x}", byte))
             .collect()
