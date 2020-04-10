@@ -121,9 +121,10 @@ impl Md4 {
         md4.input = input.to_vec();
         md4.padding();
         md4.round();
+        println!("{:?}", md4.status);
         md4.status[0..4]
             .iter()
-            .map(|byte| format!("{:02x}", byte))
+            .map(|byte| format!("{:08x}", byte))
             .collect()
     }
 }

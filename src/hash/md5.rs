@@ -207,7 +207,7 @@ impl Md5 {
         md5.round();
         md5.status[0..4]
             .iter()
-            .map(|byte| format!("{:02x}", byte))
+            .map(|byte| format!("{:08x}", byte))
             .collect()
     }
 }
