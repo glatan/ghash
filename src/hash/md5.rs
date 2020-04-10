@@ -79,8 +79,8 @@ impl Md5 {
         }
     }
     fn padding(&mut self) {
+        let input_length = self.input.len() as u64;
         // word_block末尾に0x80を追加
-        let input_length: usize = self.input.len();
         self.input.push(0x80);
         let message_length: usize = self.input.len();
         // (self.word_block.len() % 64)が56になるよう0を追加する数
