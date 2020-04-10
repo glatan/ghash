@@ -1,5 +1,8 @@
+use std::cmp::Ordering;
+
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
+#[allow(clippy::many_single_char_names)]
 fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
     fn f(x: u32, y: u32, z: u32) -> u32 {
         (x & y) | (!x & z)
@@ -7,6 +10,7 @@ fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
     a.wrapping_add(f(b, c, d)).wrapping_add(k).rotate_left(s)
 }
 
+#[allow(clippy::many_single_char_names)]
 fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
     fn g(x: u32, y: u32, z: u32) -> u32 {
         (x & y) | (x & z) | (y & z)
@@ -17,6 +21,7 @@ fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
         .rotate_left(s)
 }
 
+#[allow(clippy::many_single_char_names)]
 fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
     fn h(x: u32, y: u32, z: u32) -> u32 {
         x ^ y ^ z
@@ -47,13 +52,17 @@ impl Md4 {
         self.input.push(0x80);
         // (self.word_block.len() % 64)が55(56 - 1)になるよう0を追加する数
         let padding_length = 55 - (input_length as isize % 64);
-        if padding_length > 0 {
-            self.input.append(&mut vec![0; padding_length as usize]);
-        } else if padding_length < 0 {
-            self.input
-                .append(&mut vec![0; (padding_length + 64) as usize]);
-        } else {
-            self.input.append(&mut vec![0; 64]);
+        match padding_length.cmp(&0) {
+            Ordering::Greater => {
+                self.input.append(&mut vec![0; padding_length as usize]);
+            }
+            Ordering::Less => {
+                self.input
+                    .append(&mut vec![0; (padding_length + 64) as usize]);
+            }
+            Ordering::Equal => {
+                self.input.append(&mut vec![0; 64]);
+            }
         }
         // 入力データの長さを追加
         self.input
@@ -71,6 +80,7 @@ impl Md4 {
         }
         self.word_block = word_block;
     }
+    #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
         let word_block_length = self.word_block.len() / 16;
         let (mut a, mut b, mut c, mut d);

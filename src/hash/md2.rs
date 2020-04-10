@@ -41,6 +41,7 @@ impl Md2 {
         self.word_block
             .append(&mut vec![padding_byte; padding_byte as usize]);
     }
+    #[allow(clippy::needless_range_loop)]
     fn add_check_sum(&mut self) {
         let word_block_length: usize = self.word_block.len() / BLOCK_SIZE;
         let mut checksum: Vec<u8> = vec![0; 16];
@@ -55,9 +56,9 @@ impl Md2 {
         }
         self.word_block.append(&mut checksum);
     }
+    #[allow(clippy::needless_range_loop)]
     fn round(&mut self) {
         let word_block_length = self.word_block.len() / BLOCK_SIZE;
-
         for i in 0..word_block_length {
             for j in 0..16 {
                 self.state[j + 16] = self.word_block[16 * i + j];

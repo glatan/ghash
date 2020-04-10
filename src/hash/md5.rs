@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
 #[rustfmt::skip]
@@ -16,6 +18,7 @@ const T: [u32; 64] = [
     0x6FA8_7E4F, 0xFE2C_E6E0, 0xA301_4314, 0x4E08_11A1, 0xF753_7E82, 0xBD3A_F235, 0x2AD7_D2BB, 0xEB86_D391,
 ];
 
+#[allow(clippy::many_single_char_names)]
 fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
     fn f(x: u32, y: u32, z: u32) -> u32 {
         (x & y) | (!x & z)
@@ -28,6 +31,7 @@ fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
     )
 }
 
+#[allow(clippy::many_single_char_names)]
 fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
     fn g(x: u32, y: u32, z: u32) -> u32 {
         (x & z) | (y & !z)
@@ -40,6 +44,7 @@ fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
     )
 }
 
+#[allow(clippy::many_single_char_names)]
 fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
     fn h(x: u32, y: u32, z: u32) -> u32 {
         x ^ y ^ z
@@ -52,6 +57,7 @@ fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
     )
 }
 
+#[allow(clippy::many_single_char_names)]
 fn round4(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
     fn i(x: u32, y: u32, z: u32) -> u32 {
         y ^ (x | !z)
@@ -84,13 +90,17 @@ impl Md5 {
         self.input.push(0x80);
         // (self.word_block.len() % 64)が55(56 - 1)になるよう0を追加する数
         let padding_length = 55 - (input_length as isize % 64);
-        if padding_length > 0 {
-            self.input.append(&mut vec![0; padding_length as usize]);
-        } else if padding_length < 0 {
-            self.input
-                .append(&mut vec![0; (padding_length + 64) as usize]);
-        } else {
-            self.input.append(&mut vec![0; 64]);
+        match padding_length.cmp(&0) {
+            Ordering::Greater => {
+                self.input.append(&mut vec![0; padding_length as usize]);
+            }
+            Ordering::Less => {
+                self.input
+                    .append(&mut vec![0; (padding_length + 64) as usize]);
+            }
+            Ordering::Equal => {
+                self.input.append(&mut vec![0; 64]);
+            }
         }
         // 入力データの長さを追加
         self.input
@@ -108,6 +118,7 @@ impl Md5 {
         }
         self.word_block = word_block;
     }
+    #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
         let word_block_length: usize = self.word_block.len() / 16;
         let (mut a, mut b, mut c, mut d);
