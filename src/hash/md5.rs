@@ -79,20 +79,22 @@ impl Md5 {
         }
     }
     fn padding(&mut self) {
-        let input_length = self.input.len() as u64;
-        // word_block末尾に0x80を追加
+        let input_length = self.input.len();
+        // word_block末尾に0x80を追加(0b1000_0000)
         self.input.push(0x80);
-        let message_length: usize = self.input.len();
-        // (self.word_block.len() % 64)が56になるよう0を追加する数
-        let padding_range = 56 - (message_length % 64);
-        if padding_range != 0 {
-            self.input.append(&mut vec![0; padding_range]);
+        // (self.word_block.len() % 64)が55(56 - 1)になるよう0を追加する数
+        let padding_length = 55 - (input_length as isize % 64);
+        if padding_length > 0 {
+            self.input.append(&mut vec![0; padding_length as usize]);
+        } else if padding_length < 0 {
+            self.input
+                .append(&mut vec![0; (padding_length + 64) as usize]);
         } else {
             self.input.append(&mut vec![0; 64]);
         }
         // 入力データの長さを追加
-        let mut padding_length = { (8 * input_length).to_le_bytes().to_vec() };
-        self.input.append(&mut padding_length);
+        self.input
+            .append(&mut (8 * input_length as u64).to_le_bytes().to_vec());
         // word_block用に値をu32に拡張する
         let mut word_block: Vec<u32> = Vec::new();
         // iは4の倍数となる (0, 4, 8..60..)
