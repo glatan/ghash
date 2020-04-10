@@ -29,7 +29,7 @@ pub struct Md2 {
 
 impl Md2 {
     pub const fn new() -> Self {
-        Md2 {
+        Self {
             word_block: Vec::new(),
             state: [0; 48],
         }
