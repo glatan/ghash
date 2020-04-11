@@ -68,17 +68,15 @@ impl Md4 {
         self.input
             .append(&mut (8 * input_length as u64).to_le_bytes().to_vec());
         // word_block用に値をu32に拡張する
-        let mut word_block: Vec<u32> = Vec::new();
         // iは4の倍数となる (0, 4, 8..60..)
         for i in (0..self.input.len()).filter(|i| i % 4 == 0) {
-            word_block.push(u32::from_le_bytes([
+            self.word_block.push(u32::from_le_bytes([
                 self.input[i],
                 self.input[i + 1],
                 self.input[i + 2],
                 self.input[i + 3],
             ]));
         }
-        self.word_block = word_block;
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
@@ -130,7 +128,6 @@ impl Md4 {
         md4.input = input.to_vec();
         md4.padding();
         md4.round();
-        println!("{:?}", md4.status);
         md4.status[0..4]
             .iter()
             .map(|byte| format!("{:08x}", byte))
