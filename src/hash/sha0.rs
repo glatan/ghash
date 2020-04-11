@@ -15,19 +15,16 @@ const H: [u32; 5] = [
 ];
 
 // 0 <= t <= 19
-// #[allow(clippy::many_single_char_names)]
 fn ch(b: u32, c: u32, d: u32) -> u32 {
     (b & c) | (!b & d)
 }
 
 // 20 <= t <= 39, 60 <= t <= 79
-// #[allow(clippy::many_single_char_names)]
 fn parity(b: u32, c: u32, d: u32) -> u32 {
     b ^ c ^ d
 }
 
 // 40 <= t <= 59
-// #[allow(clippy::many_single_char_names)]
 fn maj(b: u32, c: u32, d: u32) -> u32 {
     (b & c) | (b & d) | (c & d)
 }
