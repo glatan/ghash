@@ -29,13 +29,13 @@ fn maj(b: u32, c: u32, d: u32) -> u32 {
     (b & c) | (b & d) | (c & d)
 }
 
-pub struct Sha1 {
+pub struct Sha0 {
     input: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 5],
 }
 
-impl Sha1 {
+impl Sha0 {
     pub const fn new() -> Self {
         Self {
             input: Vec::new(),
@@ -84,7 +84,7 @@ impl Sha1 {
                 w[t] = self.word_block[t + i * 16];
             }
             for t in 16..80 {
-                w[t] = (w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16]).rotate_left(1);
+                w[t] = w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16];
             }
             a = self.status[0];
             b = self.status[1];
@@ -155,11 +155,11 @@ impl Sha1 {
         }
     }
     pub fn hash(input: &[u8]) -> String {
-        let mut sha1 = Self::new();
-        sha1.input = input.to_vec();
-        sha1.padding();
-        sha1.round();
-        sha1.status
+        let mut sha0 = Self::new();
+        sha0.input = input.to_vec();
+        sha0.padding();
+        sha0.round();
+        sha0.status
             .iter()
             .map(|word| format!("{:08x}", word))
             .collect()
