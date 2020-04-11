@@ -105,7 +105,6 @@ impl Md5 {
         // 入力データの長さを追加
         self.input
             .append(&mut (8 * input_length as u64).to_le_bytes().to_vec());
-        // word_block用に値をu32に拡張する
         // iは4の倍数となる (0, 4, 8..60..)
         for i in (0..self.input.len()).filter(|i| i % 4 == 0) {
             self.word_block.push(u32::from_le_bytes([
@@ -129,7 +128,6 @@ impl Md5 {
             b = self.status[1];
             c = self.status[2];
             d = self.status[3];
-
             // Round 1
             a = round1(a, b, c, d, x[0], 7, T[0]);
             d = round1(d, a, b, c, x[1], 12, T[1]);
@@ -210,7 +208,7 @@ impl Md5 {
         }
     }
     pub fn hash(input: &[u8]) -> String {
-        let mut md5 = Md5::new();
+        let mut md5 = Self::new();
         md5.input = input.to_vec();
         md5.padding();
         md5.round();

@@ -67,7 +67,6 @@ impl Md4 {
         // 入力データの長さを追加
         self.input
             .append(&mut (8 * input_length as u64).to_le_bytes().to_vec());
-        // word_block用に値をu32に拡張する
         // iは4の倍数となる (0, 4, 8..60..)
         for i in (0..self.input.len()).filter(|i| i % 4 == 0) {
             self.word_block.push(u32::from_le_bytes([
@@ -124,7 +123,7 @@ impl Md4 {
         }
     }
     pub fn hash(input: &[u8]) -> String {
-        let mut md4 = Md4::new();
+        let mut md4 = Self::new();
         md4.input = input.to_vec();
         md4.padding();
         md4.round();
