@@ -1,6 +1,4 @@
-extern crate ghash;
-
-use ghash::*;
+use ghash::Sha256;
 
 // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA256.pdf
 // SHA256("abc") = ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad

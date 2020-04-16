@@ -1,6 +1,4 @@
-extern crate ghash;
-
-use ghash::*;
+use ghash::Sha512Trunc256;
 
 // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512_256.pdf
 // SHA512("abc") = 53048e2681941ef99b2e29b76b4c7dabe4c2d0c634fc6d46e0e2f13107e7af23

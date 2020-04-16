@@ -1,6 +1,4 @@
-extern crate ghash;
-
-use ghash::*;
+use ghash::Sha224;
 
 // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA224.pdf
 // SHA224 ("abc") = 23097d223405d8228642a477bda255b32aadbce4bda0b3f7e36c9da7

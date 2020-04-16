@@ -1,6 +1,4 @@
-extern crate ghash;
-
-use ghash::*;
+use ghash::Sha1;
 
 // https://tools.ietf.org/html/rfc3174
 /*

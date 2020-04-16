@@ -1,6 +1,4 @@
-extern crate ghash;
-
-use ghash::*;
+use ghash::Sha0;
 
 // https://web.archive.org/web/20180905102133/https://www-ljk.imag.fr/membres/Pierre.Karpman/fips180.pdf
 // https://crypto.stackexchange.com/questions/62055/where-can-i-find-a-description-of-the-sha-0-hash-algorithm/62071#62071

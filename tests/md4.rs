@@ -1,6 +1,4 @@
-extern crate ghash;
-
-use ghash::*;
+use ghash::Md4;
 
 // https://tools.ietf.org/html/rfc1320
 // A.5 Test suite
