@@ -207,14 +207,14 @@ impl Md5 {
             self.status[i] = self.status[i].swap_bytes();
         }
     }
-    pub fn hash(input: &[u8]) -> String {
+    pub fn hash(input: &[u8]) -> Vec<u8> {
         let mut md5 = Self::new();
         md5.input = input.to_vec();
         md5.padding();
         md5.round();
         md5.status[0..4]
             .iter()
-            .map(|byte| format!("{:08x}", byte))
+            .flat_map(|byte| byte.to_be_bytes().to_vec())
             .collect()
     }
 }

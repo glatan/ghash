@@ -122,14 +122,14 @@ impl Md4 {
             self.status[i] = self.status[i].swap_bytes();
         }
     }
-    pub fn hash(input: &[u8]) -> String {
+    pub fn hash(input: &[u8]) -> Vec<u8> {
         let mut md4 = Self::new();
         md4.input = input.to_vec();
         md4.padding();
         md4.round();
         md4.status[0..4]
             .iter()
-            .map(|byte| format!("{:08x}", byte))
+            .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()
     }
 }

@@ -306,14 +306,14 @@ impl Sha224 {
     fn round(&mut self) {
         self.0.round();
     }
-    pub fn hash(input: &[u8]) -> String {
+    pub fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha224 = Self::new();
         sha224.0.input = input.to_vec();
         sha224.padding();
         sha224.round();
         sha224.0.status[0..7]
             .iter()
-            .map(|word| format!("{:08x}", word))
+            .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()
     }
 }
@@ -332,7 +332,7 @@ impl Sha256 {
     fn round(&mut self) {
         self.0.round();
     }
-    pub fn hash(input: &[u8]) -> String {
+    pub fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha256 = Self::new();
         sha256.0.input = input.to_vec();
         sha256.padding();
@@ -341,7 +341,7 @@ impl Sha256 {
             .0
             .status
             .iter()
-            .map(|word| format!("{:08x}", word))
+            .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()
     }
 }
@@ -360,14 +360,14 @@ impl Sha384 {
     fn round(&mut self) {
         self.0.round();
     }
-    pub fn hash(input: &[u8]) -> String {
+    pub fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha384 = Self::new();
         sha384.0.input = input.to_vec();
         sha384.padding();
         sha384.round();
         sha384.0.status[0..6]
             .iter()
-            .map(|word| format!("{:016x}", word))
+            .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()
     }
 }
@@ -386,7 +386,7 @@ impl Sha512 {
     fn round(&mut self) {
         self.0.round();
     }
-    pub fn hash(input: &[u8]) -> String {
+    pub fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha512 = Self::new();
         sha512.0.input = input.to_vec();
         sha512.padding();
@@ -395,7 +395,7 @@ impl Sha512 {
             .0
             .status
             .iter()
-            .map(|word| format!("{:016x}", word))
+            .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()
     }
 }
@@ -414,17 +414,16 @@ impl Sha512Trunc224 {
     fn round(&mut self) {
         self.0.round();
     }
-    pub fn hash(input: &[u8]) -> String {
+    pub fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha512trunc224 = Self::new();
         sha512trunc224.0.input = input.to_vec();
         sha512trunc224.padding();
         sha512trunc224.round();
-        let mut result = sha512trunc224.0.status[0..4]
+        sha512trunc224.0.status[0..4]
             .iter()
-            .map(|word| format!("{:016x}", word))
-            .collect::<String>();
-        result.truncate(224 / 4);
-        result
+            .flat_map(|word| word.to_be_bytes().to_vec())
+            .take(224 / 8) // (224 / 8) bytes
+            .collect()
     }
 }
 
@@ -442,14 +441,14 @@ impl Sha512Trunc256 {
     fn round(&mut self) {
         self.0.round();
     }
-    pub fn hash(input: &[u8]) -> String {
+    pub fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha512trunc256 = Self::new();
         sha512trunc256.0.input = input.to_vec();
         sha512trunc256.padding();
         sha512trunc256.round();
         sha512trunc256.0.status[0..4]
             .iter()
-            .map(|word| format!("{:016x}", word))
+            .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()
     }
 }

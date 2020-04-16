@@ -2,6 +2,10 @@ use ghash::*;
 use std::io;
 use std::io::BufRead;
 
+fn vec_to_string(vec: Vec<u8>) -> String {
+    vec.iter().map(|byte| format!("{:02x}", byte)).collect()
+}
+
 fn main() {
     let input: Vec<u8> = {
         let mut input = String::new();
@@ -9,15 +13,21 @@ fn main() {
         input.trim_end().as_bytes().to_owned()
     };
     println!("input: {:?}", input);
-    println!("MD2:\t\t{:}", Md2::hash(&input));
-    println!("MD4:\t\t{:}", Md4::hash(&input));
-    println!("MD5:\t\t{:}", Md5::hash(&input));
-    println!("SHA0:\t\t{:}", Sha0::hash(&input));
-    println!("SHA1:\t\t{:}", Sha1::hash(&input));
-    println!("SHA224:\t\t{:}", Sha224::hash(&input));
-    println!("SHA256:\t\t{:}", Sha256::hash(&input));
-    println!("SHA384:\t\t{:}", Sha384::hash(&input));
-    println!("SHA512:\t\t{:}", Sha512::hash(&input));
-    println!("SHA512/224:\t{:}", Sha512Trunc224::hash(&input));
-    println!("SHA512/256:\t{:}", Sha512Trunc256::hash(&input));
+    println!("MD2:\t\t{:}", vec_to_string(Md2::hash(&input)));
+    println!("MD4:\t\t{:}", vec_to_string(Md4::hash(&input)));
+    println!("MD5:\t\t{:}", vec_to_string(Md5::hash(&input)));
+    println!("SHA0:\t\t{:}", vec_to_string(Sha0::hash(&input)));
+    println!("SHA1:\t\t{:}", vec_to_string(Sha1::hash(&input)));
+    println!("SHA224:\t\t{:}", vec_to_string(Sha224::hash(&input)));
+    println!("SHA256:\t\t{:}", vec_to_string(Sha256::hash(&input)));
+    println!("SHA384:\t\t{:}", vec_to_string(Sha384::hash(&input)));
+    println!("SHA512:\t\t{:}", vec_to_string(Sha512::hash(&input)));
+    println!(
+        "SHA512/224:\t{:}",
+        vec_to_string(Sha512Trunc224::hash(&input))
+    );
+    println!(
+        "SHA512/256:\t{:}",
+        vec_to_string(Sha512Trunc256::hash(&input))
+    );
 }
