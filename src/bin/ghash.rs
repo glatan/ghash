@@ -1,4 +1,4 @@
-use ghash::{Md2, Md4, Md5, Sha0, Sha1};
+use ghash::*;
 use std::io;
 use std::io::BufRead;
 
@@ -9,9 +9,15 @@ fn main() {
         input.trim_end().as_bytes().to_owned()
     };
     println!("input: {:?}", input);
-    println!("MD2:\t{:}", Md2::hash(&input));
-    println!("MD4:\t{:}", Md4::hash(&input));
-    println!("MD5:\t{:}", Md5::hash(&input));
-    println!("SHA0:\t{:}", Sha0::hash(&input));
-    println!("SHA1:\t{:}", Sha1::hash(&input));
+    println!("MD2:\t\t{:}", Md2::hash(&input));
+    println!("MD4:\t\t{:}", Md4::hash(&input));
+    println!("MD5:\t\t{:}", Md5::hash(&input));
+    println!("SHA0:\t\t{:}", Sha0::hash(&input));
+    println!("SHA1:\t\t{:}", Sha1::hash(&input));
+    println!("SHA224:\t\t{:}", Sha224::hash(&input));
+    println!("SHA256:\t\t{:}", Sha256::hash(&input));
+    println!("SHA384:\t\t{:}", Sha384::hash(&input));
+    println!("SHA512:\t\t{:}", Sha512::hash(&input));
+    println!("SHA512/224:\t{:}", Sha512Trunc224::hash(&input));
+    println!("SHA512/256:\t{:}", Sha512Trunc256::hash(&input));
 }
