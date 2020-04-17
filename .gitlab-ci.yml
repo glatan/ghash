@@ -1,0 +1,22 @@
+stages:
+  - test
+
+variables:
+  CARGO_HOME: ${CI_PROJECT_DIR}/cargo
+
+cache:
+  paths:
+    - cargo/
+    - target/
+
+stable:
+  stage: test
+  image: rust:1.42.0-slim-buster
+  script:
+    - cargo test --verbose
+
+nightly:
+  stage: test
+  image: rustlang/rust:nightly-buster-slim
+  script:
+    - cargo test --verbose
