@@ -16,17 +16,17 @@ const H: [u32; 5] = [
 ];
 
 // 0 <= t <= 19
-fn ch(b: u32, c: u32, d: u32) -> u32 {
+const fn ch(b: u32, c: u32, d: u32) -> u32 {
     (b & c) | (!b & d)
 }
 
 // 20 <= t <= 39, 60 <= t <= 79
-fn parity(b: u32, c: u32, d: u32) -> u32 {
+const fn parity(b: u32, c: u32, d: u32) -> u32 {
     b ^ c ^ d
 }
 
 // 40 <= t <= 59
-fn maj(b: u32, c: u32, d: u32) -> u32 {
+const fn maj(b: u32, c: u32, d: u32) -> u32 {
     (b & c) | (b & d) | (c & d)
 }
 
@@ -172,8 +172,8 @@ impl Hash for Sha1 {
 
 #[cfg(test)]
 mod tests {
-    use super::super::Test;
     use super::Sha1;
+    use crate::hash::Test;
     impl Test<Sha1> for Sha1 {}
     // https://tools.ietf.org/html/rfc3174
     const TEST_CASES: [(&[u8], &str); 4] = [

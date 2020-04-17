@@ -91,8 +91,8 @@ impl Hash for Md2 {
 
 #[cfg(test)]
 mod tests {
-    use super::super::Test;
     use super::Md2;
+    use crate::hash::Test;
     impl Test<Md2> for Md2 {}
     // https://tools.ietf.org/html/rfc1319
     const TEST_CASES: [(&[u8], &str); 6] = [

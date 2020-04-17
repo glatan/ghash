@@ -16,17 +16,17 @@ const H: [u32; 5] = [
 ];
 
 // 0 <= t <= 19
-fn ch(b: u32, c: u32, d: u32) -> u32 {
+const fn ch(b: u32, c: u32, d: u32) -> u32 {
     (b & c) | (!b & d)
 }
 
 // 20 <= t <= 39, 60 <= t <= 79
-fn parity(b: u32, c: u32, d: u32) -> u32 {
+const fn parity(b: u32, c: u32, d: u32) -> u32 {
     b ^ c ^ d
 }
 
 // 40 <= t <= 59
-fn maj(b: u32, c: u32, d: u32) -> u32 {
+const fn maj(b: u32, c: u32, d: u32) -> u32 {
     (b & c) | (b & d) | (c & d)
 }
 
@@ -171,8 +171,8 @@ impl Hash for Sha0 {
 }
 #[cfg(test)]
 mod tests {
-    use super::super::Test;
     use super::Sha0;
+    use crate::hash::Test;
     impl Test<Sha0> for Sha0 {}
     // https://web.archive.org/web/20180905102133/https://www-ljk.imag.fr/membres/Pierre.Karpman/fips180.pdf
     // https://crypto.stackexchange.com/questions/62055/where-can-i-find-a-description-of-the-sha-0-hash-algorithm/62071#62071
