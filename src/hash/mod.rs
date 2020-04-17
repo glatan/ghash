@@ -27,3 +27,66 @@ pub trait Hash {
             .collect()
     }
 }
+
+#[cfg(test)]
+trait Test<T>
+where
+    T: Hash,
+{
+    fn compare_bytes(input: &[u8], expected: &str) {
+        fn hex_to_bytes(s: &str) -> Vec<u8> {
+            // 上位4ビット
+            let s1: Vec<u8> = s
+                .chars()
+                .by_ref()
+                .enumerate()
+                .filter(|(i, _)| i % 2 == 0)
+                .map(|(_, c)| (c.to_digit(16).unwrap() as u8) << 4)
+                .collect();
+            // 下位4ビット
+            let s2: Vec<u8> = s
+                .chars()
+                .by_ref()
+                .enumerate()
+                .filter(|(i, _)| i % 2 == 1)
+                .map(|(_, c)| c.to_digit(16).unwrap() as u8)
+                .collect();
+            if s1.len() != s2.len() {
+                unreachable!();
+            }
+            let bytes = {
+                let mut bytes: Vec<u8> = Vec::new();
+                for i in 0..s1.len() {
+                    bytes.push((s1[i] & 0b1111_0000) | (s2[i] & 0b0000_1111));
+                }
+                bytes
+            };
+            bytes
+        }
+        assert_eq!(T::hash(input), hex_to_bytes(expected));
+    }
+    fn compare_lowercase(input: &[u8], expected: &str) {
+        fn to_lowercase(s: &str) -> String {
+            let mut lower = s.to_string();
+            if s.is_ascii() {
+                lower.make_ascii_lowercase();
+                lower
+            } else {
+                unreachable!()
+            }
+        }
+        assert_eq!(T::hash_to_lowercase(input), to_lowercase(expected));
+    }
+    fn compare_uppercase(input: &[u8], expected: &str) {
+        fn to_upperrcase(s: &str) -> String {
+            let mut upper = s.to_string();
+            if s.is_ascii() {
+                upper.make_ascii_uppercase();
+                upper
+            } else {
+                unreachable!()
+            }
+        }
+        assert_eq!(T::hash_to_uppercase(input), to_upperrcase(expected));
+    }
+}

@@ -169,3 +169,38 @@ impl Hash for Sha0 {
             .collect()
     }
 }
+#[cfg(test)]
+mod tests {
+    use super::super::Test;
+    use super::Sha0;
+    impl Test<Sha0> for Sha0 {}
+    // https://web.archive.org/web/20180905102133/https://www-ljk.imag.fr/membres/Pierre.Karpman/fips180.pdf
+    // https://crypto.stackexchange.com/questions/62055/where-can-i-find-a-description-of-the-sha-0-hash-algorithm/62071#62071
+    const TEST_CASES: [(&[u8], &str); 2] = [
+        // SHA0 ("abc") = 0164b8a914cd2a5e74c4f7ff082c4d97f1edf880
+        ("abc".as_bytes(), "0164b8a914cd2a5e74c4f7ff082c4d97f1edf880"),
+        // SHA0 ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") = d2516ee1acfa5baf33dfc1c471e438449ef134c8
+        (
+            "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq".as_bytes(),
+            "d2516ee1acfa5baf33dfc1c471e438449ef134c8",
+        ),
+    ];
+    #[test]
+    fn bytes() {
+        for (i, e) in TEST_CASES.iter() {
+            Sha0::compare_bytes(i, e);
+        }
+    }
+    #[test]
+    fn lower_hex() {
+        for (i, e) in TEST_CASES.iter() {
+            Sha0::compare_lowercase(i, e);
+        }
+    }
+    #[test]
+    fn upper_hex() {
+        for (i, e) in TEST_CASES.iter() {
+            Sha0::compare_uppercase(i, e);
+        }
+    }
+}
