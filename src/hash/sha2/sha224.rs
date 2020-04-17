@@ -87,10 +87,11 @@ mod tests {
         (
             &[0; 1000000],
             "3a5d74b68f14f3a4b2be9289b8d370672d0b3d2f53bc303c59032df3",
-        ), // TOO BIG!
-           // 0x20000000 (536870912) bytes of 0x41 ‘A’
-           // 0x41000000 (1090519040) bytes of zeros
-           // 0x6000003f (1610612799) bytes of 0x84
+        ),
+        // TOO BIG!
+        // 0x20000000 (536870912) bytes of 0x41 ‘A’
+        // 0x41000000 (1090519040) bytes of zeros
+        // 0x6000003f (1610612799) bytes of 0x84
     ];
     #[test]
     fn bytes() {
