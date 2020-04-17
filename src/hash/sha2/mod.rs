@@ -110,7 +110,7 @@ impl Sha2_32bit {
         // word_block末尾に0x80を追加(0b1000_0000)
         self.input.push(0x80);
         // [byte]: 64 - 8(input_length) - 1(0x80) = 55
-        let padding_length = 55 - (input_length as isize);
+        let padding_length = 55 - (input_length as i128);
         match padding_length.cmp(&0) {
             Ordering::Greater => {
                 self.input.append(&mut vec![0; padding_length as usize]);
@@ -191,7 +191,7 @@ impl Sha2_64bit {
         // word_block末尾に0x80を追加(0b1000_0000)
         self.input.push(0x80);
         // [byte]: 128 - 16(input_length) - 1(0x80) = 111
-        let padding_length = 111 - (input_length as isize);
+        let padding_length = 111 - (input_length as i128);
         match padding_length.cmp(&0) {
             Ordering::Greater => {
                 self.input.append(&mut vec![0; padding_length as usize]);
