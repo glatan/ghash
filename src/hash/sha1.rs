@@ -172,8 +172,8 @@ impl Hash for Sha1 {
 
 #[cfg(test)]
 mod tests {
-    use super::super::Test;
     use super::Sha1;
+    use crate::hash::Test;
     impl Test<Sha1> for Sha1 {}
     // https://tools.ietf.org/html/rfc3174
     const TEST_CASES: [(&[u8], &str); 4] = [

@@ -140,8 +140,8 @@ impl Hash for Md4 {
 
 #[cfg(test)]
 mod tests {
-    use super::super::Test;
     use super::Md4;
+    use crate::hash::Test;
     impl Test<Md4> for Md4 {}
     // https://tools.ietf.org/html/rfc1320
     const TEST_CASES: [(&[u8], &str); 7] = [

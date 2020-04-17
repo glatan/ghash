@@ -225,8 +225,8 @@ impl Hash for Md5 {
 
 #[cfg(test)]
 mod tests {
-    use super::super::Test;
     use super::Md5;
+    use crate::hash::Test;
     impl Test<Md5> for Md5 {}
     // https://tools.ietf.org/html/rfc1321
     const TEST_CASES: [(&[u8], &str); 7] = [
