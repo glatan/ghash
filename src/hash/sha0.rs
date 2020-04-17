@@ -183,10 +183,7 @@ mod tests {
             "d2516ee1acfa5baf33dfc1c471e438449ef134c8",
         ),
         // 448 mod 512 bits of 0x30
-        (
-            &[0x30; 55],
-            "6b486fba8c9d3c8ba45c10990df5b579f4244235",
-        )
+        (&[0x30; 55], "6b486fba8c9d3c8ba45c10990df5b579f4244235"),
     ];
     #[test]
     fn bytes() {

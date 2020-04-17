@@ -111,7 +111,7 @@ mod tests {
         (
             &[0x30; 55],
             "9f8ef876f51f5313c91cc3f6b8119af09d8bbdd72098fa149b2780eb3591d6be",
-        )
+        ),
         // TOO BIG!
         // 0x20000000 (536870912) bytes of 0x5a ‘Z‘
         // 0x41000000 (1090519040) bytes of zeros

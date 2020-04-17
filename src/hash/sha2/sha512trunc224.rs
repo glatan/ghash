@@ -43,7 +43,7 @@ mod tests {
     use crate::hash::Test;
     impl Test<Sha512Trunc224> for Sha512Trunc224 {}
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512_224.pdf
-    const TEST_CASES: [(&[u8], &str); 2] = [
+    const TEST_CASES: [(&[u8], &str); 3] = [
         // SHA-512/224("abc") = 4634270f707b6a54daae7530460842e20e37ed265ceee9a43e8924aa
         (
             "abc".as_bytes(),
@@ -53,6 +53,11 @@ mod tests {
         (
             "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu".as_bytes(),
             "23fec5bb94d60b23308192640b0c453335d664734fe40e7268674af9",
+        ),
+        // 896 mod 1024 bits of 0x30
+        (
+            &[0x30; 111],
+            "3e4fc8cc1265b73e7ab857d3b78d84c481d4a8d7641792f5d2d450d0",
         ),
     ];
     #[test]

@@ -45,7 +45,7 @@ mod tests {
     impl Test<Sha512> for Sha512 {}
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512.pdf
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
-    const TEST_CASES: [(&[u8], &str); 11] = [
+    const TEST_CASES: [(&[u8], &str); 12] = [
         // SHA512("abc") = ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f
         (
             "abc".as_bytes(),
@@ -100,7 +100,12 @@ mod tests {
         (
             &[0; 1000000],
             "ce044bc9fd43269d5bbc946cbebc3bb711341115cc4abdf2edbc3ff2c57ad4b15deb699bda257fea5aef9c6e55fcf4cf9dc25a8c3ce25f2efe90908379bff7ed"
-        )
+        ),
+        // 896 mod 1024 bits of 0x30
+        (
+            &[0x30; 111],
+            "9e14b633e0befc8d09837c9f460f0680f8f7057f5dc4175b1ee18a6e379f8c9212cdde5585eaf29a598fb082ff733d6ea6d34c80e9e04e0a8c0bb0416065399d",
+        ),
         // TOO BIG!
         // 0x20000000 (536870912) bytes of 0x5a ‘Z’
         // 0x41000000 (1090519040) bytes of zeros

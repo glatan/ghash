@@ -190,10 +190,7 @@ mod tests {
             "e0c094e867ef46c350ef54a7f59dd60bed92ae83",
         ),
         // 448 mod 512 bits of 0x30
-        (
-            &[0x30; 55],
-            "8fffd3df3d041baf53b27f42ec802cfb362710bd",
-        )
+        (&[0x30; 55], "8fffd3df3d041baf53b27f42ec802cfb362710bd"),
     ];
     #[test]
     fn bytes() {
