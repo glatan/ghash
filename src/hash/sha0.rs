@@ -1,3 +1,4 @@
+use super::Hash;
 use std::cmp::Ordering;
 
 // K(t) = 5A827999 ( 0 <= t <= 19)
@@ -154,7 +155,10 @@ impl Sha0 {
             self.status[4] = self.status[4].wrapping_add(e);
         }
     }
-    pub fn hash(input: &[u8]) -> Vec<u8> {
+}
+
+impl Hash for Sha0 {
+    fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha0 = Self::new();
         sha0.input = input.to_vec();
         sha0.padding();

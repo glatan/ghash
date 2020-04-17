@@ -1,3 +1,4 @@
+use super::Hash;
 use std::cmp::Ordering;
 
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
@@ -122,7 +123,10 @@ impl Md4 {
             self.status[i] = self.status[i].swap_bytes();
         }
     }
-    pub fn hash(input: &[u8]) -> Vec<u8> {
+}
+
+impl Hash for Md4 {
+    fn hash(input: &[u8]) -> Vec<u8> {
         let mut md4 = Self::new();
         md4.input = input.to_vec();
         md4.padding();
