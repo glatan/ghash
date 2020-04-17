@@ -1,17 +1,21 @@
 use super::Hash;
 use std::cmp::Ordering;
 
-// SHA-224 and SHA-256 Constants
-#[rustfmt::skip]
-pub const H224: [u32; 8] = [
-    0xC105_9ED8, 0x367C_D507, 0x3070_DD17, 0xF70_E5939,
-    0xFFC0_0B31, 0x6858_1511, 0x64F9_8FA7, 0xBEF_A4FA4
-];
-#[rustfmt::skip]
-pub const H256: [u32; 8] = [
-    0x6A09_E667, 0xBB67_AE85, 0x3C6E_F372, 0xA54F_F53A,
-    0x510E_527F, 0x9B05_688C, 0x1F83_D9AB, 0x5BE0_CD19,
-];
+mod sha224;
+mod sha256;
+mod sha384;
+mod sha512;
+mod sha512trunc224;
+mod sha512trunc256;
+
+pub use sha224::Sha224;
+pub use sha256::Sha256;
+pub use sha384::Sha384;
+pub use sha512::Sha512;
+pub use sha512trunc224::Sha512Trunc224;
+pub use sha512trunc256::Sha512Trunc256;
+
+// SHA-224 and SHA-256 Constant
 #[rustfmt::skip]
 const K32: [u32; 64] = [
     0x428A_2F98, 0x7137_4491, 0xB5C0_FBCF, 0xE9B5_DBA5, 0x3956_C25B, 0x59F1_11F1, 0x923F_82A4, 0xAB1_C5ED5,
@@ -23,27 +27,7 @@ const K32: [u32; 64] = [
     0x19A4_C116, 0x1E37_6C08, 0x2748_774C, 0x34B0_BCB5, 0x391C_0CB3, 0x4ED8_AA4A, 0x5B9C_CA4F, 0x682_E6FF3,
     0x748F_82EE, 0x78A5_636F, 0x84C8_7814, 0x8CC7_0208, 0x90BE_FFFA, 0xA450_6CEB, 0xBEF9_A3F7, 0xC67_178F2,
 ];
-// SHA-384, SHA-512, SHA-512/224 and SHA-512/256 Constants
-#[rustfmt::skip]
-pub const H384: [u64; 8] = [
-    0xCBBB_9D5D_C105_9ED8, 0x629A_292A_367C_D507, 0x9159_015A_3070_DD17, 0x152F_ECD8_F70E_5939,
-    0x6733_2667_FFC0_0B31, 0x8EB4_4A87_6858_1511, 0xDB0C_2E0D_64F9_8FA7, 0x47B5_481D_BEFA_4FA4,
-];
-#[rustfmt::skip]
-pub const H512: [u64; 8] = [
-    0x6A09_E667_F3BC_C908, 0xBB67_AE85_84CA_A73B, 0x3C6E_F372_FE94_F82B, 0xA54F_F53A_5F1D_36F1,
-    0x510E_527F_ADE6_82D1, 0x9B05_688C_2B3E_6C1F, 0x1F83_D9AB_FB41_BD6B, 0x5BE0_CD19_137E_2179,
-];
-#[rustfmt::skip]
-pub const H512_TRUNC_224: [u64; 8] = [
-    0x8C3D_37C8_1954_4DA2, 0x73E1_9966_89DC_D4D6, 0x1DFA_B7AE_32FF_9C82, 0x679D_D514_582F_9FCF,
-    0x0F6D_2B69_7BD4_4DA8, 0x77E3_6F73_04C4_8942, 0x3F9D_85A8_6A1D_36C8, 0x1112_E6AD_91D6_92A1,
-];
-#[rustfmt::skip]
-pub const H512_TRUNC_256: [u64; 8] = [
-    0x2231_2194_FC2B_F72C, 0x9F55_5FA3_C84C_64C2, 0x2393_B86B_6F53_B151, 0x9638_7719_5940_EABD,
-    0x9628_3EE2_A88E_FFE3, 0xBE5E_1E25_5386_3992, 0x2B01_99FC_2C85_B8AA, 0x0EB7_2DDC_81C5_2CA2,
-];
+// SHA-384, SHA-512, SHA-512/224 and SHA-512/256 Constant
 #[rustfmt::skip]
 const K64: [u64; 80] = [
     0x428A_2F98_D728_AE22, 0x7137_4491_23EF_65CD, 0xB5C0_FBCF_EC4D_3B2F, 0xE9B5_DBA5_8189_DBBC,
@@ -119,13 +103,6 @@ struct Sha2_64bit {
     word_block: Vec<u64>,
     status: [u64; 8],
 }
-
-pub struct Sha224(Sha2_32bit);
-pub struct Sha256(Sha2_32bit);
-pub struct Sha384(Sha2_64bit);
-pub struct Sha512(Sha2_64bit);
-pub struct Sha512Trunc224(Sha2_64bit);
-pub struct Sha512Trunc256(Sha2_64bit);
 
 impl Sha2_32bit {
     fn padding(&mut self) {
@@ -290,184 +267,5 @@ impl Sha2_64bit {
             self.status[6] = self.status[6].wrapping_add(g);
             self.status[7] = self.status[7].wrapping_add(h);
         }
-    }
-}
-
-impl Sha224 {
-    pub const fn new() -> Self {
-        Self(Sha2_32bit {
-            input: Vec::new(),
-            word_block: Vec::new(),
-            status: H224,
-        })
-    }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn round(&mut self) {
-        self.0.round();
-    }
-}
-
-impl Hash for Sha224 {
-    fn hash(input: &[u8]) -> Vec<u8> {
-        let mut sha224 = Self::new();
-        sha224.0.input = input.to_vec();
-        sha224.padding();
-        sha224.round();
-        sha224.0.status[0..7]
-            .iter()
-            .flat_map(|word| word.to_be_bytes().to_vec())
-            .collect()
-    }
-}
-
-impl Sha256 {
-    pub const fn new() -> Self {
-        Self(Sha2_32bit {
-            input: Vec::new(),
-            word_block: Vec::new(),
-            status: H256,
-        })
-    }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn round(&mut self) {
-        self.0.round();
-    }
-}
-
-impl Hash for Sha256 {
-    fn hash(input: &[u8]) -> Vec<u8> {
-        let mut sha256 = Self::new();
-        sha256.0.input = input.to_vec();
-        sha256.padding();
-        sha256.round();
-        sha256
-            .0
-            .status
-            .iter()
-            .flat_map(|word| word.to_be_bytes().to_vec())
-            .collect()
-    }
-}
-
-impl Sha384 {
-    pub const fn new() -> Self {
-        Self(Sha2_64bit {
-            input: Vec::new(),
-            word_block: Vec::new(),
-            status: H384,
-        })
-    }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn round(&mut self) {
-        self.0.round();
-    }
-}
-
-impl Hash for Sha384 {
-    fn hash(input: &[u8]) -> Vec<u8> {
-        let mut sha384 = Self::new();
-        sha384.0.input = input.to_vec();
-        sha384.padding();
-        sha384.round();
-        sha384.0.status[0..6]
-            .iter()
-            .flat_map(|word| word.to_be_bytes().to_vec())
-            .collect()
-    }
-}
-
-impl Sha512 {
-    pub const fn new() -> Self {
-        Self(Sha2_64bit {
-            input: Vec::new(),
-            word_block: Vec::new(),
-            status: H512,
-        })
-    }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn round(&mut self) {
-        self.0.round();
-    }
-}
-
-impl Hash for Sha512 {
-    fn hash(input: &[u8]) -> Vec<u8> {
-        let mut sha512 = Self::new();
-        sha512.0.input = input.to_vec();
-        sha512.padding();
-        sha512.round();
-        sha512
-            .0
-            .status
-            .iter()
-            .flat_map(|word| word.to_be_bytes().to_vec())
-            .collect()
-    }
-}
-
-impl Sha512Trunc224 {
-    pub const fn new() -> Self {
-        Self(Sha2_64bit {
-            input: Vec::new(),
-            word_block: Vec::new(),
-            status: H512_TRUNC_224,
-        })
-    }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn round(&mut self) {
-        self.0.round();
-    }
-}
-
-impl Hash for Sha512Trunc224 {
-    fn hash(input: &[u8]) -> Vec<u8> {
-        let mut sha512trunc224 = Self::new();
-        sha512trunc224.0.input = input.to_vec();
-        sha512trunc224.padding();
-        sha512trunc224.round();
-        sha512trunc224.0.status[0..4]
-            .iter()
-            .flat_map(|word| word.to_be_bytes().to_vec())
-            .take(224 / 8) // (224 / 8) bytes
-            .collect()
-    }
-}
-
-impl Sha512Trunc256 {
-    pub const fn new() -> Self {
-        Self(Sha2_64bit {
-            input: Vec::new(),
-            word_block: Vec::new(),
-            status: H512_TRUNC_256,
-        })
-    }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn round(&mut self) {
-        self.0.round();
-    }
-}
-
-impl Hash for Sha512Trunc256 {
-    fn hash(input: &[u8]) -> Vec<u8> {
-        let mut sha512trunc256 = Self::new();
-        sha512trunc256.0.input = input.to_vec();
-        sha512trunc256.padding();
-        sha512trunc256.round();
-        sha512trunc256.0.status[0..4]
-            .iter()
-            .flat_map(|word| word.to_be_bytes().to_vec())
-            .collect()
     }
 }
