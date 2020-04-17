@@ -48,19 +48,17 @@ impl Sha1 {
         let input_length = self.input.len();
         // word_block末尾に0x80を追加(0b1000_0000)
         self.input.push(0x80);
-        // (self.word_block.len() % 64)が55(56 - 1)になるよう0を追加する数
-        let padding_length = 55 - (input_length as isize % 64);
+        // [byte]: 64 - 8(input_length) - 1(0x80) = 55
+        let padding_length = 55 - (input_length as i128);
         match padding_length.cmp(&0) {
             Ordering::Greater => {
                 self.input.append(&mut vec![0; padding_length as usize]);
             }
             Ordering::Less => {
                 self.input
-                    .append(&mut vec![0; (padding_length + 64) as usize]);
+                    .append(&mut vec![0; 64 - (padding_length.abs() % 64) as usize]);
             }
-            Ordering::Equal => {
-                self.input.append(&mut vec![0; 64]);
-            }
+            Ordering::Equal => (),
         }
         // 入力データの長さを追加
         self.input
@@ -176,7 +174,7 @@ mod tests {
     use crate::hash::Test;
     impl Test<Sha1> for Sha1 {}
     // https://tools.ietf.org/html/rfc3174
-    const TEST_CASES: [(&[u8], &str); 4] = [
+    const TEST_CASES: [(&[u8], &str); 7] = [
         // SHA1 ("abc") = a9993e364706816aba3e25717850c26c9cd0d89d
         ("abc".as_bytes(), "a9993e364706816aba3e25717850c26c9cd0d89d"),
         // SHA1 ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") = 84983e441c3bd26ebaae4aa1f95129e5e54670f1
@@ -191,6 +189,12 @@ mod tests {
             "0123456701234567012345670123456701234567012345670123456701234567".as_bytes(),
             "e0c094e867ef46c350ef54a7f59dd60bed92ae83",
         ),
+        // padding_length > 0
+        (&[0x30; 54], "fcd2740438dd7a05dc5747d176fd65dda58cfd01"),
+        // padding_length == 0
+        (&[0x30; 55], "8fffd3df3d041baf53b27f42ec802cfb362710bd"),
+        // padding_length < 0
+        (&[0x30; 56], "2a04b5125ba4030ef13232ecf1b72849f6ec9e97"),
     ];
     #[test]
     fn bytes() {
