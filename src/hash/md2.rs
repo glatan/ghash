@@ -74,15 +74,12 @@ impl Md2 {
             }
         }
     }
-    pub fn hash(input: &[u8]) -> String {
+    pub fn hash(input: &[u8]) -> Vec<u8> {
         let mut md2 = Self::new();
         md2.word_block = input.to_vec();
         md2.padding();
         md2.add_check_sum();
         md2.round();
-        md2.state[0..16]
-            .iter()
-            .map(|byte| format!("{:02x}", byte))
-            .collect()
+        md2.state.iter().take(16).copied().collect()
     }
 }

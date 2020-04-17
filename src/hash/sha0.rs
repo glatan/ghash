@@ -154,14 +154,14 @@ impl Sha0 {
             self.status[4] = self.status[4].wrapping_add(e);
         }
     }
-    pub fn hash(input: &[u8]) -> String {
+    pub fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha0 = Self::new();
         sha0.input = input.to_vec();
         sha0.padding();
         sha0.round();
         sha0.status
             .iter()
-            .map(|word| format!("{:08x}", word))
+            .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()
     }
 }
