@@ -2,6 +2,12 @@
 
 いろんなハッシュ関数を実装していくプロジェクト
 
+## About
+
+基本的に仕様書に準じた素朴な実装になっているため、各ハッシュ関数の仕様を学ぶ用途には多分適しています。
+
+自分のプロジェクトでハッシュ関数を使いたい場合は、より高速な他の実装を利用することをおすすめします。
+
 ## 実装しているハッシュ関数
 
 * MD2
@@ -13,7 +19,7 @@
 
 ## 入力サイズについて
 
-入力バイト列の長さがusize(今のWebAssemblyなどの32bit環境では、32-bit unsigned integer。64bit環境では、64-bit unsigned integer)の最大値を超えるものには対応していません。
+入力バイト列の長さがusize(今のWebAssemblyなどの32bit環境では、32-bit unsigned integer・64bit環境では、64-bit unsigned integer)の最大値を超えるものには対応していません。
 
 [MD4](https://tools.ietf.org/html/rfc1320)・[MD5](https://tools.ietf.org/html/rfc1321)のRFCには以下のような記載がありますが、これに対応するコードは実装されていません。
 
