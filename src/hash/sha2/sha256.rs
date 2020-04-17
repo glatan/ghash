@@ -108,7 +108,7 @@ mod tests {
             "d29751f2649b32ff572b5e0a9f541ea660a50f94ff0beedfb0b692b924cc8025",
         ),
         // TOO BIG!
-        // 0x20000000 (536870912) bytes of 0x5a ‘Z
+        // 0x20000000 (536870912) bytes of 0x5a ‘Z‘
         // 0x41000000 (1090519040) bytes of zeros
         // 0x6000003e (1610612798) bytes of 0x42 ‘B’
     ];
