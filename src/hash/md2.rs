@@ -1,3 +1,5 @@
+use super::Hash;
+
 const BLOCK_SIZE: usize = 16;
 const STABLE: [u8; 256] = [
     41, 46, 67, 201, 162, 216, 124, 1, 61, 54, 84, 161, 236, 240, 6, 19, 98, 167, 5, 243, 192, 199,
@@ -74,7 +76,10 @@ impl Md2 {
             }
         }
     }
-    pub fn hash(input: &[u8]) -> Vec<u8> {
+}
+
+impl Hash for Md2 {
+    fn hash(input: &[u8]) -> Vec<u8> {
         let mut md2 = Self::new();
         md2.word_block = input.to_vec();
         md2.padding();

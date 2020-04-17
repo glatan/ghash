@@ -1,3 +1,4 @@
+use super::Hash;
 use std::cmp::Ordering;
 
 // SHA-224 and SHA-256 Constants
@@ -306,7 +307,10 @@ impl Sha224 {
     fn round(&mut self) {
         self.0.round();
     }
-    pub fn hash(input: &[u8]) -> Vec<u8> {
+}
+
+impl Hash for Sha224 {
+    fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha224 = Self::new();
         sha224.0.input = input.to_vec();
         sha224.padding();
@@ -332,7 +336,10 @@ impl Sha256 {
     fn round(&mut self) {
         self.0.round();
     }
-    pub fn hash(input: &[u8]) -> Vec<u8> {
+}
+
+impl Hash for Sha256 {
+    fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha256 = Self::new();
         sha256.0.input = input.to_vec();
         sha256.padding();
@@ -360,7 +367,10 @@ impl Sha384 {
     fn round(&mut self) {
         self.0.round();
     }
-    pub fn hash(input: &[u8]) -> Vec<u8> {
+}
+
+impl Hash for Sha384 {
+    fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha384 = Self::new();
         sha384.0.input = input.to_vec();
         sha384.padding();
@@ -386,7 +396,10 @@ impl Sha512 {
     fn round(&mut self) {
         self.0.round();
     }
-    pub fn hash(input: &[u8]) -> Vec<u8> {
+}
+
+impl Hash for Sha512 {
+    fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha512 = Self::new();
         sha512.0.input = input.to_vec();
         sha512.padding();
@@ -414,7 +427,10 @@ impl Sha512Trunc224 {
     fn round(&mut self) {
         self.0.round();
     }
-    pub fn hash(input: &[u8]) -> Vec<u8> {
+}
+
+impl Hash for Sha512Trunc224 {
+    fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha512trunc224 = Self::new();
         sha512trunc224.0.input = input.to_vec();
         sha512trunc224.padding();
@@ -441,7 +457,10 @@ impl Sha512Trunc256 {
     fn round(&mut self) {
         self.0.round();
     }
-    pub fn hash(input: &[u8]) -> Vec<u8> {
+}
+
+impl Hash for Sha512Trunc256 {
+    fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha512trunc256 = Self::new();
         sha512trunc256.0.input = input.to_vec();
         sha512trunc256.padding();
