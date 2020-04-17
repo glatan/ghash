@@ -169,3 +169,45 @@ impl Hash for Sha1 {
             .collect()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::super::Test;
+    use super::Sha1;
+    impl Test<Sha1> for Sha1 {}
+    // https://tools.ietf.org/html/rfc3174
+    const TEST_CASES: [(&[u8], &str); 4] = [
+        // SHA1 ("abc") = a9993e364706816aba3e25717850c26c9cd0d89d
+        ("abc".as_bytes(), "a9993e364706816aba3e25717850c26c9cd0d89d"),
+        // SHA1 ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") = 84983e441c3bd26ebaae4aa1f95129e5e54670f1
+        (
+            "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq".as_bytes(),
+            "84983e441c3bd26ebaae4aa1f95129e5e54670f1",
+        ),
+        // SHA1 ("a") = 86f7e437faa5a7fce15d1ddcb9eaeaea377667b8
+        ("a".as_bytes(), "86f7e437faa5a7fce15d1ddcb9eaeaea377667b8"),
+        // SHA1 ("0123456701234567012345670123456701234567012345670123456701234567") = e0c094e867ef46c350ef54a7f59dd60bed92ae83
+        (
+            "0123456701234567012345670123456701234567012345670123456701234567".as_bytes(),
+            "e0c094e867ef46c350ef54a7f59dd60bed92ae83",
+        ),
+    ];
+    #[test]
+    fn bytes() {
+        for (i, e) in TEST_CASES.iter() {
+            Sha1::compare_bytes(i, e);
+        }
+    }
+    #[test]
+    fn lower_hex() {
+        for (i, e) in TEST_CASES.iter() {
+            Sha1::compare_lowercase(i, e);
+        }
+    }
+    #[test]
+    fn upper_hex() {
+        for (i, e) in TEST_CASES.iter() {
+            Sha1::compare_uppercase(i, e);
+        }
+    }
+}
