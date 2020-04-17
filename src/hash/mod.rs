@@ -63,7 +63,6 @@ where
             };
             bytes
         }
-        println!("{:0b}", T::hash(input)[0]);
         assert_eq!(T::hash(input), hex_to_bytes(expected));
     }
     fn compare_lowercase(input: &[u8], expected: &str) {
