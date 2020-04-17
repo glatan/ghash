@@ -174,7 +174,7 @@ mod tests {
     use crate::hash::Test;
     impl Test<Sha1> for Sha1 {}
     // https://tools.ietf.org/html/rfc3174
-    const TEST_CASES: [(&[u8], &str); 5] = [
+    const TEST_CASES: [(&[u8], &str); 7] = [
         // SHA1 ("abc") = a9993e364706816aba3e25717850c26c9cd0d89d
         ("abc".as_bytes(), "a9993e364706816aba3e25717850c26c9cd0d89d"),
         // SHA1 ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") = 84983e441c3bd26ebaae4aa1f95129e5e54670f1
@@ -189,8 +189,12 @@ mod tests {
             "0123456701234567012345670123456701234567012345670123456701234567".as_bytes(),
             "e0c094e867ef46c350ef54a7f59dd60bed92ae83",
         ),
-        // 448 mod 512 bits of 0x30
+        // padding_length > 0
+        (&[0x30; 54], "fcd2740438dd7a05dc5747d176fd65dda58cfd01"),
+        // padding_length == 0
         (&[0x30; 55], "8fffd3df3d041baf53b27f42ec802cfb362710bd"),
+        // padding_length < 0
+        (&[0x30; 56], "2a04b5125ba4030ef13232ecf1b72849f6ec9e97"),
     ];
     #[test]
     fn bytes() {

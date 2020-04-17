@@ -143,7 +143,7 @@ mod tests {
     use crate::hash::Test;
     impl Test<Md4> for Md4 {}
     // https://tools.ietf.org/html/rfc1320
-    const TEST_CASES: [(&[u8], &str); 8] = [
+    const TEST_CASES: [(&[u8], &str); 10] = [
         // MD4 ("") = 31d6cfe0d16ae931b73c59d7e0c089c0
         ("".as_bytes(), "31d6cfe0d16ae931b73c59d7e0c089c0"),
         // MD4 ("a") = bde52cb31de33e46245e05fbdbd6fb24
@@ -171,8 +171,12 @@ mod tests {
                 .as_bytes(),
             "e33b4ddc9c38f2199c3e7b164fcc0536",
         ),
-        // 448 mod 512 bits of 0x30
+        // padding_length > 0
+        (&[0x30; 54], "374f6c9aa6ee2eef316d1357c4c66e73"),
+        // padding_length == 0
         (&[0x30; 55], "5df3a07b1fca415a0d196e1cf255ec21"),
+        // padding_length < 0
+        (&[0x30; 56], "ba4591a932374808dc47c89bf7f729b3"),
     ];
     #[test]
     fn bytes() {
