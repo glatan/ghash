@@ -51,19 +51,17 @@ impl Md4 {
         let input_length = self.input.len();
         // word_block末尾に0x80を追加(0b1000_0000)
         self.input.push(0x80);
-        // (self.word_block.len() % 64)が55(56 - 1)になるよう0を追加する数
-        let padding_length = 55 - (input_length as isize % 64);
+        // [byte]: 64 - 8(input_length) - 1(0x80) = 55
+        let padding_length = 55 - (input_length as isize);
         match padding_length.cmp(&0) {
             Ordering::Greater => {
                 self.input.append(&mut vec![0; padding_length as usize]);
             }
             Ordering::Less => {
                 self.input
-                    .append(&mut vec![0; (padding_length + 64) as usize]);
+                    .append(&mut vec![0; 64 - (padding_length.abs() % 64) as usize]);
             }
-            Ordering::Equal => {
-                self.input.append(&mut vec![0; 64]);
-            }
+            Ordering::Equal => (),
         }
         // 入力データの長さを追加
         self.input
@@ -127,6 +125,7 @@ impl Md4 {
 
 impl Hash for Md4 {
     fn hash(input: &[u8]) -> Vec<u8> {
+        println!("{:?}", input);
         let mut md4 = Self::new();
         md4.input = input.to_vec();
         md4.padding();
@@ -144,7 +143,7 @@ mod tests {
     use crate::hash::Test;
     impl Test<Md4> for Md4 {}
     // https://tools.ietf.org/html/rfc1320
-    const TEST_CASES: [(&[u8], &str); 7] = [
+    const TEST_CASES: [(&[u8], &str); 8] = [
         // MD4 ("") = 31d6cfe0d16ae931b73c59d7e0c089c0
         ("".as_bytes(), "31d6cfe0d16ae931b73c59d7e0c089c0"),
         // MD4 ("a") = bde52cb31de33e46245e05fbdbd6fb24
@@ -172,6 +171,11 @@ mod tests {
                 .as_bytes(),
             "e33b4ddc9c38f2199c3e7b164fcc0536",
         ),
+        // 448 mod 512 bits of 0x30
+        (
+            &[0x30; 55],
+            "5df3a07b1fca415a0d196e1cf255ec21",
+        )
     ];
     #[test]
     fn bytes() {

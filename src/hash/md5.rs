@@ -89,19 +89,17 @@ impl Md5 {
         let input_length = self.input.len();
         // word_block末尾に0x80を追加(0b1000_0000)
         self.input.push(0x80);
-        // (self.word_block.len() % 64)が55(56 - 1)になるよう0を追加する数
-        let padding_length = 55 - (input_length as isize % 64);
+        // [byte]: 64 - 8(input_length) - 1(0x80) = 55
+        let padding_length = 55 - (input_length as isize);
         match padding_length.cmp(&0) {
             Ordering::Greater => {
                 self.input.append(&mut vec![0; padding_length as usize]);
             }
             Ordering::Less => {
                 self.input
-                    .append(&mut vec![0; (padding_length + 64) as usize]);
+                    .append(&mut vec![0; 64 - (padding_length.abs() % 64) as usize]);
             }
-            Ordering::Equal => {
-                self.input.append(&mut vec![0; 64]);
-            }
+            Ordering::Equal => (),
         }
         // 入力データの長さを追加
         self.input
@@ -229,7 +227,7 @@ mod tests {
     use crate::hash::Test;
     impl Test<Md5> for Md5 {}
     // https://tools.ietf.org/html/rfc1321
-    const TEST_CASES: [(&[u8], &str); 7] = [
+    const TEST_CASES: [(&[u8], &str); 8] = [
         // MD5 ("") = d41d8cd98f00b204e9800998ecf8427e
         ("".as_bytes(), "d41d8cd98f00b204e9800998ecf8427e"),
         // MD5 ("a") = 0cc175b9c0f1b6a831c399e269772661
@@ -257,6 +255,11 @@ mod tests {
                 .as_bytes(),
             "57edf4a22be3c955ac49da2e2107b67a",
         ),
+        // 448 mod 512 bits of 0x30
+        (
+            &[0x30; 55],
+            "d7fe636bd28e2ee2ba4d6c5898318699",
+        )
     ];
     #[test]
     fn bytes() {

@@ -43,7 +43,7 @@ mod tests {
     impl Test<Sha224> for Sha224 {}
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA224.pdf
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
-    const TEST_CASES: [(&[u8], &str); 9] = [
+    const TEST_CASES: [(&[u8], &str); 10] = [
         (
             "abc".as_bytes(),
             "23097d223405d8228642a477bda255b32aadbce4bda0b3f7e36c9da7",
@@ -87,6 +87,11 @@ mod tests {
         (
             &[0; 1000000],
             "3a5d74b68f14f3a4b2be9289b8d370672d0b3d2f53bc303c59032df3",
+        ),
+        // 448 mod 512 bits of 0x30
+        (
+            &[0x30; 55],
+            "e2feb3ff28b75ce748f128eb8eda46a859b3c2c235ef5bf911c24c1d",
         ),
         // TOO BIG!
         // 0x20000000 (536870912) bytes of 0x41 ‘A’
