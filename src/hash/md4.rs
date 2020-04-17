@@ -4,16 +4,16 @@ use std::cmp::Ordering;
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
 #[allow(clippy::many_single_char_names)]
-fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
-    fn f(x: u32, y: u32, z: u32) -> u32 {
+const fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
+    const fn f(x: u32, y: u32, z: u32) -> u32 {
         (x & y) | (!x & z)
     }
     a.wrapping_add(f(b, c, d)).wrapping_add(k).rotate_left(s)
 }
 
 #[allow(clippy::many_single_char_names)]
-fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
-    fn g(x: u32, y: u32, z: u32) -> u32 {
+const fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
+    const fn g(x: u32, y: u32, z: u32) -> u32 {
         (x & y) | (x & z) | (y & z)
     }
     a.wrapping_add(g(b, c, d))
@@ -23,8 +23,8 @@ fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
 }
 
 #[allow(clippy::many_single_char_names)]
-fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
-    fn h(x: u32, y: u32, z: u32) -> u32 {
+const fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
+    const fn h(x: u32, y: u32, z: u32) -> u32 {
         x ^ y ^ z
     }
     a.wrapping_add(h(b, c, d))

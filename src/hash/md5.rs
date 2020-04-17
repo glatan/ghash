@@ -20,8 +20,8 @@ const T: [u32; 64] = [
 ];
 
 #[allow(clippy::many_single_char_names)]
-fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
-    fn f(x: u32, y: u32, z: u32) -> u32 {
+const fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
+    const fn f(x: u32, y: u32, z: u32) -> u32 {
         (x & y) | (!x & z)
     }
     b.wrapping_add(
@@ -33,8 +33,8 @@ fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
 }
 
 #[allow(clippy::many_single_char_names)]
-fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
-    fn g(x: u32, y: u32, z: u32) -> u32 {
+const fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
+    const fn g(x: u32, y: u32, z: u32) -> u32 {
         (x & z) | (y & !z)
     }
     b.wrapping_add(
@@ -46,8 +46,8 @@ fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
 }
 
 #[allow(clippy::many_single_char_names)]
-fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
-    fn h(x: u32, y: u32, z: u32) -> u32 {
+const fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
+    const fn h(x: u32, y: u32, z: u32) -> u32 {
         x ^ y ^ z
     }
     b.wrapping_add(
@@ -59,8 +59,8 @@ fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
 }
 
 #[allow(clippy::many_single_char_names)]
-fn round4(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
-    fn i(x: u32, y: u32, z: u32) -> u32 {
+const fn round4(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
+    const fn i(x: u32, y: u32, z: u32) -> u32 {
         y ^ (x | !z)
     }
     b.wrapping_add(
