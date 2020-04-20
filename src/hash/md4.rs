@@ -125,7 +125,6 @@ impl Md4 {
 
 impl Hash for Md4 {
     fn hash(input: &[u8]) -> Vec<u8> {
-        println!("{:?}", input);
         let mut md4 = Self::new();
         md4.input = input.to_vec();
         md4.padding();
