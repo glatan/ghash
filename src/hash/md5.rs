@@ -1,5 +1,4 @@
-use super::Hash;
-use std::cmp::Ordering;
+use super::{Hash, Md4Padding};
 
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
@@ -86,33 +85,7 @@ impl Md5 {
         }
     }
     fn padding(&mut self) {
-        let input_length = self.input.len();
-        // word_block末尾に0x80を追加(0b1000_0000)
-        self.input.push(0x80);
-        // [byte]: 64 - 8(input_length) - 1(0x80) = 55
-        let padding_length = 55 - (input_length as i128);
-        match padding_length.cmp(&0) {
-            Ordering::Greater => {
-                self.input.append(&mut vec![0; padding_length as usize]);
-            }
-            Ordering::Less => {
-                self.input
-                    .append(&mut vec![0; 64 - (padding_length.abs() % 64) as usize]);
-            }
-            Ordering::Equal => (),
-        }
-        // 入力データの長さを追加
-        self.input
-            .append(&mut (8 * input_length as u64).to_le_bytes().to_vec());
-        // iは4の倍数となる (0, 4, 8..60..)
-        for i in (0..self.input.len()).filter(|i| i % 4 == 0) {
-            self.word_block.push(u32::from_le_bytes([
-                self.input[i],
-                self.input[i + 1],
-                self.input[i + 2],
-                self.input[i + 3],
-            ]));
-        }
+        self.word_block = Self::md4_padding(&mut self.input);
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
@@ -218,6 +191,15 @@ impl Hash for Md5 {
             .iter()
             .flat_map(|byte| byte.to_be_bytes().to_vec())
             .collect()
+    }
+}
+
+impl Md4Padding for Md5 {
+    fn u64_to_bytes(num: u64) -> [u8; 8] {
+        num.to_le_bytes()
+    }
+    fn u32_from_bytes(bytes: [u8; 4]) -> u32 {
+        u32::from_le_bytes(bytes)
     }
 }
 
