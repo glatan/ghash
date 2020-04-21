@@ -12,6 +12,10 @@ fn main() {
     println!("MD2:\t\t{:}", Md2::hash_to_lowercase(&input));
     println!("MD4:\t\t{:}", Md4::hash_to_lowercase(&input));
     println!("MD5:\t\t{:}", Md5::hash_to_lowercase(&input));
+    println!("RIPEMD-128:\t{:}", Ripemd128::hash_to_lowercase(&input));
+    println!("RIPEMD-160:\t{:}", Ripemd160::hash_to_lowercase(&input));
+    println!("RIPEMD-256:\t{:}", Ripemd256::hash_to_lowercase(&input));
+    println!("RIPEMD-320:\t{:}", Ripemd320::hash_to_lowercase(&input));
     println!("SHA0:\t\t{:}", Sha0::hash_to_lowercase(&input));
     println!("SHA1:\t\t{:}", Sha1::hash_to_lowercase(&input));
     println!("SHA224:\t\t{:}", Sha224::hash_to_lowercase(&input));
