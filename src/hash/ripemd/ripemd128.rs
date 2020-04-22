@@ -82,6 +82,7 @@ mod tests {
     use super::Ripemd128;
     use crate::hash::Test;
     impl Test<Ripemd128> for Ripemd128 {}
+    // https://homes.esat.kuleuven.be/~bosselae/ripemd160/pdf/AB-9601/AB-9601.pdf
     const TEST_CASES: [(&[u8], &str); 9] = [
         ("".as_bytes(), "cdf26213a150dc3ecb610f18f6b38b46"),
         ("a".as_bytes(), "86be7afa339d0fc7cfc785e72f578d33"),

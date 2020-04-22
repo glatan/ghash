@@ -116,6 +116,7 @@ mod tests {
     use super::Ripemd256;
     use crate::hash::Test;
     impl Test<Ripemd256> for Ripemd256 {}
+    // https://homes.esat.kuleuven.be/~bosselae/ripemd160.html
     const TEST_CASES: [(&[u8], &str); 9] = [
         (
             "".as_bytes(),
