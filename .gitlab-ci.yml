@@ -4,6 +4,9 @@ stages:
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
 
+before_script:
+  - rustc --version
+
 cache:
   paths:
     - cargo/
@@ -13,19 +16,16 @@ stable-i386:
   stage: test
   image: i386/rust:slim-buster
   script:
-    - rust --version
     - cargo test --verbose
 
 stable-amd64:
   stage: test
   image: rust:slim-buster
   script:
-    - rust --version
     - cargo test --verbose
 
 nightly-amd64:
   stage: test
   image: rustlang/rust:nightly-buster-slim
   script:
-    - rust --version
     - cargo test --verbose
