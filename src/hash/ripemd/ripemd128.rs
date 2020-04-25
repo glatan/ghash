@@ -4,7 +4,7 @@ use super::{Hash, Md4Padding};
 const H: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
 pub struct Ripemd128 {
-    input: Vec<u8>,
+    pub(crate) input: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
@@ -57,7 +57,7 @@ impl Ripemd128 {
 impl Hash for Ripemd128 {
     fn hash(input: &[u8]) -> Vec<u8> {
         let mut ripemd128 = Self::new();
-        ripemd128.input = input.to_vec();
+        ripemd128.input(input);
         ripemd128.padding();
         ripemd128.round();
         ripemd128

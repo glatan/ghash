@@ -32,7 +32,7 @@ impl Blake512 {
 impl Hash for Blake512 {
     fn hash(input: &[u8]) -> Vec<u8> {
         let mut blake512 = Self::new();
-        blake512.0.input = input.to_vec();
+        blake512.0.input(input);
         blake512.padding();
         blake512.compress();
         blake512

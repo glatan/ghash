@@ -27,7 +27,7 @@ impl Sha512Trunc256 {
 impl Hash for Sha512Trunc256 {
     fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha512trunc256 = Self::new();
-        sha512trunc256.0.input = input.to_vec();
+        sha512trunc256.0.input(input);
         sha512trunc256.padding();
         sha512trunc256.round();
         sha512trunc256.0.status[0..4]

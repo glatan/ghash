@@ -21,10 +21,13 @@ pub use sha0::Sha0;
 pub use sha1::Sha1;
 pub use sha2::{Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
 
+use blake::Blake;
+use sha2::Sha2;
+
 macro_rules! impl_input {
     ($SelfT:ty, $LimitT:ty) => {
         impl $SelfT {
-            pub fn input(&mut self, input: &[u8]) -> &mut Self {
+            fn input(&mut self, input: &[u8]) {
                 match input.len().checked_mul(8) {
                     Some(_) => {
                         // input bit length is less than usize::MAX
@@ -32,7 +35,6 @@ macro_rules! impl_input {
                             Ordering::Equal | Ordering::Less => {
                                 // input type limit is less than hash function limit
                                 self.input = input.to_vec();
-                                self
                             }
                             Ordering::Greater => {
                                 // input bit length is greater than the hash function limit length
@@ -53,6 +55,19 @@ macro_rules! impl_input {
         }
     };
 }
+
+impl_input!(Blake::<u32>, u64);
+impl_input!(Blake::<u64>, u128);
+impl_input!(Md4, u64);
+impl_input!(Md5, u64);
+impl_input!(Ripemd128, u64);
+impl_input!(Ripemd160, u64);
+impl_input!(Ripemd256, u64);
+impl_input!(Ripemd320, u64);
+impl_input!(Sha0, u64);
+impl_input!(Sha1, u64);
+impl_input!(Sha2<u32>, u64);
+impl_input!(Sha2<u64>, u128);
 
 pub trait Hash {
     fn hash(input: &[u8]) -> Vec<u8>;

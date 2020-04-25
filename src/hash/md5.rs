@@ -71,7 +71,7 @@ const fn round4(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
 }
 
 pub struct Md5 {
-    input: Vec<u8>,
+    pub(crate) input: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
@@ -184,7 +184,7 @@ impl Md5 {
 impl Hash for Md5 {
     fn hash(input: &[u8]) -> Vec<u8> {
         let mut md5 = Self::new();
-        md5.input = input.to_vec();
+        md5.input(input);
         md5.padding();
         md5.round();
         md5.status[0..4]

@@ -30,7 +30,7 @@ const fn maj(b: u32, c: u32, d: u32) -> u32 {
 }
 
 pub struct Sha0 {
-    input: Vec<u8>,
+    pub(crate) input: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 5],
 }
@@ -131,7 +131,7 @@ impl Sha0 {
 impl Hash for Sha0 {
     fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha0 = Self::new();
-        sha0.input = input.to_vec();
+        sha0.input(input);
         sha0.padding();
         sha0.round();
         sha0.status

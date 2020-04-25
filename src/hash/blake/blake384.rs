@@ -32,7 +32,7 @@ impl Blake384 {
 impl Hash for Blake384 {
     fn hash(input: &[u8]) -> Vec<u8> {
         let mut blake384 = Self::new();
-        blake384.0.input = input.to_vec();
+        blake384.0.input(input);
         blake384.padding();
         blake384.compress();
         blake384.0.h[0..6]

@@ -27,7 +27,7 @@ impl Sha384 {
 impl Hash for Sha384 {
     fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha384 = Self::new();
-        sha384.0.input = input.to_vec();
+        sha384.0.input(input);
         sha384.padding();
         sha384.round();
         sha384.0.status[0..6]

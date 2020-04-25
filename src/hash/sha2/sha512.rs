@@ -27,7 +27,7 @@ impl Sha512 {
 impl Hash for Sha512 {
     fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha512 = Self::new();
-        sha512.0.input = input.to_vec();
+        sha512.0.input(input);
         sha512.padding();
         sha512.round();
         sha512

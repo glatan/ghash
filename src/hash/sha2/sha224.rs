@@ -27,7 +27,7 @@ impl Sha224 {
 impl Hash for Sha224 {
     fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha224 = Self::new();
-        sha224.0.input = input.to_vec();
+        sha224.0.input(input);
         sha224.padding();
         sha224.round();
         sha224.0.status[0..7]

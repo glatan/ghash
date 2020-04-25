@@ -27,7 +27,7 @@ impl Sha256 {
 impl Hash for Sha256 {
     fn hash(input: &[u8]) -> Vec<u8> {
         let mut sha256 = Self::new();
-        sha256.0.input = input.to_vec();
+        sha256.0.input(input);
         sha256.padding();
         sha256.round();
         sha256

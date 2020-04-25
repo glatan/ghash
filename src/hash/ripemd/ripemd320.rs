@@ -8,7 +8,7 @@ const H: [u32; 10] = [
 ];
 
 pub struct Ripemd320 {
-    input: Vec<u8>,
+    pub(crate) input: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 10],
 }
@@ -103,7 +103,7 @@ impl Ripemd320 {
 impl Hash for Ripemd320 {
     fn hash(input: &[u8]) -> Vec<u8> {
         let mut ripemd320 = Self::new();
-        ripemd320.input = input.to_vec();
+        ripemd320.input(input);
         ripemd320.padding();
         ripemd320.round();
         ripemd320
