@@ -1,4 +1,4 @@
-use super::{Hash, Md4Padding};
+use super::Hash;
 
 mod ripemd128;
 mod ripemd160;

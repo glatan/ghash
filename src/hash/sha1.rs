@@ -1,4 +1,4 @@
-use super::{Hash, Md4Padding};
+use super::Hash;
 
 // K(t) = 5A827999 ( 0 <= t <= 19)
 // K(t) = 6ED9EBA1 (20 <= t <= 39)
@@ -31,7 +31,7 @@ const fn maj(b: u32, c: u32, d: u32) -> u32 {
 
 pub struct Sha1 {
     pub(super) message: Vec<u8>,
-    word_block: Vec<u32>,
+    pub(super) word_block: Vec<u32>,
     status: [u32; 5],
 }
 
@@ -42,9 +42,6 @@ impl Sha1 {
             word_block: Vec::new(),
             status: H,
         }
-    }
-    fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.message);
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
@@ -138,15 +135,6 @@ impl Hash for Sha1 {
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()
-    }
-}
-
-impl Md4Padding for Sha1 {
-    fn u64_to_bytes(num: u64) -> [u8; 8] {
-        num.to_be_bytes()
-    }
-    fn u32_from_bytes(bytes: [u8; 4]) -> u32 {
-        u32::from_be_bytes(bytes)
     }
 }
 

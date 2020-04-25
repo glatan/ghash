@@ -1,4 +1,4 @@
-use super::{Hash, Md4Padding};
+use super::Hash;
 
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
@@ -72,7 +72,7 @@ const fn round4(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
 
 pub struct Md5 {
     pub(super) message: Vec<u8>,
-    word_block: Vec<u32>,
+    pub(super) word_block: Vec<u32>,
     status: [u32; 4],
 }
 
@@ -83,9 +83,6 @@ impl Md5 {
             word_block: Vec::new(),
             status: WORD_BUFFER,
         }
-    }
-    fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.message);
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
@@ -191,15 +188,6 @@ impl Hash for Md5 {
             .iter()
             .flat_map(|byte| byte.to_be_bytes().to_vec())
             .collect()
-    }
-}
-
-impl Md4Padding for Md5 {
-    fn u64_to_bytes(num: u64) -> [u8; 8] {
-        num.to_le_bytes()
-    }
-    fn u32_from_bytes(bytes: [u8; 4]) -> u32 {
-        u32::from_le_bytes(bytes)
     }
 }
 

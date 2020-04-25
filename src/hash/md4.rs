@@ -35,7 +35,7 @@ const fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
 
 pub struct Md4 {
     pub(super) message: Vec<u8>,
-    word_block: Vec<u32>,
+    pub(super) word_block: Vec<u32>,
     status: [u32; 4],
 }
 
@@ -46,9 +46,6 @@ impl Md4 {
             word_block: Vec::new(),
             status: WORD_BUFFER,
         }
-    }
-    fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.message);
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
@@ -142,15 +139,6 @@ pub(super) trait Md4Padding {
             ]));
         }
         word_block
-    }
-}
-
-impl Md4Padding for Md4 {
-    fn u64_to_bytes(num: u64) -> [u8; 8] {
-        num.to_le_bytes()
-    }
-    fn u32_from_bytes(bytes: [u8; 4]) -> u32 {
-        u32::from_le_bytes(bytes)
     }
 }
 
