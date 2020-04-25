@@ -27,6 +27,7 @@ impl Hash for Blake256 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut blake256 = Self::new();
         blake256.0.input(message);
+        blake256.0.set_counter();
         blake256.0.padding();
         blake256.0.compress();
         blake256

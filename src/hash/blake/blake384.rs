@@ -27,6 +27,7 @@ impl Hash for Blake384 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut blake384 = Self::new();
         blake384.0.input(message);
+        blake384.0.set_counter();
         blake384.0.padding();
         blake384.0.compress();
         blake384.0.h[0..6]

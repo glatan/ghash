@@ -53,7 +53,7 @@ pub(super) struct Blake<T> {
 
 // BLAKE-224 and BLAKE-256
 impl Blake<u32> {
-    fn padding(&mut self) {
+    fn set_counter(&mut self) {
         self.l = self.message.len() * 8;
         // padding bitを含まないblockのビット数をカウントする
         match (self.l).cmp(&512) {
@@ -61,6 +61,8 @@ impl Blake<u32> {
             Ordering::Less => self.t[0] = self.l as u32,
             Ordering::Greater => self.t[0] = (self.l - self.l % 512) as u32,
         }
+    }
+    fn padding(&mut self) {
         // 入力末尾に0x80を追加(0b1000_0000)
         self.message.push(0x80);
         // [byte]: 64 - 8(input_length) - 1(0x80) - 1(0x01) = 54
@@ -164,7 +166,7 @@ impl Blake<u32> {
 
 // BLAKE-384 and BLAKE-512
 impl Blake<u64> {
-    fn padding(&mut self) {
+    fn set_counter(&mut self) {
         self.l = self.message.len() * 8;
         // padding bitを含まないblockのビット数をカウントする
         match (self.l).cmp(&1024) {
@@ -172,6 +174,8 @@ impl Blake<u64> {
             Ordering::Less => self.t[0] = self.l as u64,
             Ordering::Greater => self.t[0] = (self.l - self.l % 1024) as u64,
         }
+    }
+    fn padding(&mut self) {
         // 入力末尾に0x80を追加(0b1000_0000)
         self.message.push(0x80);
         // [byte]: 128 - self.l - 1(0x80) - 1(0x01) = 110
