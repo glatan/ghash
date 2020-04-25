@@ -16,20 +16,14 @@ impl Sha256 {
             status: H256,
         })
     }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn round(&mut self) {
-        self.0.round();
-    }
 }
 
 impl Hash for Sha256 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha256 = Self::new();
         sha256.0.input(message);
-        sha256.padding();
-        sha256.round();
+        sha256.0.padding();
+        sha256.0.round();
         sha256
             .0
             .status

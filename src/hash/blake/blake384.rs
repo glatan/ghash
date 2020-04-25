@@ -21,20 +21,14 @@ impl Blake384 {
             bit: 384,
         })
     }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn compress(&mut self) {
-        self.0.compress();
-    }
 }
 
 impl Hash for Blake384 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut blake384 = Self::new();
         blake384.0.input(message);
-        blake384.padding();
-        blake384.compress();
+        blake384.0.padding();
+        blake384.0.compress();
         blake384.0.h[0..6]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())

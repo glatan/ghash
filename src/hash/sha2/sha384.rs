@@ -16,20 +16,14 @@ impl Sha384 {
             status: H384,
         })
     }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn round(&mut self) {
-        self.0.round();
-    }
 }
 
 impl Hash for Sha384 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha384 = Self::new();
         sha384.0.input(message);
-        sha384.padding();
-        sha384.round();
+        sha384.0.padding();
+        sha384.0.round();
         sha384.0.status[0..6]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
