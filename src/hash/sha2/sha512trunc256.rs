@@ -16,20 +16,14 @@ impl Sha512Trunc256 {
             status: H512_TRUNC_256,
         })
     }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn round(&mut self) {
-        self.0.round();
-    }
 }
 
 impl Hash for Sha512Trunc256 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha512trunc256 = Self::new();
         sha512trunc256.0.input(message);
-        sha512trunc256.padding();
-        sha512trunc256.round();
+        sha512trunc256.0.padding();
+        sha512trunc256.0.round();
         sha512trunc256.0.status[0..4]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())

@@ -16,20 +16,14 @@ impl Sha512 {
             status: H512,
         })
     }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn round(&mut self) {
-        self.0.round();
-    }
 }
 
 impl Hash for Sha512 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha512 = Self::new();
         sha512.0.input(message);
-        sha512.padding();
-        sha512.round();
+        sha512.0.padding();
+        sha512.0.round();
         sha512
             .0
             .status

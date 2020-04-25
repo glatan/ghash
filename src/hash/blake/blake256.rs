@@ -21,20 +21,14 @@ impl Blake256 {
             bit: 256,
         })
     }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn compress(&mut self) {
-        self.0.compress();
-    }
 }
 
 impl Hash for Blake256 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut blake256 = Self::new();
         blake256.0.input(message);
-        blake256.padding();
-        blake256.compress();
+        blake256.0.padding();
+        blake256.0.compress();
         blake256
             .0
             .h

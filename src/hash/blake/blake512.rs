@@ -21,20 +21,14 @@ impl Blake512 {
             bit: 512,
         })
     }
-    fn padding(&mut self) {
-        self.0.padding();
-    }
-    fn compress(&mut self) {
-        self.0.compress();
-    }
 }
 
 impl Hash for Blake512 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut blake512 = Self::new();
         blake512.0.input(message);
-        blake512.padding();
-        blake512.compress();
+        blake512.0.padding();
+        blake512.0.compress();
         blake512
             .0
             .h
