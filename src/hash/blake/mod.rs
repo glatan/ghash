@@ -94,11 +94,6 @@ impl Blake<u32> {
                 self.input[i + 3],
             ]));
         }
-        println!("Padded:");
-        for i in 0..16 {
-            print!("{:08x} ", self.word_block[i]);
-        }
-        println!();
     }
     #[allow(clippy::too_many_arguments)]
     fn g(&mut self, n: usize, i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
@@ -120,15 +115,6 @@ impl Blake<u32> {
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(7);
     }
     fn compress(&mut self) {
-        println!("Salt and counter:");
-        for i in 0..4 {
-            print!("{:08x} ", self.salt[i]);
-        }
-        print!("\t");
-        for i in 0..2 {
-            print!("{:08x} ", self.t[i]);
-        }
-        println!();
         // Compress blocks(1 block == 16 words, 1 word == 32 bit)
         // Compress 1 block in 1 loop
         for n in 0..(self.word_block.len() / 16) {
@@ -151,11 +137,6 @@ impl Blake<u32> {
                 self.t[1] ^ C32[6],
                 self.t[1] ^ C32[7],
             ];
-            println!("Initial state of v");
-            for i in 0..16 {
-                print!("{:08x} ", self.v[i]);
-            }
-            println!();
             if u32::MAX - self.t[0] >= (self.l as u32 - self.t[0]) {
                 self.t[0] += self.l as u32 - self.t[0];
             } else if u32::MAX - self.t[0] < (self.l as u32 - self.t[0]) {
@@ -164,7 +145,6 @@ impl Blake<u32> {
             }
             // round
             for r in 0..14 {
-                println!("Round {}", r);
                 self.g(n, 0, r, 0, 4, 8, 12);
                 self.g(n, 1, r, 1, 5, 9, 13);
                 self.g(n, 2, r, 2, 6, 10, 14);
@@ -173,10 +153,6 @@ impl Blake<u32> {
                 self.g(n, 5, r, 1, 6, 11, 12);
                 self.g(n, 6, r, 2, 7, 8, 13);
                 self.g(n, 7, r, 3, 4, 9, 14);
-                for i in 0..16 {
-                    print!("{:08x} ", self.v[i]);
-                }
-                println!();
             }
             // finalize
             for i in 0..8 {
@@ -233,11 +209,6 @@ impl Blake<u64> {
                 self.input[i + 7],
             ]));
         }
-        println!("Padded:");
-        for i in 0..16 {
-            print!("{:016x} ", self.word_block[i]);
-        }
-        println!();
     }
     #[allow(clippy::too_many_arguments)]
     fn g(&mut self, n: usize, i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
@@ -259,15 +230,6 @@ impl Blake<u64> {
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(11);
     }
     fn compress(&mut self) {
-        println!("Salt and counter:");
-        for i in 0..4 {
-            print!("{:016x} ", self.salt[i]);
-        }
-        print!("\t");
-        for i in 0..2 {
-            print!("{:016x} ", self.t[i]);
-        }
-        println!();
         // Compress blocks(1 block == 16 words, 1 word == 64 bit)
         // Compress 1 block in 1 loop
         for n in 0..(self.word_block.len() / 16) {
@@ -290,11 +252,6 @@ impl Blake<u64> {
                 self.t[1] ^ C64[6],
                 self.t[1] ^ C64[7],
             ];
-            println!("Initial state of v");
-            for i in 0..16 {
-                print!("{:016x} ", self.v[i]);
-            }
-            println!();
             if u64::MAX - self.t[0] >= (self.l as u64 - self.t[0]) {
                 self.t[0] += self.l as u64 - self.t[0];
             } else if u64::MAX - self.t[0] < (self.l as u64 - self.t[0]) {
@@ -303,7 +260,6 @@ impl Blake<u64> {
             }
             // round
             for r in 0..16 {
-                println!("Round {}", r);
                 self.g(n, 0, r, 0, 4, 8, 12);
                 self.g(n, 1, r, 1, 5, 9, 13);
                 self.g(n, 2, r, 2, 6, 10, 14);
@@ -312,10 +268,6 @@ impl Blake<u64> {
                 self.g(n, 5, r, 1, 6, 11, 12);
                 self.g(n, 6, r, 2, 7, 8, 13);
                 self.g(n, 7, r, 3, 4, 9, 14);
-                for i in 0..16 {
-                    print!("{:016x} ", self.v[i]);
-                }
-                println!();
             }
             // finalize
             for i in 0..8 {
