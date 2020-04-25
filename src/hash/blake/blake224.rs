@@ -1,7 +1,7 @@
 use super::{Blake, Hash};
 
 #[rustfmt::skip]
-const H: [u32; 8] = [
+const H224: [u32; 8] = [
     0xC105_9ED8, 0x367C_D507, 0x3070_DD17, 0xF70E_5939,
     0xFFC0_0B31, 0x6858_1511, 0x64F9_8FA7, 0xBEF_A4FA4
 ];
@@ -15,7 +15,7 @@ impl Blake224 {
             word_block: Vec::new(),
             salt: [0; 4],
             l: 0,
-            h: H,
+            h: H224,
             t: [0; 2],
             v: [0; 16],
             bit: 224,
