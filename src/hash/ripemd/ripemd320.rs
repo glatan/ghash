@@ -8,7 +8,7 @@ const H: [u32; 10] = [
 ];
 
 pub struct Ripemd320 {
-    pub(crate) input: Vec<u8>,
+    pub(crate) message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 10],
 }
@@ -16,13 +16,13 @@ pub struct Ripemd320 {
 impl Ripemd320 {
     pub const fn new() -> Self {
         Self {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
             status: H,
         }
     }
     fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.input);
+        self.word_block = Self::md4_padding(&mut self.message);
     }
     fn round(&mut self) {
         let mut t;
@@ -101,9 +101,9 @@ impl Ripemd320 {
 }
 
 impl Hash for Ripemd320 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut ripemd320 = Self::new();
-        ripemd320.input(input);
+        ripemd320.input(message);
         ripemd320.padding();
         ripemd320.round();
         ripemd320

@@ -41,7 +41,7 @@ const C64: [u64; 16] = [
 ];
 
 pub(crate) struct Blake<T> {
-    pub(crate) input: Vec<u8>,
+    pub(crate) message: Vec<u8>,
     word_block: Vec<T>,
     salt: [T; 4],
     l: usize, // length: 入力のビット数
@@ -54,7 +54,7 @@ pub(crate) struct Blake<T> {
 // BLAKE-224 and BLAKE-256
 impl Blake<u32> {
     fn padding(&mut self) {
-        self.l = self.input.len() * 8;
+        self.l = self.message.len() * 8;
         // padding bitを含まないblockのビット数をカウントする
         match (self.l).cmp(&512) {
             Ordering::Equal => self.t[0] = 512,
@@ -62,36 +62,36 @@ impl Blake<u32> {
             Ordering::Greater => self.t[0] = (self.l - self.l % 512) as u32,
         }
         // 入力末尾に0x80を追加(0b1000_0000)
-        self.input.push(0x80);
+        self.message.push(0x80);
         // [byte]: 64 - 8(input_length) - 1(0x80) - 1(0x01) = 54
         let padding_length = 54 - (self.l / 8) as i128;
         match padding_length.cmp(&0) {
             Ordering::Greater => {
-                self.input.append(&mut vec![0; padding_length as usize]);
+                self.message.append(&mut vec![0; padding_length as usize]);
             }
             Ordering::Less => {
-                self.input
+                self.message
                     .append(&mut vec![0; 64 - (padding_length.abs() % 64) as usize]);
             }
             Ordering::Equal => (),
         }
         match self.bit {
             // BLAKE-224はパディング末尾が0
-            224 => self.input.push(0x00),
+            224 => self.message.push(0x00),
             // BLAKE-256はパディング末尾が1
-            256 => self.input.push(0x01),
+            256 => self.message.push(0x01),
             _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
         }
         // 入力データの長さを追加
-        self.input
+        self.message
             .append(&mut (self.l as u64).to_be_bytes().to_vec());
         // バイト列からワードブロックを生成
-        for i in (0..self.input.len()).filter(|i| i % 4 == 0) {
+        for i in (0..self.message.len()).filter(|i| i % 4 == 0) {
             self.word_block.push(u32::from_be_bytes([
-                self.input[i],
-                self.input[i + 1],
-                self.input[i + 2],
-                self.input[i + 3],
+                self.message[i],
+                self.message[i + 1],
+                self.message[i + 2],
+                self.message[i + 3],
             ]));
         }
     }
@@ -165,7 +165,7 @@ impl Blake<u32> {
 // BLAKE-384 and BLAKE-512
 impl Blake<u64> {
     fn padding(&mut self) {
-        self.l = self.input.len() * 8;
+        self.l = self.message.len() * 8;
         // padding bitを含まないblockのビット数をカウントする
         match (self.l).cmp(&1024) {
             Ordering::Equal => self.t[0] = 1024,
@@ -173,40 +173,40 @@ impl Blake<u64> {
             Ordering::Greater => self.t[0] = (self.l - self.l % 1024) as u64,
         }
         // 入力末尾に0x80を追加(0b1000_0000)
-        self.input.push(0x80);
+        self.message.push(0x80);
         // [byte]: 128 - self.l - 1(0x80) - 1(0x01) = 110
         let padding_length = 110 - (self.l / 8) as i128;
         match padding_length.cmp(&0) {
             Ordering::Greater => {
-                self.input.append(&mut vec![0; padding_length as usize]);
+                self.message.append(&mut vec![0; padding_length as usize]);
             }
             Ordering::Less => {
-                self.input
+                self.message
                     .append(&mut vec![0; 128 - (padding_length.abs() % 128) as usize]);
             }
             Ordering::Equal => (),
         }
         match self.bit {
             // BLAKE-384はパディング末尾が0
-            384 => self.input.push(0x00),
+            384 => self.message.push(0x00),
             // BLAKE-512はパディング末尾が1
-            512 => self.input.push(0x01),
+            512 => self.message.push(0x01),
             _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
         }
         // 入力データの長さを追加
-        self.input
+        self.message
             .append(&mut (self.l as u128).to_be_bytes().to_vec());
         // バイト列からワードブロックを生成
-        for i in (0..self.input.len()).filter(|i| i % 8 == 0) {
+        for i in (0..self.message.len()).filter(|i| i % 8 == 0) {
             self.word_block.push(u64::from_be_bytes([
-                self.input[i],
-                self.input[i + 1],
-                self.input[i + 2],
-                self.input[i + 3],
-                self.input[i + 4],
-                self.input[i + 5],
-                self.input[i + 6],
-                self.input[i + 7],
+                self.message[i],
+                self.message[i + 1],
+                self.message[i + 2],
+                self.message[i + 3],
+                self.message[i + 4],
+                self.message[i + 5],
+                self.message[i + 6],
+                self.message[i + 7],
             ]));
         }
     }

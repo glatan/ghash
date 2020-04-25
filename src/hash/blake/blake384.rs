@@ -11,7 +11,7 @@ pub struct Blake384(Blake<u64>);
 impl Blake384 {
     pub const fn new() -> Self {
         Self(Blake::<u64> {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
             salt: [0; 4],
             l: 0,
@@ -30,9 +30,9 @@ impl Blake384 {
 }
 
 impl Hash for Blake384 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut blake384 = Self::new();
-        blake384.0.input(input);
+        blake384.0.input(message);
         blake384.padding();
         blake384.compress();
         blake384.0.h[0..6]

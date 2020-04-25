@@ -11,7 +11,7 @@ pub struct Sha384(Sha2<u64>);
 impl Sha384 {
     pub const fn new() -> Self {
         Self(Sha2::<u64> {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
             status: H384,
         })
@@ -25,9 +25,9 @@ impl Sha384 {
 }
 
 impl Hash for Sha384 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha384 = Self::new();
-        sha384.0.input(input);
+        sha384.0.input(message);
         sha384.padding();
         sha384.round();
         sha384.0.status[0..6]

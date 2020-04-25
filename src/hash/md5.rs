@@ -71,7 +71,7 @@ const fn round4(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
 }
 
 pub struct Md5 {
-    pub(crate) input: Vec<u8>,
+    pub(crate) message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
@@ -79,13 +79,13 @@ pub struct Md5 {
 impl Md5 {
     pub const fn new() -> Self {
         Self {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
             status: WORD_BUFFER,
         }
     }
     fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.input);
+        self.word_block = Self::md4_padding(&mut self.message);
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
@@ -182,9 +182,9 @@ impl Md5 {
 }
 
 impl Hash for Md5 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut md5 = Self::new();
-        md5.input(input);
+        md5.input(message);
         md5.padding();
         md5.round();
         md5.status[0..4]

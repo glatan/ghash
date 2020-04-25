@@ -93,7 +93,7 @@ const fn small_sigma64_1(x: u64) -> u64 {
 }
 
 pub(crate) struct Sha2<T> {
-    pub(crate) input: Vec<u8>,
+    pub(crate) message: Vec<u8>,
     word_block: Vec<T>,
     status: [T; 8],
 }
@@ -101,7 +101,7 @@ pub(crate) struct Sha2<T> {
 // SHA-224 and SHA-256
 impl Sha2<u32> {
     fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.input);
+        self.word_block = Self::md4_padding(&mut self.message);
     }
     #[allow(clippy::many_single_char_names)]
     fn round(&mut self) {
@@ -166,35 +166,35 @@ impl Md4Padding for Sha2<u32> {
 // SHA-384, SHA-512, SHA-512/224 and SHA-512/256
 impl Sha2<u64> {
     fn padding(&mut self) {
-        let input_length = self.input.len();
+        let input_length = self.message.len();
         // word_block末尾に0x80を追加(0b1000_0000)
-        self.input.push(0x80);
+        self.message.push(0x80);
         // [byte]: 128 - 16(input_length) - 1(0x80) = 111
         let padding_length = 111 - (input_length as i128);
         match padding_length.cmp(&0) {
             Ordering::Greater => {
-                self.input.append(&mut vec![0; padding_length as usize]);
+                self.message.append(&mut vec![0; padding_length as usize]);
             }
             Ordering::Less => {
-                self.input
+                self.message
                     .append(&mut vec![0; 128 - (padding_length.abs() % 128) as usize]);
             }
             Ordering::Equal => (),
         }
         // 入力データの長さを追加
-        self.input
+        self.message
             .append(&mut (8 * input_length as u128).to_be_bytes().to_vec());
         // 64bitワードにしてpush
-        for i in (0..self.input.len()).filter(|i| i % 8 == 0) {
+        for i in (0..self.message.len()).filter(|i| i % 8 == 0) {
             self.word_block.push(u64::from_be_bytes([
-                self.input[i],
-                self.input[i + 1],
-                self.input[i + 2],
-                self.input[i + 3],
-                self.input[i + 4],
-                self.input[i + 5],
-                self.input[i + 6],
-                self.input[i + 7],
+                self.message[i],
+                self.message[i + 1],
+                self.message[i + 2],
+                self.message[i + 3],
+                self.message[i + 4],
+                self.message[i + 5],
+                self.message[i + 6],
+                self.message[i + 7],
             ]));
         }
     }

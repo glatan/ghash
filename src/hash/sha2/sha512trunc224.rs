@@ -11,7 +11,7 @@ pub struct Sha512Trunc224(Sha2<u64>);
 impl Sha512Trunc224 {
     pub const fn new() -> Self {
         Self(Sha2::<u64> {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
             status: H512_TRUNC_224,
         })
@@ -25,9 +25,9 @@ impl Sha512Trunc224 {
 }
 
 impl Hash for Sha512Trunc224 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha512trunc224 = Self::new();
-        sha512trunc224.0.input(input);
+        sha512trunc224.0.input(message);
         sha512trunc224.padding();
         sha512trunc224.round();
         sha512trunc224.0.status[0..4]

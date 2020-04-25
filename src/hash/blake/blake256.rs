@@ -11,7 +11,7 @@ pub struct Blake256(Blake<u32>);
 impl Blake256 {
     pub const fn new() -> Self {
         Self(Blake::<u32> {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
             salt: [0; 4],
             l: 0,
@@ -30,9 +30,9 @@ impl Blake256 {
 }
 
 impl Hash for Blake256 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut blake256 = Self::new();
-        blake256.0.input(input);
+        blake256.0.input(message);
         blake256.padding();
         blake256.compress();
         blake256

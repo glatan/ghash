@@ -18,52 +18,44 @@ const STABLE: [u8; 256] = [
 ];
 
 pub struct Md2 {
-    /*
-    word_block {
-        input + padding_byte : 16*n bytes
-        +
-        checksum : 16 bytes
-    }
-    */
-    word_block: Vec<u8>,
+    pub(crate) message: Vec<u8>, // message, word_block: input message + padding_byte + checksum
     state: [u8; 48],
 }
 
 impl Md2 {
     pub const fn new() -> Self {
         Self {
-            word_block: Vec::new(),
+            message: Vec::new(),
             state: [0; 48],
         }
     }
     fn padding(&mut self) {
-        // padding_byte: self.dataを16の整数倍長に調整するための値
-        let message_length: usize = self.word_block.len();
+        let message_length: usize = self.message.len();
         let padding_byte = (BLOCK_SIZE - (message_length % BLOCK_SIZE)) as u8;
-        self.word_block
+        self.message
             .append(&mut vec![padding_byte; padding_byte as usize]);
     }
     #[allow(clippy::needless_range_loop)]
     fn add_check_sum(&mut self) {
-        let word_block_length: usize = self.word_block.len() / BLOCK_SIZE;
+        let word_block_length: usize = self.message.len() / BLOCK_SIZE;
         let mut checksum: Vec<u8> = vec![0; 16];
         let mut c;
         let mut l = 0;
         for i in 0..word_block_length {
             for j in 0..16 {
-                c = self.word_block[16 * i + j] as usize;
+                c = self.message[16 * i + j] as usize;
                 checksum[j] ^= STABLE[c ^ l];
                 l = checksum[j] as usize;
             }
         }
-        self.word_block.append(&mut checksum);
+        self.message.append(&mut checksum);
     }
     #[allow(clippy::needless_range_loop)]
     fn round(&mut self) {
-        let word_block_length = self.word_block.len() / BLOCK_SIZE;
+        let word_block_length = self.message.len() / BLOCK_SIZE;
         for i in 0..word_block_length {
             for j in 0..16 {
-                self.state[j + 16] = self.word_block[16 * i + j];
+                self.state[j + 16] = self.message[16 * i + j];
                 self.state[j + 32] = self.state[j + 16] ^ self.state[j];
             }
             let mut t = 0;
@@ -79,9 +71,9 @@ impl Md2 {
 }
 
 impl Hash for Md2 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut md2 = Self::new();
-        md2.word_block = input.to_vec();
+        md2.input(message);
         md2.padding();
         md2.add_check_sum();
         md2.round();
