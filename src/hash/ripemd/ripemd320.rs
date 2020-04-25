@@ -2,13 +2,13 @@ use super::{f, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
 use super::{Hash, Md4Padding};
 
 #[rustfmt::skip]
-const H: [u32; 10] = [
+const H320: [u32; 10] = [
     0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476, 0xC3D2_E1F0,
     0x7654_3210, 0xFEDC_BA98, 0x89AB_CDEF, 0x0123_4567, 0x3C2D_1E0F
 ];
 
 pub struct Ripemd320 {
-    input: Vec<u8>,
+    pub(crate) message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 10],
 }
@@ -16,13 +16,13 @@ pub struct Ripemd320 {
 impl Ripemd320 {
     pub const fn new() -> Self {
         Self {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
-            status: H,
+            status: H320,
         }
     }
     fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.input);
+        self.word_block = Self::md4_padding(&mut self.message);
     }
     fn round(&mut self) {
         let mut t;
@@ -101,9 +101,9 @@ impl Ripemd320 {
 }
 
 impl Hash for Ripemd320 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut ripemd320 = Self::new();
-        ripemd320.input = input.to_vec();
+        ripemd320.input(message);
         ripemd320.padding();
         ripemd320.round();
         ripemd320

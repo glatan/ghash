@@ -2,13 +2,13 @@ use super::{f, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
 use super::{Hash, Md4Padding};
 
 #[rustfmt::skip]
-const H: [u32; 8] = [
+const H256: [u32; 8] = [
     0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476,
     0x7654_3210, 0xFEDC_BA98, 0x89AB_CDEF, 0x0123_4567
 ];
 
 pub struct Ripemd256 {
-    input: Vec<u8>,
+    pub(crate) message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 8],
 }
@@ -16,13 +16,13 @@ pub struct Ripemd256 {
 impl Ripemd256 {
     pub const fn new() -> Self {
         Self {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
-            status: H,
+            status: H256,
         }
     }
     fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.input);
+        self.word_block = Self::md4_padding(&mut self.message);
     }
     fn round(&mut self) {
         let mut t;
@@ -89,9 +89,9 @@ impl Ripemd256 {
 }
 
 impl Hash for Ripemd256 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut ripemd256 = Self::new();
-        ripemd256.input = input.to_vec();
+        ripemd256.input(message);
         ripemd256.padding();
         ripemd256.round();
         ripemd256

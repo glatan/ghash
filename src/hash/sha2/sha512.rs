@@ -11,7 +11,7 @@ pub struct Sha512(Sha2<u64>);
 impl Sha512 {
     pub const fn new() -> Self {
         Self(Sha2::<u64> {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
             status: H512,
         })
@@ -25,9 +25,9 @@ impl Sha512 {
 }
 
 impl Hash for Sha512 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha512 = Self::new();
-        sha512.0.input = input.to_vec();
+        sha512.0.input(message);
         sha512.padding();
         sha512.round();
         sha512

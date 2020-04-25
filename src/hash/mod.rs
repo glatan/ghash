@@ -1,3 +1,6 @@
+use std::cmp::Ordering;
+use std::mem;
+
 mod blake;
 mod md2;
 mod md4;
@@ -18,16 +21,65 @@ pub use sha0::Sha0;
 pub use sha1::Sha1;
 pub use sha2::{Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
 
+use blake::Blake;
+use sha2::Sha2;
+
+macro_rules! impl_input {
+    ($SelfT:ty, $LimitT:ty) => {
+        impl $SelfT {
+            fn input(&mut self, message: &[u8]) {
+                match message.len().checked_mul(8) {
+                    Some(_) => {
+                        // input bit length is less than usize::MAX
+                        match mem::size_of::<usize>().cmp(&mem::size_of::<$LimitT>()) {
+                            Ordering::Equal | Ordering::Less => {
+                                // input type limit is less than hash function limit
+                                self.message = message.to_vec();
+                            }
+                            Ordering::Greater => {
+                                // input bit length is greater than the hash function limit length
+                                panic!(
+                                    "{} takes a input of any length less than 2^{} bits",
+                                    stringify!($SelfT),
+                                    mem::size_of::<$LimitT>()
+                                )
+                            }
+                        }
+                    }
+                    None => panic!(
+                        "{} * 8 is greeter than usize::MAX",
+                        mem::size_of::<$LimitT>()
+                    ),
+                }
+            }
+        }
+    };
+}
+
+impl_input!(Blake::<u32>, u64);
+impl_input!(Blake::<u64>, u128);
+impl_input!(Md2, usize);
+impl_input!(Md4, u64);
+impl_input!(Md5, u64);
+impl_input!(Ripemd128, u64);
+impl_input!(Ripemd160, u64);
+impl_input!(Ripemd256, u64);
+impl_input!(Ripemd320, u64);
+impl_input!(Sha0, u64);
+impl_input!(Sha1, u64);
+impl_input!(Sha2<u32>, u64);
+impl_input!(Sha2<u64>, u128);
+
 pub trait Hash {
-    fn hash(input: &[u8]) -> Vec<u8>;
-    fn hash_to_lowercase(input: &[u8]) -> String {
-        Self::hash(input)
+    fn hash(message: &[u8]) -> Vec<u8>;
+    fn hash_to_lowercase(message: &[u8]) -> String {
+        Self::hash(message)
             .iter()
             .map(|byte| format!("{:02x}", byte))
             .collect()
     }
-    fn hash_to_uppercase(input: &[u8]) -> String {
-        Self::hash(input)
+    fn hash_to_uppercase(message: &[u8]) -> String {
+        Self::hash(message)
             .iter()
             .map(|byte| format!("{:02X}", byte))
             .collect()
@@ -39,7 +91,7 @@ trait Test<T>
 where
     T: Hash,
 {
-    fn compare_bytes(input: &[u8], expected: &str) {
+    fn compare_bytes(message: &[u8], expected: &str) {
         fn hex_to_bytes(s: &str) -> Vec<u8> {
             // 上位4ビット
             let s1: Vec<u8> = s
@@ -69,9 +121,9 @@ where
             };
             bytes
         }
-        assert_eq!(T::hash(input), hex_to_bytes(expected));
+        assert_eq!(T::hash(message), hex_to_bytes(expected));
     }
-    fn compare_lowercase(input: &[u8], expected: &str) {
+    fn compare_lowercase(message: &[u8], expected: &str) {
         fn to_lowercase(s: &str) -> String {
             let mut lower = s.to_string();
             if s.is_ascii() {
@@ -81,9 +133,9 @@ where
                 unreachable!()
             }
         }
-        assert_eq!(T::hash_to_lowercase(input), to_lowercase(expected));
+        assert_eq!(T::hash_to_lowercase(message), to_lowercase(expected));
     }
-    fn compare_uppercase(input: &[u8], expected: &str) {
+    fn compare_uppercase(message: &[u8], expected: &str) {
         fn to_upperrcase(s: &str) -> String {
             let mut upper = s.to_string();
             if s.is_ascii() {
@@ -93,6 +145,6 @@ where
                 unreachable!()
             }
         }
-        assert_eq!(T::hash_to_uppercase(input), to_upperrcase(expected));
+        assert_eq!(T::hash_to_uppercase(message), to_upperrcase(expected));
     }
 }

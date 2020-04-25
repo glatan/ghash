@@ -11,7 +11,7 @@ pub struct Sha224(Sha2<u32>);
 impl Sha224 {
     pub const fn new() -> Self {
         Self(Sha2::<u32> {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
             status: H224,
         })
@@ -25,9 +25,9 @@ impl Sha224 {
 }
 
 impl Hash for Sha224 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha224 = Self::new();
-        sha224.0.input = input.to_vec();
+        sha224.0.input(message);
         sha224.padding();
         sha224.round();
         sha224.0.status[0..7]

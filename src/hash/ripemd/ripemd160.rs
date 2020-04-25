@@ -1,7 +1,7 @@
 use super::{f, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
 use super::{Hash, Md4Padding};
 
-const H: [u32; 5] = [
+const H160: [u32; 5] = [
     0x6745_2301,
     0xEFCD_AB89,
     0x98BA_DCFE,
@@ -10,7 +10,7 @@ const H: [u32; 5] = [
 ];
 
 pub struct Ripemd160 {
-    input: Vec<u8>,
+    pub(crate) message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 5],
 }
@@ -18,13 +18,13 @@ pub struct Ripemd160 {
 impl Ripemd160 {
     pub const fn new() -> Self {
         Self {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
-            status: H,
+            status: H160,
         }
     }
     fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.input);
+        self.word_block = Self::md4_padding(&mut self.message);
     }
     fn round(&mut self) {
         let mut t;
@@ -66,9 +66,9 @@ impl Ripemd160 {
 }
 
 impl Hash for Ripemd160 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut ripemd160 = Self::new();
-        ripemd160.input = input.to_vec();
+        ripemd160.input(message);
         ripemd160.padding();
         ripemd160.round();
         ripemd160

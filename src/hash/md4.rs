@@ -34,7 +34,7 @@ const fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
 }
 
 pub struct Md4 {
-    input: Vec<u8>,
+    pub(super) message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
@@ -42,13 +42,13 @@ pub struct Md4 {
 impl Md4 {
     pub const fn new() -> Self {
         Self {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
             status: WORD_BUFFER,
         }
     }
     fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.input);
+        self.word_block = Self::md4_padding(&mut self.message);
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
@@ -98,9 +98,9 @@ impl Md4 {
 }
 
 impl Hash for Md4 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut md4 = Self::new();
-        md4.input = input.to_vec();
+        md4.input(message);
         md4.padding();
         md4.round();
         md4.status[0..4]
@@ -109,6 +109,7 @@ impl Hash for Md4 {
             .collect()
     }
 }
+
 // MD4と同様、又はほぼ同様のパディングを行うハッシュ関数が多いため、このような実装になっている。
 pub(super) trait Md4Padding {
     fn u64_to_bytes(num: u64) -> [u8; 8];

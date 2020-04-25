@@ -30,7 +30,7 @@ const fn maj(b: u32, c: u32, d: u32) -> u32 {
 }
 
 pub struct Sha1 {
-    input: Vec<u8>,
+    pub(super) message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 5],
 }
@@ -38,13 +38,13 @@ pub struct Sha1 {
 impl Sha1 {
     pub const fn new() -> Self {
         Self {
-            input: Vec::new(),
+            message: Vec::new(),
             word_block: Vec::new(),
             status: H,
         }
     }
     fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.input);
+        self.word_block = Self::md4_padding(&mut self.message);
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
@@ -129,9 +129,9 @@ impl Sha1 {
 }
 
 impl Hash for Sha1 {
-    fn hash(input: &[u8]) -> Vec<u8> {
+    fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha1 = Self::new();
-        sha1.input = input.to_vec();
+        sha1.input(message);
         sha1.padding();
         sha1.round();
         sha1.status
