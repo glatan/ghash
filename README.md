@@ -10,18 +10,20 @@
 
 ## 実装しているハッシュ関数
 
+* BLAKE-{224, 256, 384, 512}
 * MD2
 * MD4
 * MD5
+* RIPEMD-{128, 160, 256, 320}
 * SHA-0
 * SHA-1
-* SHA-2(224, 256, 384, 512, 512/224, 512/256)
+* SHA-{224, 256, 384, 512, 512/224, 512/256}
 
 ## 入力サイズについて
 
 入力バイト列の長さがusize(今のWebAssemblyなどの32bit環境では、32-bit unsigned integer・64bit環境では、64-bit unsigned integer)の最大値を超えるものには対応していません。
 
-[MD4](https://tools.ietf.org/html/rfc1320)・[MD5](https://tools.ietf.org/html/rfc1321)のRFCには以下のような記載がありますが、これに対応するコードは実装されていません。
+[MD4](https://tools.ietf.org/html/rfc1320)・[MD5](https://tools.ietf.org/html/rfc1321)のRFCには以下のような記載がありますが、これに対応するコードは実装されていません。これはMD4と同様のパディングを行うRIPEMD-{128, 160, 256, 320}・SHA-0・SHA-1・SHA-{224, 256}でも同じです。
 
 > In the unlikely event that b is greater than 2^64, then only
 > the low-order 64 bits of b are used. (These bits are appended as two
