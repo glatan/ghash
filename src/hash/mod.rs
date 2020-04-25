@@ -1,3 +1,6 @@
+use std::cmp::Ordering;
+use std::mem;
+
 mod blake;
 mod md2;
 mod md4;
@@ -17,6 +20,39 @@ pub use ripemd::{Ripemd128, Ripemd160, Ripemd256, Ripemd320};
 pub use sha0::Sha0;
 pub use sha1::Sha1;
 pub use sha2::{Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
+
+macro_rules! impl_input {
+    ($SelfT:ty, $LimitT:ty) => {
+        impl $SelfT {
+            pub fn input(&mut self, input: &[u8]) -> &mut Self {
+                match input.len().checked_mul(8) {
+                    Some(_) => {
+                        // input bit length is less than usize::MAX
+                        match mem::size_of::<usize>().cmp(&mem::size_of::<$LimitT>()) {
+                            Ordering::Equal | Ordering::Less => {
+                                // input type limit is less than hash function limit
+                                self.input = input.to_vec();
+                                self
+                            }
+                            Ordering::Greater => {
+                                // input bit length is greater than the hash function limit length
+                                panic!(
+                                    "{} takes a input of any length less than 2^{} bits",
+                                    stringify!($SelfT),
+                                    mem::size_of::<$LimitT>()
+                                )
+                            }
+                        }
+                    }
+                    None => panic!(
+                        "{} * 8 is greeter than usize::MAX",
+                        mem::size_of::<$LimitT>()
+                    ),
+                }
+            }
+        }
+    };
+}
 
 pub trait Hash {
     fn hash(input: &[u8]) -> Vec<u8>;
