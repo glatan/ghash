@@ -1,4 +1,4 @@
-use super::{Hash, Sha2_32bit};
+use super::{Hash, Sha2};
 
 #[rustfmt::skip]
 pub const H256: [u32; 8] = [
@@ -6,11 +6,11 @@ pub const H256: [u32; 8] = [
     0x510E_527F, 0x9B05_688C, 0x1F83_D9AB, 0x5BE0_CD19,
 ];
 
-pub struct Sha256(Sha2_32bit);
+pub struct Sha256(Sha2<u32>);
 
 impl Sha256 {
     pub const fn new() -> Self {
-        Self(Sha2_32bit {
+        Self(Sha2::<u32> {
             input: Vec::new(),
             word_block: Vec::new(),
             status: H256,

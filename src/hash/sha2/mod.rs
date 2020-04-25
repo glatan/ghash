@@ -92,19 +92,14 @@ const fn small_sigma64_1(x: u64) -> u64 {
     x.rotate_right(19) ^ x.rotate_right(61) ^ (x >> 6)
 }
 
-struct Sha2_32bit {
+struct Sha2<T> {
     input: Vec<u8>,
-    word_block: Vec<u32>,
-    status: [u32; 8],
+    word_block: Vec<T>,
+    status: [T; 8],
 }
 
-struct Sha2_64bit {
-    input: Vec<u8>,
-    word_block: Vec<u64>,
-    status: [u64; 8],
-}
-
-impl Sha2_32bit {
+// SHA-224 and SHA-256
+impl Sha2<u32> {
     fn padding(&mut self) {
         self.word_block = Self::md4_padding(&mut self.input);
     }
@@ -159,7 +154,7 @@ impl Sha2_32bit {
     }
 }
 
-impl Md4Padding for Sha2_32bit {
+impl Md4Padding for Sha2<u32> {
     fn u64_to_bytes(num: u64) -> [u8; 8] {
         num.to_be_bytes()
     }
@@ -168,7 +163,8 @@ impl Md4Padding for Sha2_32bit {
     }
 }
 
-impl Sha2_64bit {
+// SHA-384, SHA-512, SHA-512/224 and SHA-512/256
+impl Sha2<u64> {
     fn padding(&mut self) {
         let input_length = self.input.len();
         // word_block末尾に0x80を追加(0b1000_0000)

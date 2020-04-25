@@ -1,4 +1,4 @@
-use super::{Hash, Sha2_64bit};
+use super::{Hash, Sha2};
 
 #[rustfmt::skip]
 pub const H512: [u64; 8] = [
@@ -6,11 +6,11 @@ pub const H512: [u64; 8] = [
     0x510E_527F_ADE6_82D1, 0x9B05_688C_2B3E_6C1F, 0x1F83_D9AB_FB41_BD6B, 0x5BE0_CD19_137E_2179,
 ];
 
-pub struct Sha512(Sha2_64bit);
+pub struct Sha512(Sha2<u64>);
 
 impl Sha512 {
     pub const fn new() -> Self {
-        Self(Sha2_64bit {
+        Self(Sha2::<u64> {
             input: Vec::new(),
             word_block: Vec::new(),
             status: H512,

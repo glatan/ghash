@@ -1,4 +1,4 @@
-use super::{Hash, Sha2_64bit};
+use super::{Hash, Sha2};
 
 #[rustfmt::skip]
 pub const H384: [u64; 8] = [
@@ -6,11 +6,11 @@ pub const H384: [u64; 8] = [
     0x6733_2667_FFC0_0B31, 0x8EB4_4A87_6858_1511, 0xDB0C_2E0D_64F9_8FA7, 0x47B5_481D_BEFA_4FA4,
 ];
 
-pub struct Sha384(Sha2_64bit);
+pub struct Sha384(Sha2<u64>);
 
 impl Sha384 {
     pub const fn new() -> Self {
-        Self(Sha2_64bit {
+        Self(Sha2::<u64> {
             input: Vec::new(),
             word_block: Vec::new(),
             status: H384,
