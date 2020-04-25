@@ -18,7 +18,7 @@ const STABLE: [u8; 256] = [
 ];
 
 pub struct Md2 {
-    pub(crate) message: Vec<u8>, // message, word_block: input message + padding_byte + checksum
+    pub(super) message: Vec<u8>, // message, word_block: input message + padding_byte + checksum
     state: [u8; 48],
 }
 

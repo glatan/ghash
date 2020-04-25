@@ -34,7 +34,7 @@ const fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
 }
 
 pub struct Md4 {
-    pub(crate) message: Vec<u8>,
+    pub(super) message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }

@@ -40,8 +40,8 @@ const C64: [u64; 16] = [
     0xBA7C_9045_F12C_7F99, 0x24A1_9947_B391_6CF7, 0x0801_F2E2_858E_FC16, 0x6369_20D8_7157_4E69
 ];
 
-pub(crate) struct Blake<T> {
-    pub(crate) message: Vec<u8>,
+pub(super) struct Blake<T> {
+    pub(super) message: Vec<u8>,
     word_block: Vec<T>,
     salt: [T; 4],
     l: usize, // length: 入力のビット数

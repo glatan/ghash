@@ -92,8 +92,8 @@ const fn small_sigma64_1(x: u64) -> u64 {
     x.rotate_right(19) ^ x.rotate_right(61) ^ (x >> 6)
 }
 
-pub(crate) struct Sha2<T> {
-    pub(crate) message: Vec<u8>,
+pub(super) struct Sha2<T> {
+    pub(super) message: Vec<u8>,
     word_block: Vec<T>,
     status: [T; 8],
 }

@@ -30,7 +30,7 @@ const fn maj(b: u32, c: u32, d: u32) -> u32 {
 }
 
 pub struct Sha1 {
-    pub(crate) message: Vec<u8>,
+    pub(super) message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 5],
 }
