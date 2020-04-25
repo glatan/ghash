@@ -2,7 +2,7 @@ use super::{f, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
 use super::{Hash, Md4Padding};
 
 #[rustfmt::skip]
-const H: [u32; 8] = [
+const H256: [u32; 8] = [
     0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476,
     0x7654_3210, 0xFEDC_BA98, 0x89AB_CDEF, 0x0123_4567
 ];
@@ -18,7 +18,7 @@ impl Ripemd256 {
         Self {
             message: Vec::new(),
             word_block: Vec::new(),
-            status: H,
+            status: H256,
         }
     }
     fn padding(&mut self) {

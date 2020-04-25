@@ -1,7 +1,7 @@
 use super::{f, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
 use super::{Hash, Md4Padding};
 
-const H: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
+const H128: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
 pub struct Ripemd128 {
     pub(crate) message: Vec<u8>,
@@ -14,7 +14,7 @@ impl Ripemd128 {
         Self {
             message: Vec::new(),
             word_block: Vec::new(),
-            status: H,
+            status: H128,
         }
     }
     fn padding(&mut self) {

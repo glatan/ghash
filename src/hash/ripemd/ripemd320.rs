@@ -2,7 +2,7 @@ use super::{f, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
 use super::{Hash, Md4Padding};
 
 #[rustfmt::skip]
-const H: [u32; 10] = [
+const H320: [u32; 10] = [
     0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476, 0xC3D2_E1F0,
     0x7654_3210, 0xFEDC_BA98, 0x89AB_CDEF, 0x0123_4567, 0x3C2D_1E0F
 ];
@@ -18,7 +18,7 @@ impl Ripemd320 {
         Self {
             message: Vec::new(),
             word_block: Vec::new(),
-            status: H,
+            status: H320,
         }
     }
     fn padding(&mut self) {

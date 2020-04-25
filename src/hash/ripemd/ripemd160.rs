@@ -1,7 +1,7 @@
 use super::{f, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
 use super::{Hash, Md4Padding};
 
-const H: [u32; 5] = [
+const H160: [u32; 5] = [
     0x6745_2301,
     0xEFCD_AB89,
     0x98BA_DCFE,
@@ -20,7 +20,7 @@ impl Ripemd160 {
         Self {
             message: Vec::new(),
             word_block: Vec::new(),
-            status: H,
+            status: H160,
         }
     }
     fn padding(&mut self) {
