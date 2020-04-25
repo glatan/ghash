@@ -9,6 +9,10 @@ fn main() {
         input.trim_end().as_bytes().to_owned()
     };
     println!("input: {:?}", input);
+    println!("BLAKE-224\t{:}", Blake224::hash_to_lowercase(&input));
+    println!("BLAKE-256\t{:}", Blake256::hash_to_lowercase(&input));
+    println!("BLAKE-384\t{:}", Blake384::hash_to_lowercase(&input));
+    println!("BLAKE-512\t{:}", Blake512::hash_to_lowercase(&input));
     println!("MD2:\t\t{:}", Md2::hash_to_lowercase(&input));
     println!("MD4:\t\t{:}", Md4::hash_to_lowercase(&input));
     println!("MD5:\t\t{:}", Md5::hash_to_lowercase(&input));
