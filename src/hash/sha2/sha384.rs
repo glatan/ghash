@@ -29,7 +29,7 @@ impl Hash for Sha384 {
         let mut sha384 = Self::new();
         sha384.0.input(message);
         sha384.0.padding();
-        sha384.0.round();
+        sha384.0.compress();
         sha384.0.status[0..6]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())

@@ -88,7 +88,7 @@ impl Md5 {
         }
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
-    fn round(&mut self) {
+    fn compress(&mut self) {
         let word_block_length = self.word_block.len() / 16;
         let (mut a, mut b, mut c, mut d);
         let mut x: [u32; 16] = [0; 16];
@@ -196,7 +196,7 @@ impl Hash for Md5 {
         let mut md5 = Self::new();
         md5.input(message);
         md5.padding();
-        md5.round();
+        md5.compress();
         md5.status[0..4]
             .iter()
             .flat_map(|byte| byte.to_be_bytes().to_vec())

@@ -29,7 +29,7 @@ impl Hash for Sha256 {
         let mut sha256 = Self::new();
         sha256.0.input(message);
         sha256.0.padding();
-        sha256.0.round();
+        sha256.0.compress();
         sha256
             .0
             .status

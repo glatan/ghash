@@ -54,7 +54,7 @@ impl Md2 {
         self.message.append(&mut checksum);
     }
     #[allow(clippy::needless_range_loop)]
-    fn round(&mut self) {
+    fn compress(&mut self) {
         let word_block_length = self.message.len() / BLOCK_SIZE;
         for i in 0..word_block_length {
             for j in 0..16 {
@@ -84,7 +84,7 @@ impl Hash for Md2 {
         md2.input(message);
         md2.padding();
         md2.add_check_sum();
-        md2.round();
+        md2.compress();
         md2.state.iter().take(16).copied().collect()
     }
 }

@@ -20,7 +20,7 @@ impl Ripemd128 {
             status: H128,
         }
     }
-    fn round(&mut self) {
+    fn compress(&mut self) {
         let mut t;
         for i in 0..(self.word_block.len() / 16) {
             let [mut a_left, mut b_left, mut c_left, mut d_left] = self.status;
@@ -69,7 +69,7 @@ impl Hash for Ripemd128 {
         let mut ripemd128 = Self::new();
         ripemd128.input(message);
         ripemd128.padding();
-        ripemd128.round();
+        ripemd128.compress();
         ripemd128
             .status
             .iter()

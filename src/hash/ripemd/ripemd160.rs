@@ -26,7 +26,7 @@ impl Ripemd160 {
             status: H160,
         }
     }
-    fn round(&mut self) {
+    fn compress(&mut self) {
         let mut t;
         for i in 0..(self.word_block.len() / 16) {
             let [mut a_left, mut b_left, mut c_left, mut d_left, mut e_left] = self.status;
@@ -80,7 +80,7 @@ impl Hash for Ripemd160 {
         let mut ripemd160 = Self::new();
         ripemd160.input(message);
         ripemd160.padding();
-        ripemd160.round();
+        ripemd160.compress();
         ripemd160
             .status
             .iter()

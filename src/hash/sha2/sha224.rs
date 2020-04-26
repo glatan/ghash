@@ -29,7 +29,7 @@ impl Hash for Sha224 {
         let mut sha224 = Self::new();
         sha224.0.input(message);
         sha224.0.padding();
-        sha224.0.round();
+        sha224.0.compress();
         sha224.0.status[0..7]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())

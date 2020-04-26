@@ -29,7 +29,7 @@ impl Hash for Sha512Trunc224 {
         let mut sha512trunc224 = Self::new();
         sha512trunc224.0.input(message);
         sha512trunc224.0.padding();
-        sha512trunc224.0.round();
+        sha512trunc224.0.compress();
         sha512trunc224.0.status[0..4]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())

@@ -29,7 +29,7 @@ impl Hash for Sha512 {
         let mut sha512 = Self::new();
         sha512.0.input(message);
         sha512.0.padding();
-        sha512.0.round();
+        sha512.0.compress();
         sha512
             .0
             .status

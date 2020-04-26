@@ -24,7 +24,7 @@ impl Ripemd256 {
             status: H256,
         }
     }
-    fn round(&mut self) {
+    fn compress(&mut self) {
         let mut t;
         for i in 0..(self.word_block.len() / 16) {
             let [mut a_left, mut b_left, mut c_left, mut d_left] = [
@@ -103,7 +103,7 @@ impl Hash for Ripemd256 {
         let mut ripemd256 = Self::new();
         ripemd256.input(message);
         ripemd256.padding();
-        ripemd256.round();
+        ripemd256.compress();
         ripemd256
             .status
             .iter()

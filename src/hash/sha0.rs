@@ -47,7 +47,7 @@ impl Sha0 {
         }
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
-    fn round(&mut self) {
+    fn compress(&mut self) {
         let (mut a, mut b, mut c, mut d, mut e);
         let mut temp;
         let mut w = [0; 80];
@@ -143,7 +143,7 @@ impl Hash for Sha0 {
         let mut sha0 = Self::new();
         sha0.input(message);
         sha0.padding();
-        sha0.round();
+        sha0.compress();
         sha0.status
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())

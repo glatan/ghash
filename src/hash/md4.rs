@@ -50,7 +50,7 @@ impl Md4 {
         }
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
-    fn round(&mut self) {
+    fn compress(&mut self) {
         let word_block_length = self.word_block.len() / 16;
         let (mut a, mut b, mut c, mut d);
         let mut x: [u32; 16] = [0; 16];
@@ -111,7 +111,7 @@ impl Hash for Md4 {
         let mut md4 = Self::new();
         md4.input(message);
         md4.padding();
-        md4.round();
+        md4.compress();
         md4.status[0..4]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
