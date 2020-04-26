@@ -25,7 +25,7 @@ impl Message for Sha256 {
 }
 
 impl Hash for Sha256 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut sha256 = Self::new();
         sha256.0.message(message);
         sha256.0.padding();

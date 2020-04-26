@@ -76,7 +76,7 @@ impl Message for Ripemd160 {
 }
 
 impl Hash for Ripemd160 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut ripemd160 = Self::new();
         ripemd160.message(message);
         ripemd160.padding();

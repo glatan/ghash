@@ -137,15 +137,15 @@ pub trait Hash<T = Self>
 where
     T: Message,
 {
-    fn hash(message: &[u8]) -> Vec<u8>;
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8>;
     fn hash_to_lowercase(message: &[u8]) -> String {
-        Self::hash(message)
+        Self::hash_to_bytes(message)
             .iter()
             .map(|byte| format!("{:02x}", byte))
             .collect()
     }
     fn hash_to_uppercase(message: &[u8]) -> String {
-        Self::hash(message)
+        Self::hash_to_bytes(message)
             .iter()
             .map(|byte| format!("{:02X}", byte))
             .collect()
@@ -187,7 +187,7 @@ where
             };
             bytes
         }
-        assert_eq!(T::hash(message), hex_to_bytes(expected));
+        assert_eq!(T::hash_to_bytes(message), hex_to_bytes(expected));
     }
     fn compare_lowercase(message: &[u8], expected: &str) {
         fn to_lowercase(s: &str) -> String {

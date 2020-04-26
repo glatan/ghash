@@ -30,7 +30,7 @@ impl Message for Blake384 {
 }
 
 impl Hash for Blake384 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut blake384 = Self::new();
         blake384.0.message(message);
         blake384.0.set_counter();

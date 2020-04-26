@@ -79,7 +79,7 @@ impl Message for Md2 {
 }
 
 impl Hash for Md2 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut md2 = Self::new();
         md2.message(message);
         md2.padding();

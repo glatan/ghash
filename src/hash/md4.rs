@@ -107,7 +107,7 @@ impl Message for Md4 {
 }
 
 impl Hash for Md4 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut md4 = Self::new();
         md4.message(message);
         md4.padding();

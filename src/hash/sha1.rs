@@ -139,7 +139,7 @@ impl Message for Sha1 {
 }
 
 impl Hash for Sha1 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut sha1 = Self::new();
         sha1.message(message);
         sha1.padding();

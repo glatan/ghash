@@ -25,7 +25,7 @@ impl Message for Sha512 {
 }
 
 impl Hash for Sha512 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut sha512 = Self::new();
         sha512.0.message(message);
         sha512.0.padding();

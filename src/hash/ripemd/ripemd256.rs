@@ -99,7 +99,7 @@ impl Message for Ripemd256 {
 }
 
 impl Hash for Ripemd256 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut ripemd256 = Self::new();
         ripemd256.message(message);
         ripemd256.padding();

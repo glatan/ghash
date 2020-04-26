@@ -25,7 +25,7 @@ impl Message for Sha384 {
 }
 
 impl Hash for Sha384 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut sha384 = Self::new();
         sha384.0.message(message);
         sha384.0.padding();

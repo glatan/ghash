@@ -192,7 +192,7 @@ impl Message for Md5 {
 }
 
 impl Hash for Md5 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut md5 = Self::new();
         md5.message(message);
         md5.padding();

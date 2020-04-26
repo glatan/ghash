@@ -111,7 +111,7 @@ impl Message for Ripemd320 {
 }
 
 impl Hash for Ripemd320 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut ripemd320 = Self::new();
         ripemd320.message(message);
         ripemd320.padding();

@@ -25,7 +25,7 @@ impl Message for Sha224 {
 }
 
 impl Hash for Sha224 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut sha224 = Self::new();
         sha224.0.message(message);
         sha224.0.padding();

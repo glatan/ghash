@@ -25,7 +25,7 @@ impl Message for Sha512Trunc256 {
 }
 
 impl Hash for Sha512Trunc256 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut sha512trunc256 = Self::new();
         sha512trunc256.0.message(message);
         sha512trunc256.0.padding();
