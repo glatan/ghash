@@ -1,17 +1,20 @@
 use super::Hash;
 use super::{f, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use crate::impl_md4_padding;
+use crate::{impl_input, impl_md4_padding};
 use std::cmp::Ordering;
+use std::mem;
 
 const H128: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
 pub struct Ripemd128 {
-    pub(crate) message: Vec<u8>,
+    message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
 
 impl Ripemd128 {
+    // Set Message
+    impl_input!(self, u64);
     // Padding
     impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
 }

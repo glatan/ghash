@@ -1,6 +1,7 @@
 use super::Hash;
-use crate::impl_md4_padding;
+use crate::{impl_input, impl_md4_padding};
 use std::cmp::Ordering;
+use std::mem;
 
 mod blake224;
 mod blake256;
@@ -42,8 +43,8 @@ const C64: [u64; 16] = [
 
 // Blake<u32>: BLAKE-224 and BLAKE-256
 // Blake<u64>: BLAKE-384 and BLAKE-512
-pub(super) struct Blake<T> {
-    pub(super) message: Vec<u8>,
+struct Blake<T> {
+    message: Vec<u8>,
     word_block: Vec<T>,
     salt: [T; 4],
     l: usize, // length: 入力のビット数
@@ -54,6 +55,8 @@ pub(super) struct Blake<T> {
 }
 
 impl Blake<u32> {
+    // Set Message
+    impl_input!(self, u64);
     // Padding
     impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 54, {match self.bit {
         // BLAKE-224はパディング末尾が0
@@ -142,6 +145,8 @@ impl Blake<u32> {
 }
 
 impl Blake<u64> {
+    // Set Message
+    impl_input!(self, u128);
     // Padding
     impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 110, {match self.bit {
         // BLAKE-384はパディング末尾が0

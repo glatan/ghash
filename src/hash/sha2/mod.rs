@@ -1,6 +1,7 @@
 use super::Hash;
-use crate::impl_md4_padding;
+use crate::{impl_input, impl_md4_padding};
 use std::cmp::Ordering;
+use std::mem;
 
 mod sha224;
 mod sha256;
@@ -95,13 +96,15 @@ const fn small_sigma64_1(x: u64) -> u64 {
 
 // Sha2<u32>: SHA-224 and SHA-256
 // Sha2<u64>: SHA-384, SHA-512, SHA-512/224 and SHA-512/256
-pub(super) struct Sha2<T> {
-    pub(super) message: Vec<u8>,
+struct Sha2<T> {
+    message: Vec<u8>,
     word_block: Vec<T>,
     status: [T; 8],
 }
 
 impl Sha2<u32> {
+    // Set Message
+    impl_input!(self, u64);
     // Padding
     impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 55, {});
 }
@@ -159,6 +162,8 @@ impl Sha2<u32> {
 }
 
 impl Sha2<u64> {
+    // Set Message
+    impl_input!(self, u128);
     // Padding
     impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 111, {});
 }

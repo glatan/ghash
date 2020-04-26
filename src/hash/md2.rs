@@ -1,4 +1,7 @@
 use super::Hash;
+use crate::impl_input;
+use std::cmp::Ordering;
+use std::mem;
 
 const BLOCK_SIZE: usize = 16;
 const STABLE: [u8; 256] = [
@@ -18,8 +21,13 @@ const STABLE: [u8; 256] = [
 ];
 
 pub struct Md2 {
-    pub(super) message: Vec<u8>, // message, word_block: input message + padding_byte + checksum
+    message: Vec<u8>, // message, word_block: input message + padding_byte + checksum
     state: [u8; 48],
+}
+
+impl Md2 {
+    // Set Message
+    impl_input!(self, usize);
 }
 
 impl Md2 {
