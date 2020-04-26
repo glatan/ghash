@@ -175,20 +175,20 @@ mod tests {
     ];
     #[test]
     fn bytes() {
-        for (i, e) in TEST_CASES.iter() {
-            Sha0::compare_bytes(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Sha0::compare_bytes(m, e);
         }
     }
     #[test]
     fn lower_hex() {
-        for (i, e) in TEST_CASES.iter() {
-            Sha0::compare_lowerhex(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Sha0::compare_lowerhex(m, e);
         }
     }
     #[test]
     fn upper_hex() {
-        for (i, e) in TEST_CASES.iter() {
-            Sha0::compare_upperhex(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Sha0::compare_upperhex(m, e);
         }
     }
 }
