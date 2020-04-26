@@ -103,7 +103,7 @@ struct Sha2<T> {
 }
 
 impl Sha2<u32> {
-    #[allow(clippy::many_single_char_names)]
+    #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self) {
         let (mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h);
         let (mut temp_1, mut temp_2);
@@ -162,7 +162,7 @@ impl Sha2<u32> {
 }
 
 impl Sha2<u64> {
-    #[allow(clippy::many_single_char_names)]
+    #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self) {
         let (mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h);
         let (mut temp_1, mut temp_2);

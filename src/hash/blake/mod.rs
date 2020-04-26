@@ -64,7 +64,7 @@ impl Blake<u32> {
             Ordering::Greater => self.t[0] = (self.l - self.l % 512) as u32,
         }
     }
-    #[allow(clippy::too_many_arguments)]
+    #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
     fn g(&mut self, n: usize, i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
         // a,b,c,d: index of self.v
         // n: block index
@@ -154,7 +154,7 @@ impl Blake<u64> {
             Ordering::Greater => self.t[0] = (self.l - self.l % 1024) as u64,
         }
     }
-    #[allow(clippy::too_many_arguments)]
+    #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
     fn g(&mut self, n: usize, i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
         // a,b,c,d: index of self.v
         // n: block index
