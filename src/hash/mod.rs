@@ -138,13 +138,13 @@ where
     T: Message,
 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8>;
-    fn hash_to_lowercase(message: &[u8]) -> String {
+    fn hash_to_lowerhex(message: &[u8]) -> String {
         Self::hash_to_bytes(message)
             .iter()
             .map(|byte| format!("{:02x}", byte))
             .collect()
     }
-    fn hash_to_uppercase(message: &[u8]) -> String {
+    fn hash_to_upperhex(message: &[u8]) -> String {
         Self::hash_to_bytes(message)
             .iter()
             .map(|byte| format!("{:02X}", byte))
@@ -189,8 +189,8 @@ where
         }
         assert_eq!(T::hash_to_bytes(message), hex_to_bytes(expected));
     }
-    fn compare_lowercase(message: &[u8], expected: &str) {
-        fn to_lowercase(s: &str) -> String {
+    fn compare_lowerhex(message: &[u8], expected: &str) {
+        fn to_lowerhex(s: &str) -> String {
             let mut lower = s.to_string();
             if s.is_ascii() {
                 lower.make_ascii_lowercase();
@@ -199,10 +199,10 @@ where
                 unreachable!()
             }
         }
-        assert_eq!(T::hash_to_lowercase(message), to_lowercase(expected));
+        assert_eq!(T::hash_to_lowerhex(message), to_lowerhex(expected));
     }
-    fn compare_uppercase(message: &[u8], expected: &str) {
-        fn to_upperrcase(s: &str) -> String {
+    fn compare_upperhex(message: &[u8], expected: &str) {
+        fn to_upperhex(s: &str) -> String {
             let mut upper = s.to_string();
             if s.is_ascii() {
                 upper.make_ascii_uppercase();
@@ -211,6 +211,6 @@ where
                 unreachable!()
             }
         }
-        assert_eq!(T::hash_to_uppercase(message), to_upperrcase(expected));
+        assert_eq!(T::hash_to_upperhex(message), to_upperhex(expected));
     }
 }

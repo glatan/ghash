@@ -120,13 +120,13 @@ mod tests {
     #[test]
     fn lower_hex() {
         for (i, e) in TEST_CASES.iter() {
-            Ripemd128::compare_lowercase(i, e);
+            Ripemd128::compare_lowerhex(i, e);
         }
     }
     #[test]
     fn upper_hex() {
         for (i, e) in TEST_CASES.iter() {
-            Ripemd128::compare_uppercase(i, e);
+            Ripemd128::compare_upperhex(i, e);
         }
     }
 }

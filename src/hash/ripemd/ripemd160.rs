@@ -131,13 +131,13 @@ mod tests {
     #[test]
     fn lower_hex() {
         for (i, e) in TEST_CASES.iter() {
-            Ripemd160::compare_lowercase(i, e);
+            Ripemd160::compare_lowerhex(i, e);
         }
     }
     #[test]
     fn upper_hex() {
         for (i, e) in TEST_CASES.iter() {
-            Ripemd160::compare_uppercase(i, e);
+            Ripemd160::compare_upperhex(i, e);
         }
     }
 }

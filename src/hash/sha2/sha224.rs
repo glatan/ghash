@@ -117,13 +117,13 @@ mod tests {
     #[test]
     fn lower_hex() {
         for (i, e) in TEST_CASES.iter() {
-            Sha224::compare_lowercase(i, e);
+            Sha224::compare_lowerhex(i, e);
         }
     }
     #[test]
     fn upper_hex() {
         for (i, e) in TEST_CASES.iter() {
-            Sha224::compare_uppercase(i, e);
+            Sha224::compare_upperhex(i, e);
         }
     }
 }

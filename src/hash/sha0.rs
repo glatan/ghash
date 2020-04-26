@@ -182,13 +182,13 @@ mod tests {
     #[test]
     fn lower_hex() {
         for (i, e) in TEST_CASES.iter() {
-            Sha0::compare_lowercase(i, e);
+            Sha0::compare_lowerhex(i, e);
         }
     }
     #[test]
     fn upper_hex() {
         for (i, e) in TEST_CASES.iter() {
-            Sha0::compare_uppercase(i, e);
+            Sha0::compare_upperhex(i, e);
         }
     }
 }

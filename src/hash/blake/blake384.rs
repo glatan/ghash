@@ -67,13 +67,13 @@ mod tests {
     #[test]
     fn lower_hex() {
         for (i, e) in TEST_CASES.iter() {
-            Blake384::compare_lowercase(i, e);
+            Blake384::compare_lowerhex(i, e);
         }
     }
     #[test]
     fn upper_hex() {
         for (i, e) in TEST_CASES.iter() {
-            Blake384::compare_uppercase(i, e);
+            Blake384::compare_upperhex(i, e);
         }
     }
 }
