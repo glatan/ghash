@@ -1,5 +1,5 @@
-use super::{Hash, Input};
-use crate::{impl_input, impl_md4_padding};
+use super::{Hash, Message};
+use crate::{impl_md4_padding, impl_message};
 use std::cmp::Ordering;
 use std::mem;
 
@@ -186,15 +186,15 @@ impl Md5 {
     impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
 }
 
-impl Input for Md5 {
+impl Message for Md5 {
     // Set Message
-    impl_input!(self, u64);
+    impl_message!(self, u64);
 }
 
 impl Hash for Md5 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut md5 = Self::new();
-        md5.input(message);
+        md5.message(message);
         md5.padding();
         md5.compress();
         md5.status[0..4]

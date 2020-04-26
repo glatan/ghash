@@ -1,4 +1,4 @@
-use super::{Hash, Input, Sha2};
+use super::{Hash, Message, Sha2};
 
 #[rustfmt::skip]
 pub const H384: [u64; 8] = [
@@ -18,16 +18,16 @@ impl Sha384 {
     }
 }
 
-impl Input for Sha384 {
-    fn input(&mut self, message: &[u8]) {
-        self.0.input(message)
+impl Message for Sha384 {
+    fn message(&mut self, message: &[u8]) {
+        self.0.message(message)
     }
 }
 
 impl Hash for Sha384 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha384 = Self::new();
-        sha384.0.input(message);
+        sha384.0.message(message);
         sha384.0.padding();
         sha384.0.compress();
         sha384.0.status[0..6]

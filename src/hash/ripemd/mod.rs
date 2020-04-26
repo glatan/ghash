@@ -1,4 +1,4 @@
-use super::{Hash, Input};
+use super::{Hash, Message};
 
 mod ripemd128;
 mod ripemd160;

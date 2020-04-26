@@ -1,5 +1,5 @@
-use super::{Hash, Input};
-use crate::impl_input;
+use super::{Hash, Message};
+use crate::impl_message;
 use std::cmp::Ordering;
 use std::mem;
 
@@ -73,15 +73,15 @@ impl Md2 {
     }
 }
 
-impl Input for Md2 {
+impl Message for Md2 {
     // Set Message
-    impl_input!(self, usize);
+    impl_message!(self, usize);
 }
 
 impl Hash for Md2 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut md2 = Self::new();
-        md2.input(message);
+        md2.message(message);
         md2.padding();
         md2.add_check_sum();
         md2.compress();

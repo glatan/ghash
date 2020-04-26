@@ -1,6 +1,6 @@
 use super::{f, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use super::{Hash, Input};
-use crate::{impl_input, impl_md4_padding};
+use super::{Hash, Message};
+use crate::{impl_md4_padding, impl_message};
 use std::cmp::Ordering;
 use std::mem;
 
@@ -70,15 +70,15 @@ impl Ripemd160 {
     impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
 }
 
-impl Input for Ripemd160 {
+impl Message for Ripemd160 {
     // Set Message
-    impl_input!(self, u64);
+    impl_message!(self, u64);
 }
 
 impl Hash for Ripemd160 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut ripemd160 = Self::new();
-        ripemd160.input(message);
+        ripemd160.message(message);
         ripemd160.padding();
         ripemd160.compress();
         ripemd160

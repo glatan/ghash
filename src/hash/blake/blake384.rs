@@ -1,4 +1,4 @@
-use super::{Blake, Hash, Input};
+use super::{Blake, Hash, Message};
 
 #[rustfmt::skip]
 const H384: [u64; 8] = [
@@ -23,16 +23,16 @@ impl Blake384 {
     }
 }
 
-impl Input for Blake384 {
-    fn input(&mut self, message: &[u8]) {
-        self.0.input(message);
+impl Message for Blake384 {
+    fn message(&mut self, message: &[u8]) {
+        self.0.message(message);
     }
 }
 
 impl Hash for Blake384 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut blake384 = Self::new();
-        blake384.0.input(message);
+        blake384.0.message(message);
         blake384.0.set_counter();
         blake384.0.padding();
         blake384.0.compress();

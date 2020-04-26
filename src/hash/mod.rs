@@ -18,9 +18,9 @@ pub use sha2::{Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
 
 // Set Message
 #[macro_export(local)]
-macro_rules! impl_input {
+macro_rules! impl_message {
     ($self:ident, $LimitT:ty) => {
-            fn input(&mut $self, message: &[u8]) {
+            fn message(&mut $self, message: &[u8]) {
                 match message.len().checked_mul(8) {
                     Some(_) => {
                         // input bit length is less than usize::MAX
@@ -129,13 +129,13 @@ macro_rules! impl_md4_padding {
     };
 }
 
-pub trait Input {
-    fn input(&mut self, message: &[u8]);
+pub trait Message {
+    fn message(&mut self, message: &[u8]);
 }
 
 pub trait Hash<T = Self>
 where
-    T: Input,
+    T: Message,
 {
     fn hash(message: &[u8]) -> Vec<u8>;
     fn hash_to_lowercase(message: &[u8]) -> String {
@@ -155,7 +155,7 @@ where
 #[cfg(test)]
 trait Test<T = Self>
 where
-    T: Hash + Input,
+    T: Hash + Message,
 {
     fn compare_bytes(message: &[u8], expected: &str) {
         fn hex_to_bytes(s: &str) -> Vec<u8> {
