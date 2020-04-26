@@ -1,5 +1,8 @@
 use super::{f, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use super::{Hash, Md4Padding};
+use super::{Hash, Input};
+use crate::{impl_input, impl_md4_padding};
+use std::cmp::Ordering;
+use std::mem;
 
 #[rustfmt::skip]
 const H256: [u32; 8] = [
@@ -8,7 +11,7 @@ const H256: [u32; 8] = [
 ];
 
 pub struct Ripemd256 {
-    pub(crate) message: Vec<u8>,
+    message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 8],
 }
@@ -20,9 +23,6 @@ impl Ripemd256 {
             word_block: Vec::new(),
             status: H256,
         }
-    }
-    fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.message);
     }
     fn round(&mut self) {
         let mut t;
@@ -88,6 +88,16 @@ impl Ripemd256 {
     }
 }
 
+impl Ripemd256 {
+    // Padding
+    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
+}
+
+impl Input for Ripemd256 {
+    // Set Message
+    impl_input!(self, u64);
+}
+
 impl Hash for Ripemd256 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut ripemd256 = Self::new();
@@ -102,20 +112,11 @@ impl Hash for Ripemd256 {
     }
 }
 
-impl Md4Padding for Ripemd256 {
-    fn u64_to_bytes(num: u64) -> [u8; 8] {
-        num.to_le_bytes()
-    }
-    fn u32_from_bytes(bytes: [u8; 4]) -> u32 {
-        u32::from_le_bytes(bytes)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::Ripemd256;
     use crate::hash::Test;
-    impl Test<Ripemd256> for Ripemd256 {}
+    impl Test for Ripemd256 {}
     // https://homes.esat.kuleuven.be/~bosselae/ripemd160.html
     const TEST_CASES: [(&[u8], &str); 9] = [
         (

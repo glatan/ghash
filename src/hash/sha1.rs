@@ -1,4 +1,7 @@
-use super::{Hash, Md4Padding};
+use super::{Hash, Input};
+use crate::{impl_input, impl_md4_padding};
+use std::cmp::Ordering;
+use std::mem;
 
 // K(t) = 5A827999 ( 0 <= t <= 19)
 // K(t) = 6ED9EBA1 (20 <= t <= 39)
@@ -30,7 +33,7 @@ const fn maj(b: u32, c: u32, d: u32) -> u32 {
 }
 
 pub struct Sha1 {
-    pub(super) message: Vec<u8>,
+    message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 5],
 }
@@ -42,9 +45,6 @@ impl Sha1 {
             word_block: Vec::new(),
             status: H,
         }
-    }
-    fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.message);
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
@@ -128,6 +128,16 @@ impl Sha1 {
     }
 }
 
+impl Sha1 {
+    // Padding
+    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 55, {});
+}
+
+impl Input for Sha1 {
+    // Set Message
+    impl_input!(self, u64);
+}
+
 impl Hash for Sha1 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha1 = Self::new();
@@ -141,20 +151,11 @@ impl Hash for Sha1 {
     }
 }
 
-impl Md4Padding for Sha1 {
-    fn u64_to_bytes(num: u64) -> [u8; 8] {
-        num.to_be_bytes()
-    }
-    fn u32_from_bytes(bytes: [u8; 4]) -> u32 {
-        u32::from_be_bytes(bytes)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::Sha1;
     use crate::hash::Test;
-    impl Test<Sha1> for Sha1 {}
+    impl Test for Sha1 {}
     // https://tools.ietf.org/html/rfc3174
     const TEST_CASES: [(&[u8], &str); 7] = [
         // SHA1 ("abc") = a9993e364706816aba3e25717850c26c9cd0d89d

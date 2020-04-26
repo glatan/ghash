@@ -1,4 +1,7 @@
-use super::Hash;
+use super::{Hash, Input};
+use crate::impl_input;
+use std::cmp::Ordering;
+use std::mem;
 
 const BLOCK_SIZE: usize = 16;
 const STABLE: [u8; 256] = [
@@ -18,7 +21,7 @@ const STABLE: [u8; 256] = [
 ];
 
 pub struct Md2 {
-    pub(super) message: Vec<u8>, // message, word_block: input message + padding_byte + checksum
+    message: Vec<u8>, // message, word_block: input message + padding_byte + checksum
     state: [u8; 48],
 }
 
@@ -70,6 +73,11 @@ impl Md2 {
     }
 }
 
+impl Input for Md2 {
+    // Set Message
+    impl_input!(self, usize);
+}
+
 impl Hash for Md2 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut md2 = Self::new();
@@ -85,7 +93,7 @@ impl Hash for Md2 {
 mod tests {
     use super::Md2;
     use crate::hash::Test;
-    impl Test<Md2> for Md2 {}
+    impl Test for Md2 {}
     // https://tools.ietf.org/html/rfc1319
     const TEST_CASES: [(&[u8], &str); 6] = [
         // MD2 ("") = 8350e5a3e24c153df2275c9f80692773

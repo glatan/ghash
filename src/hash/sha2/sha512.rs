@@ -1,4 +1,4 @@
-use super::{Hash, Sha2};
+use super::{Hash, Input, Sha2};
 
 #[rustfmt::skip]
 pub const H512: [u64; 8] = [
@@ -15,6 +15,12 @@ impl Sha512 {
             word_block: Vec::new(),
             status: H512,
         })
+    }
+}
+
+impl Input for Sha512 {
+    fn input(&mut self, message: &[u8]) {
+        self.0.input(message)
     }
 }
 
@@ -36,7 +42,7 @@ impl Hash for Sha512 {
 mod tests {
     use super::Sha512;
     use crate::hash::Test;
-    impl Test<Sha512> for Sha512 {}
+    impl Test for Sha512 {}
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512.pdf
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
     const TEST_CASES: [(&[u8], &str); 14] = [

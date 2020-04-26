@@ -1,4 +1,4 @@
-use super::{Hash, Sha2};
+use super::{Hash, Input, Sha2};
 
 #[rustfmt::skip]
 pub const H224: [u32; 8] = [
@@ -18,6 +18,12 @@ impl Sha224 {
     }
 }
 
+impl Input for Sha224 {
+    fn input(&mut self, message: &[u8]) {
+        self.0.input(message)
+    }
+}
+
 impl Hash for Sha224 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha224 = Self::new();
@@ -34,7 +40,7 @@ impl Hash for Sha224 {
 mod tests {
     use super::Sha224;
     use crate::hash::Test;
-    impl Test<Sha224> for Sha224 {}
+    impl Test for Sha224 {}
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA224.pdf
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
     const TEST_CASES: [(&[u8], &str); 12] = [

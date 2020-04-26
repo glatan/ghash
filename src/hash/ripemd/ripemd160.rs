@@ -1,5 +1,8 @@
 use super::{f, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use super::{Hash, Md4Padding};
+use super::{Hash, Input};
+use crate::{impl_input, impl_md4_padding};
+use std::cmp::Ordering;
+use std::mem;
 
 const H160: [u32; 5] = [
     0x6745_2301,
@@ -10,7 +13,7 @@ const H160: [u32; 5] = [
 ];
 
 pub struct Ripemd160 {
-    pub(crate) message: Vec<u8>,
+    message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 5],
 }
@@ -22,9 +25,6 @@ impl Ripemd160 {
             word_block: Vec::new(),
             status: H160,
         }
-    }
-    fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.message);
     }
     fn round(&mut self) {
         let mut t;
@@ -65,6 +65,16 @@ impl Ripemd160 {
     }
 }
 
+impl Ripemd160 {
+    // Padding
+    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
+}
+
+impl Input for Ripemd160 {
+    // Set Message
+    impl_input!(self, u64);
+}
+
 impl Hash for Ripemd160 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut ripemd160 = Self::new();
@@ -79,20 +89,11 @@ impl Hash for Ripemd160 {
     }
 }
 
-impl Md4Padding for Ripemd160 {
-    fn u64_to_bytes(num: u64) -> [u8; 8] {
-        num.to_le_bytes()
-    }
-    fn u32_from_bytes(bytes: [u8; 4]) -> u32 {
-        u32::from_le_bytes(bytes)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::Ripemd160;
     use crate::hash::Test;
-    impl Test<Ripemd160> for Ripemd160 {}
+    impl Test for Ripemd160 {}
     // https://homes.esat.kuleuven.be/~bosselae/ripemd160/pdf/AB-9601/AB-9601.pdf
     const TEST_CASES: [(&[u8], &str); 9] = [
         ("".as_bytes(), "9c1185a5c5e9fc54612808977ee8f548b2258d31"),

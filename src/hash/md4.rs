@@ -1,5 +1,7 @@
-use super::Hash;
+use super::{Hash, Input};
+use crate::{impl_input, impl_md4_padding};
 use std::cmp::Ordering;
+use std::mem;
 
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
@@ -34,7 +36,7 @@ const fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
 }
 
 pub struct Md4 {
-    pub(super) message: Vec<u8>,
+    message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
@@ -46,9 +48,6 @@ impl Md4 {
             word_block: Vec::new(),
             status: WORD_BUFFER,
         }
-    }
-    fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.message);
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
@@ -97,6 +96,16 @@ impl Md4 {
     }
 }
 
+impl Md4 {
+    // Padding
+    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
+}
+
+impl Input for Md4 {
+    // Set Message
+    impl_input!(self, u64);
+}
+
 impl Hash for Md4 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut md4 = Self::new();
@@ -110,55 +119,11 @@ impl Hash for Md4 {
     }
 }
 
-// MD4と同様、又はほぼ同様のパディングを行うハッシュ関数が多いため、このような実装になっている。
-pub(super) trait Md4Padding {
-    fn u64_to_bytes(num: u64) -> [u8; 8];
-    fn u32_from_bytes(bytes: [u8; 4]) -> u32;
-    fn md4_padding(input: &mut Vec<u8>) -> Vec<u32> {
-        let mut word_block = Vec::new();
-        let input_length = input.len();
-        // 入力末尾に0x80を追加(0b1000_0000)
-        input.push(0x80);
-        // [byte]: 64 - 8(input_length) - 1(0x80) = 55
-        let padding_length = 55 - (input_length as i128);
-        match padding_length.cmp(&0) {
-            Ordering::Greater => {
-                input.append(&mut vec![0; padding_length as usize]);
-            }
-            Ordering::Less => {
-                input.append(&mut vec![0; 64 - (padding_length.abs() % 64) as usize]);
-            }
-            Ordering::Equal => (),
-        }
-        // 入力データの長さを追加
-        input.append(&mut Self::u64_to_bytes(8 * input_length as u64).to_vec());
-        // バイト列からワードブロックを生成
-        for i in (0..input.len()).filter(|i| i % 4 == 0) {
-            word_block.push(Self::u32_from_bytes([
-                input[i],
-                input[i + 1],
-                input[i + 2],
-                input[i + 3],
-            ]));
-        }
-        word_block
-    }
-}
-
-impl Md4Padding for Md4 {
-    fn u64_to_bytes(num: u64) -> [u8; 8] {
-        num.to_le_bytes()
-    }
-    fn u32_from_bytes(bytes: [u8; 4]) -> u32 {
-        u32::from_le_bytes(bytes)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::Md4;
     use crate::hash::Test;
-    impl Test<Md4> for Md4 {}
+    impl Test for Md4 {}
     // https://tools.ietf.org/html/rfc1320
     const TEST_CASES: [(&[u8], &str); 10] = [
         // MD4 ("") = 31d6cfe0d16ae931b73c59d7e0c089c0

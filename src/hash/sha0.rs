@@ -1,4 +1,7 @@
-use super::{Hash, Md4Padding};
+use super::{Hash, Input};
+use crate::{impl_input, impl_md4_padding};
+use std::cmp::Ordering;
+use std::mem;
 
 // K(t) = 5A827999 ( 0 <= t <= 19)
 // K(t) = 6ED9EBA1 (20 <= t <= 39)
@@ -30,7 +33,7 @@ const fn maj(b: u32, c: u32, d: u32) -> u32 {
 }
 
 pub struct Sha0 {
-    pub(super) message: Vec<u8>,
+    message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 5],
 }
@@ -42,9 +45,6 @@ impl Sha0 {
             word_block: Vec::new(),
             status: H,
         }
-    }
-    fn padding(&mut self) {
-        self.word_block = Self::md4_padding(&mut self.message);
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn round(&mut self) {
@@ -128,6 +128,16 @@ impl Sha0 {
     }
 }
 
+impl Sha0 {
+    // Padding
+    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 55, {});
+}
+
+impl Input for Sha0 {
+    // Set Message
+    impl_input!(self, u64);
+}
+
 impl Hash for Sha0 {
     fn hash(message: &[u8]) -> Vec<u8> {
         let mut sha0 = Self::new();
@@ -141,20 +151,11 @@ impl Hash for Sha0 {
     }
 }
 
-impl Md4Padding for Sha0 {
-    fn u64_to_bytes(num: u64) -> [u8; 8] {
-        num.to_be_bytes()
-    }
-    fn u32_from_bytes(bytes: [u8; 4]) -> u32 {
-        u32::from_be_bytes(bytes)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::Sha0;
     use crate::hash::Test;
-    impl Test<Sha0> for Sha0 {}
+    impl Test for Sha0 {}
     // https://web.archive.org/web/20180905102133/https://www-ljk.imag.fr/membres/Pierre.Karpman/fips180.pdf
     // https://crypto.stackexchange.com/questions/62055/where-can-i-find-a-description-of-the-sha-0-hash-algorithm/62071#62071
     const TEST_CASES: [(&[u8], &str); 5] = [

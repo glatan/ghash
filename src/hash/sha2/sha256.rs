@@ -1,4 +1,4 @@
-use super::{Hash, Sha2};
+use super::{Hash, Input, Sha2};
 
 #[rustfmt::skip]
 pub const H256: [u32; 8] = [
@@ -15,6 +15,12 @@ impl Sha256 {
             word_block: Vec::new(),
             status: H256,
         })
+    }
+}
+
+impl Input for Sha256 {
+    fn input(&mut self, message: &[u8]) {
+        self.0.input(message)
     }
 }
 
@@ -37,7 +43,7 @@ impl Hash for Sha256 {
 mod tests {
     use super::Sha256;
     use crate::hash::Test;
-    impl Test<Sha256> for Sha256 {}
+    impl Test for Sha256 {}
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA256.pdf
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
     const TEST_CASES: [(&[u8], &str); 15] = [
