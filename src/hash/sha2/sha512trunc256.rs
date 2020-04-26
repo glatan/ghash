@@ -1,4 +1,4 @@
-use super::{Hash, Input, Sha2};
+use super::{Hash, Message, Sha2};
 
 #[rustfmt::skip]
 pub const H512_TRUNC_256: [u64; 8] = [
@@ -18,18 +18,18 @@ impl Sha512Trunc256 {
     }
 }
 
-impl Input for Sha512Trunc256 {
-    fn input(&mut self, message: &[u8]) {
-        self.0.input(message)
+impl Message for Sha512Trunc256 {
+    fn message(&mut self, message: &[u8]) {
+        self.0.message(message)
     }
 }
 
 impl Hash for Sha512Trunc256 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut sha512trunc256 = Self::new();
-        sha512trunc256.0.input(message);
+        sha512trunc256.0.message(message);
         sha512trunc256.0.padding();
-        sha512trunc256.0.round();
+        sha512trunc256.0.compress();
         sha512trunc256.0.status[0..4]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
@@ -71,20 +71,20 @@ mod tests {
     ];
     #[test]
     fn bytes() {
-        for (i, e) in TEST_CASES.iter() {
-            Sha512Trunc256::compare_bytes(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Sha512Trunc256::compare_bytes(m, e);
         }
     }
     #[test]
     fn lower_hex() {
-        for (i, e) in TEST_CASES.iter() {
-            Sha512Trunc256::compare_lowercase(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Sha512Trunc256::compare_lowerhex(m, e);
         }
     }
     #[test]
     fn upper_hex() {
-        for (i, e) in TEST_CASES.iter() {
-            Sha512Trunc256::compare_uppercase(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Sha512Trunc256::compare_upperhex(m, e);
         }
     }
 }

@@ -1,5 +1,5 @@
-use super::{Hash, Input};
-use crate::{impl_input, impl_md4_padding};
+use super::{Hash, Message};
+use crate::{impl_md4_padding, impl_message};
 use std::cmp::Ordering;
 use std::mem;
 
@@ -133,7 +133,7 @@ impl Blake<u32> {
 
 impl Blake<u32> {
     // Set Message
-    impl_input!(self, u64);
+    impl_message!(self, u64);
     // Padding
     impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 54, {match self.bit {
         // BLAKE-224はパディング末尾が0
@@ -223,7 +223,7 @@ impl Blake<u64> {
 
 impl Blake<u64> {
     // Set Message
-    impl_input!(self, u128);
+    impl_message!(self, u128);
     // Padding
     impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 110, {match self.bit {
         // BLAKE-384はパディング末尾が0

@@ -1,4 +1,4 @@
-use super::{Blake, Hash, Input};
+use super::{Blake, Hash, Message};
 
 #[rustfmt::skip]
 const H256: [u32; 8] = [
@@ -23,16 +23,16 @@ impl Blake256 {
     }
 }
 
-impl Input for Blake256 {
-    fn input(&mut self, message: &[u8]) {
-        self.0.input(message);
+impl Message for Blake256 {
+    fn message(&mut self, message: &[u8]) {
+        self.0.message(message);
     }
 }
 
 impl Hash for Blake256 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut blake256 = Self::new();
-        blake256.0.input(message);
+        blake256.0.message(message);
         blake256.0.set_counter();
         blake256.0.padding();
         blake256.0.compress();
@@ -63,20 +63,20 @@ mod tests {
     ];
     #[test]
     fn bytes() {
-        for (i, e) in TEST_CASES.iter() {
-            Blake256::compare_bytes(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Blake256::compare_bytes(m, e);
         }
     }
     #[test]
     fn lower_hex() {
-        for (i, e) in TEST_CASES.iter() {
-            Blake256::compare_lowercase(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Blake256::compare_lowerhex(m, e);
         }
     }
     #[test]
     fn upper_hex() {
-        for (i, e) in TEST_CASES.iter() {
-            Blake256::compare_uppercase(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Blake256::compare_upperhex(m, e);
         }
     }
 }

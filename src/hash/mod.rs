@@ -18,9 +18,9 @@ pub use sha2::{Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
 
 // Set Message
 #[macro_export(local)]
-macro_rules! impl_input {
+macro_rules! impl_message {
     ($self:ident, $LimitT:ty) => {
-            fn input(&mut $self, message: &[u8]) {
+            fn message(&mut $self, message: &[u8]) {
                 match message.len().checked_mul(8) {
                     Some(_) => {
                         // input bit length is less than usize::MAX
@@ -129,23 +129,23 @@ macro_rules! impl_md4_padding {
     };
 }
 
-pub trait Input {
-    fn input(&mut self, message: &[u8]);
+pub trait Message {
+    fn message(&mut self, message: &[u8]);
 }
 
 pub trait Hash<T = Self>
 where
-    T: Input,
+    T: Message,
 {
-    fn hash(message: &[u8]) -> Vec<u8>;
-    fn hash_to_lowercase(message: &[u8]) -> String {
-        Self::hash(message)
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8>;
+    fn hash_to_lowerhex(message: &[u8]) -> String {
+        Self::hash_to_bytes(message)
             .iter()
             .map(|byte| format!("{:02x}", byte))
             .collect()
     }
-    fn hash_to_uppercase(message: &[u8]) -> String {
-        Self::hash(message)
+    fn hash_to_upperhex(message: &[u8]) -> String {
+        Self::hash_to_bytes(message)
             .iter()
             .map(|byte| format!("{:02X}", byte))
             .collect()
@@ -155,7 +155,7 @@ where
 #[cfg(test)]
 trait Test<T = Self>
 where
-    T: Hash + Input,
+    T: Hash + Message,
 {
     fn compare_bytes(message: &[u8], expected: &str) {
         fn hex_to_bytes(s: &str) -> Vec<u8> {
@@ -187,10 +187,10 @@ where
             };
             bytes
         }
-        assert_eq!(T::hash(message), hex_to_bytes(expected));
+        assert_eq!(T::hash_to_bytes(message), hex_to_bytes(expected));
     }
-    fn compare_lowercase(message: &[u8], expected: &str) {
-        fn to_lowercase(s: &str) -> String {
+    fn compare_lowerhex(message: &[u8], expected: &str) {
+        fn to_lowerhex(s: &str) -> String {
             let mut lower = s.to_string();
             if s.is_ascii() {
                 lower.make_ascii_lowercase();
@@ -199,10 +199,10 @@ where
                 unreachable!()
             }
         }
-        assert_eq!(T::hash_to_lowercase(message), to_lowercase(expected));
+        assert_eq!(T::hash_to_lowerhex(message), to_lowerhex(expected));
     }
-    fn compare_uppercase(message: &[u8], expected: &str) {
-        fn to_upperrcase(s: &str) -> String {
+    fn compare_upperhex(message: &[u8], expected: &str) {
+        fn to_upperhex(s: &str) -> String {
             let mut upper = s.to_string();
             if s.is_ascii() {
                 upper.make_ascii_uppercase();
@@ -211,6 +211,6 @@ where
                 unreachable!()
             }
         }
-        assert_eq!(T::hash_to_uppercase(message), to_upperrcase(expected));
+        assert_eq!(T::hash_to_upperhex(message), to_upperhex(expected));
     }
 }

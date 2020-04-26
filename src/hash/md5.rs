@@ -1,5 +1,5 @@
-use super::{Hash, Input};
-use crate::{impl_input, impl_md4_padding};
+use super::{Hash, Message};
+use crate::{impl_md4_padding, impl_message};
 use std::cmp::Ordering;
 use std::mem;
 
@@ -88,7 +88,7 @@ impl Md5 {
         }
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
-    fn round(&mut self) {
+    fn compress(&mut self) {
         let word_block_length = self.word_block.len() / 16;
         let (mut a, mut b, mut c, mut d);
         let mut x: [u32; 16] = [0; 16];
@@ -186,17 +186,17 @@ impl Md5 {
     impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
 }
 
-impl Input for Md5 {
+impl Message for Md5 {
     // Set Message
-    impl_input!(self, u64);
+    impl_message!(self, u64);
 }
 
 impl Hash for Md5 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut md5 = Self::new();
-        md5.input(message);
+        md5.message(message);
         md5.padding();
-        md5.round();
+        md5.compress();
         md5.status[0..4]
             .iter()
             .flat_map(|byte| byte.to_be_bytes().to_vec())
@@ -247,20 +247,20 @@ mod tests {
     ];
     #[test]
     fn bytes() {
-        for (i, e) in TEST_CASES.iter() {
-            Md5::compare_bytes(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Md5::compare_bytes(m, e);
         }
     }
     #[test]
     fn lower_hex() {
-        for (i, e) in TEST_CASES.iter() {
-            Md5::compare_lowercase(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Md5::compare_lowerhex(m, e);
         }
     }
     #[test]
     fn upper_hex() {
-        for (i, e) in TEST_CASES.iter() {
-            Md5::compare_uppercase(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Md5::compare_upperhex(m, e);
         }
     }
 }

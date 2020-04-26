@@ -1,5 +1,5 @@
-use super::{Hash, Input};
-use crate::impl_input;
+use super::{Hash, Message};
+use crate::impl_message;
 use std::cmp::Ordering;
 use std::mem;
 
@@ -54,7 +54,7 @@ impl Md2 {
         self.message.append(&mut checksum);
     }
     #[allow(clippy::needless_range_loop)]
-    fn round(&mut self) {
+    fn compress(&mut self) {
         let word_block_length = self.message.len() / BLOCK_SIZE;
         for i in 0..word_block_length {
             for j in 0..16 {
@@ -73,18 +73,18 @@ impl Md2 {
     }
 }
 
-impl Input for Md2 {
+impl Message for Md2 {
     // Set Message
-    impl_input!(self, usize);
+    impl_message!(self, usize);
 }
 
 impl Hash for Md2 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut md2 = Self::new();
-        md2.input(message);
+        md2.message(message);
         md2.padding();
         md2.add_check_sum();
-        md2.round();
+        md2.compress();
         md2.state.iter().take(16).copied().collect()
     }
 }
@@ -124,20 +124,20 @@ mod tests {
     ];
     #[test]
     fn bytes() {
-        for (i, e) in TEST_CASES.iter() {
-            Md2::compare_bytes(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Md2::compare_bytes(m, e);
         }
     }
     #[test]
     fn lower_hex() {
-        for (i, e) in TEST_CASES.iter() {
-            Md2::compare_lowercase(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Md2::compare_lowerhex(m, e);
         }
     }
     #[test]
     fn upper_hex() {
-        for (i, e) in TEST_CASES.iter() {
-            Md2::compare_uppercase(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Md2::compare_upperhex(m, e);
         }
     }
 }

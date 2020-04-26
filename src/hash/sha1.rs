@@ -1,5 +1,5 @@
-use super::{Hash, Input};
-use crate::{impl_input, impl_md4_padding};
+use super::{Hash, Message};
+use crate::{impl_md4_padding, impl_message};
 use std::cmp::Ordering;
 use std::mem;
 
@@ -47,7 +47,7 @@ impl Sha1 {
         }
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
-    fn round(&mut self) {
+    fn compress(&mut self) {
         let (mut a, mut b, mut c, mut d, mut e);
         let mut temp;
         let mut w = [0; 80];
@@ -133,17 +133,17 @@ impl Sha1 {
     impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 55, {});
 }
 
-impl Input for Sha1 {
+impl Message for Sha1 {
     // Set Message
-    impl_input!(self, u64);
+    impl_message!(self, u64);
 }
 
 impl Hash for Sha1 {
-    fn hash(message: &[u8]) -> Vec<u8> {
+    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut sha1 = Self::new();
-        sha1.input(message);
+        sha1.message(message);
         sha1.padding();
-        sha1.round();
+        sha1.compress();
         sha1.status
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
@@ -181,20 +181,20 @@ mod tests {
     ];
     #[test]
     fn bytes() {
-        for (i, e) in TEST_CASES.iter() {
-            Sha1::compare_bytes(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Sha1::compare_bytes(m, e);
         }
     }
     #[test]
     fn lower_hex() {
-        for (i, e) in TEST_CASES.iter() {
-            Sha1::compare_lowercase(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Sha1::compare_lowerhex(m, e);
         }
     }
     #[test]
     fn upper_hex() {
-        for (i, e) in TEST_CASES.iter() {
-            Sha1::compare_uppercase(i, e);
+        for (m, e) in TEST_CASES.iter() {
+            Sha1::compare_upperhex(m, e);
         }
     }
 }
