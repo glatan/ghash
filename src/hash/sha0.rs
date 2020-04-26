@@ -155,7 +155,7 @@ impl Hash for Sha0 {
 mod tests {
     use super::Sha0;
     use crate::hash::Test;
-    impl Test<Sha0> for Sha0 {}
+    impl Test for Sha0 {}
     // https://web.archive.org/web/20180905102133/https://www-ljk.imag.fr/membres/Pierre.Karpman/fips180.pdf
     // https://crypto.stackexchange.com/questions/62055/where-can-i-find-a-description-of-the-sha-0-hash-algorithm/62071#62071
     const TEST_CASES: [(&[u8], &str); 5] = [

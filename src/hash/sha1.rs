@@ -155,7 +155,7 @@ impl Hash for Sha1 {
 mod tests {
     use super::Sha1;
     use crate::hash::Test;
-    impl Test<Sha1> for Sha1 {}
+    impl Test for Sha1 {}
     // https://tools.ietf.org/html/rfc3174
     const TEST_CASES: [(&[u8], &str); 7] = [
         // SHA1 ("abc") = a9993e364706816aba3e25717850c26c9cd0d89d

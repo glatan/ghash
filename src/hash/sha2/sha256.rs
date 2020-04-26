@@ -43,7 +43,7 @@ impl Hash for Sha256 {
 mod tests {
     use super::Sha256;
     use crate::hash::Test;
-    impl Test<Sha256> for Sha256 {}
+    impl Test for Sha256 {}
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA256.pdf
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
     const TEST_CASES: [(&[u8], &str); 15] = [

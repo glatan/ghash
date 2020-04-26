@@ -93,7 +93,7 @@ impl Hash for Ripemd160 {
 mod tests {
     use super::Ripemd160;
     use crate::hash::Test;
-    impl Test<Ripemd160> for Ripemd160 {}
+    impl Test for Ripemd160 {}
     // https://homes.esat.kuleuven.be/~bosselae/ripemd160/pdf/AB-9601/AB-9601.pdf
     const TEST_CASES: [(&[u8], &str); 9] = [
         ("".as_bytes(), "9c1185a5c5e9fc54612808977ee8f548b2258d31"),

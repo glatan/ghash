@@ -153,7 +153,7 @@ where
 }
 
 #[cfg(test)]
-trait Test<T>
+trait Test<T = Self>
 where
     T: Hash + Input,
 {

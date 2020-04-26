@@ -40,7 +40,7 @@ impl Hash for Sha512Trunc256 {
 mod tests {
     use super::Sha512Trunc256;
     use crate::hash::Test;
-    impl Test<Sha512Trunc256> for Sha512Trunc256 {}
+    impl Test for Sha512Trunc256 {}
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512_256.pdf
     const TEST_CASES: [(&[u8], &str); 5] = [
         // SHA-512/256("abc") = 53048e2681941ef99b2e29b76b4c7dabe4c2d0c634fc6d46e0e2f13107e7af23

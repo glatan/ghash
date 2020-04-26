@@ -128,7 +128,7 @@ impl Hash for Ripemd320 {
 mod tests {
     use super::Ripemd320;
     use crate::hash::Test;
-    impl Test<Ripemd320> for Ripemd320 {}
+    impl Test for Ripemd320 {}
     // https://homes.esat.kuleuven.be/~bosselae/ripemd160.html
     const TEST_CASES: [(&[u8], &str); 9] = [
         (

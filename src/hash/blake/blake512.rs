@@ -49,7 +49,7 @@ impl Hash for Blake512 {
 mod tests {
     use super::Blake512;
     use crate::hash::Test;
-    impl Test<Blake512> for Blake512 {}
+    impl Test for Blake512 {}
     const TEST_CASES: [(&[u8], &str); 2] = [
         // https://131002.net/blake/blake.pdf
         (

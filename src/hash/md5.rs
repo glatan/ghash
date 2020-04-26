@@ -208,7 +208,7 @@ impl Hash for Md5 {
 mod tests {
     use super::Md5;
     use crate::hash::Test;
-    impl Test<Md5> for Md5 {}
+    impl Test for Md5 {}
     // https://tools.ietf.org/html/rfc1321
     const TEST_CASES: [(&[u8], &str); 10] = [
         // MD5 ("") = d41d8cd98f00b204e9800998ecf8427e

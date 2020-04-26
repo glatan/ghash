@@ -123,7 +123,7 @@ impl Hash for Md4 {
 mod tests {
     use super::Md4;
     use crate::hash::Test;
-    impl Test<Md4> for Md4 {}
+    impl Test for Md4 {}
     // https://tools.ietf.org/html/rfc1320
     const TEST_CASES: [(&[u8], &str); 10] = [
         // MD4 ("") = 31d6cfe0d16ae931b73c59d7e0c089c0

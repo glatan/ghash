@@ -41,7 +41,7 @@ impl Hash for Sha384 {
 mod tests {
     use super::Sha384;
     use crate::hash::Test;
-    impl Test<Sha384> for Sha384 {}
+    impl Test for Sha384 {}
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA384.pdf
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
     const TEST_CASES: [(&[u8], &str); 14] = [

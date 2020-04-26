@@ -47,7 +47,7 @@ impl Hash for Blake384 {
 mod tests {
     use super::Blake384;
     use crate::hash::Test;
-    impl Test<Blake384> for Blake384 {}
+    impl Test for Blake384 {}
     const TEST_CASES: [(&[u8], &str); 2] = [
         // https://131002.net/blake/blake.pdf
         (

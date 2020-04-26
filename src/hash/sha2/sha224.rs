@@ -40,7 +40,7 @@ impl Hash for Sha224 {
 mod tests {
     use super::Sha224;
     use crate::hash::Test;
-    impl Test<Sha224> for Sha224 {}
+    impl Test for Sha224 {}
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA224.pdf
     // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
     const TEST_CASES: [(&[u8], &str); 12] = [

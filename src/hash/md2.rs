@@ -93,7 +93,7 @@ impl Hash for Md2 {
 mod tests {
     use super::Md2;
     use crate::hash::Test;
-    impl Test<Md2> for Md2 {}
+    impl Test for Md2 {}
     // https://tools.ietf.org/html/rfc1319
     const TEST_CASES: [(&[u8], &str); 6] = [
         // MD2 ("") = 8350e5a3e24c153df2275c9f80692773
