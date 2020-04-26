@@ -1,4 +1,6 @@
 use super::Hash;
+use crate::impl_md4_padding;
+use std::cmp::Ordering;
 
 mod sha224;
 mod sha256;
@@ -91,13 +93,19 @@ const fn small_sigma64_1(x: u64) -> u64 {
     x.rotate_right(19) ^ x.rotate_right(61) ^ (x >> 6)
 }
 
+// Sha2<u32>: SHA-224 and SHA-256
+// Sha2<u64>: SHA-384, SHA-512, SHA-512/224 and SHA-512/256
 pub(super) struct Sha2<T> {
     pub(super) message: Vec<u8>,
-    pub(super) word_block: Vec<T>,
+    word_block: Vec<T>,
     status: [T; 8],
 }
 
-// SHA-224 and SHA-256
+impl Sha2<u32> {
+    // Padding
+    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 55, {});
+}
+
 impl Sha2<u32> {
     #[allow(clippy::many_single_char_names)]
     fn round(&mut self) {
@@ -150,7 +158,11 @@ impl Sha2<u32> {
     }
 }
 
-// SHA-384, SHA-512, SHA-512/224 and SHA-512/256
+impl Sha2<u64> {
+    // Padding
+    impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 111, {});
+}
+
 impl Sha2<u64> {
     #[allow(clippy::many_single_char_names)]
     fn round(&mut self) {

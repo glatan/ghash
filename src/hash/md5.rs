@@ -1,4 +1,6 @@
 use super::Hash;
+use crate::impl_md4_padding;
+use std::cmp::Ordering;
 
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
@@ -72,8 +74,13 @@ const fn round4(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
 
 pub struct Md5 {
     pub(super) message: Vec<u8>,
-    pub(super) word_block: Vec<u32>,
+    word_block: Vec<u32>,
     status: [u32; 4],
+}
+
+impl Md5 {
+    // Padding
+    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
 }
 
 impl Md5 {

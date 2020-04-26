@@ -1,4 +1,5 @@
 use super::Hash;
+use crate::impl_md4_padding;
 use std::cmp::Ordering;
 
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
@@ -35,8 +36,12 @@ const fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
 
 pub struct Md4 {
     pub(super) message: Vec<u8>,
-    pub(super) word_block: Vec<u32>,
+    word_block: Vec<u32>,
     status: [u32; 4],
+}
+impl Md4 {
+    // Padding
+    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
 }
 
 impl Md4 {
@@ -104,41 +109,6 @@ impl Hash for Md4 {
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()
-    }
-}
-
-// MD4と同様、又はほぼ同様のパディングを行うハッシュ関数が多いため、このような実装になっている。
-pub(super) trait Md4Padding {
-    fn u64_to_bytes(num: u64) -> [u8; 8];
-    fn u32_from_bytes(bytes: [u8; 4]) -> u32;
-    fn md4_padding(input: &mut Vec<u8>) -> Vec<u32> {
-        let mut word_block = Vec::new();
-        let input_length = input.len();
-        // 入力末尾に0x80を追加(0b1000_0000)
-        input.push(0x80);
-        // [byte]: 64 - 8(input_length) - 1(0x80) = 55
-        let padding_length = 55 - (input_length as i128);
-        match padding_length.cmp(&0) {
-            Ordering::Greater => {
-                input.append(&mut vec![0; padding_length as usize]);
-            }
-            Ordering::Less => {
-                input.append(&mut vec![0; 64 - (padding_length.abs() % 64) as usize]);
-            }
-            Ordering::Equal => (),
-        }
-        // 入力データの長さを追加
-        input.append(&mut Self::u64_to_bytes(8 * input_length as u64).to_vec());
-        // バイト列からワードブロックを生成
-        for i in (0..input.len()).filter(|i| i % 4 == 0) {
-            word_block.push(Self::u32_from_bytes([
-                input[i],
-                input[i + 1],
-                input[i + 2],
-                input[i + 3],
-            ]));
-        }
-        word_block
     }
 }
 

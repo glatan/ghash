@@ -1,5 +1,5 @@
-#[allow(unused_variables, unused_imports, dead_code)]
-use super::{Hash, Md4Padding};
+use super::Hash;
+use crate::impl_md4_padding;
 use std::cmp::Ordering;
 
 mod blake224;
@@ -40,6 +40,8 @@ const C64: [u64; 16] = [
     0xBA7C_9045_F12C_7F99, 0x24A1_9947_B391_6CF7, 0x0801_F2E2_858E_FC16, 0x6369_20D8_7157_4E69
 ];
 
+// Blake<u32>: BLAKE-224 and BLAKE-256
+// Blake<u64>: BLAKE-384 and BLAKE-512
 pub(super) struct Blake<T> {
     pub(super) message: Vec<u8>,
     word_block: Vec<T>,
@@ -51,7 +53,17 @@ pub(super) struct Blake<T> {
     bit: usize,
 }
 
-// BLAKE-224 and BLAKE-256
+impl Blake<u32> {
+    // Padding
+    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 54, {match self.bit {
+        // BLAKE-224はパディング末尾が0
+        224 => self.message.push(0x00),
+        // BLAKE-256はパディング末尾が1
+        256 => self.message.push(0x01),
+        _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
+    }});
+}
+
 impl Blake<u32> {
     fn set_counter(&mut self) {
         self.l = self.message.len() * 8;
@@ -60,41 +72,6 @@ impl Blake<u32> {
             Ordering::Equal => self.t[0] = 512,
             Ordering::Less => self.t[0] = self.l as u32,
             Ordering::Greater => self.t[0] = (self.l - self.l % 512) as u32,
-        }
-    }
-    fn padding(&mut self) {
-        // 入力末尾に0x80を追加(0b1000_0000)
-        self.message.push(0x80);
-        // [byte]: 64 - 8(input_length) - 1(0x80) - 1(0x01) = 54
-        let padding_length = 54 - (self.l / 8) as i128;
-        match padding_length.cmp(&0) {
-            Ordering::Greater => {
-                self.message.append(&mut vec![0; padding_length as usize]);
-            }
-            Ordering::Less => {
-                self.message
-                    .append(&mut vec![0; 64 - (padding_length.abs() % 64) as usize]);
-            }
-            Ordering::Equal => (),
-        }
-        match self.bit {
-            // BLAKE-224はパディング末尾が0
-            224 => self.message.push(0x00),
-            // BLAKE-256はパディング末尾が1
-            256 => self.message.push(0x01),
-            _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
-        }
-        // 入力データの長さを追加
-        self.message
-            .append(&mut (self.l as u64).to_be_bytes().to_vec());
-        // バイト列からワードブロックを生成
-        for i in (0..self.message.len()).filter(|i| i % 4 == 0) {
-            self.word_block.push(u32::from_be_bytes([
-                self.message[i],
-                self.message[i + 1],
-                self.message[i + 2],
-                self.message[i + 3],
-            ]));
         }
     }
     #[allow(clippy::too_many_arguments)]
@@ -164,7 +141,17 @@ impl Blake<u32> {
     }
 }
 
-// BLAKE-384 and BLAKE-512
+impl Blake<u64> {
+    // Padding
+    impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 110, {match self.bit {
+        // BLAKE-384はパディング末尾が0
+        384 => self.message.push(0x00),
+        // BLAKE-512はパディング末尾が1
+        512 => self.message.push(0x01),
+        _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
+    }});
+}
+
 impl Blake<u64> {
     fn set_counter(&mut self) {
         self.l = self.message.len() * 8;
@@ -173,45 +160,6 @@ impl Blake<u64> {
             Ordering::Equal => self.t[0] = 1024,
             Ordering::Less => self.t[0] = self.l as u64,
             Ordering::Greater => self.t[0] = (self.l - self.l % 1024) as u64,
-        }
-    }
-    fn padding(&mut self) {
-        // 入力末尾に0x80を追加(0b1000_0000)
-        self.message.push(0x80);
-        // [byte]: 128 - self.l - 1(0x80) - 1(0x01) = 110
-        let padding_length = 110 - (self.l / 8) as i128;
-        match padding_length.cmp(&0) {
-            Ordering::Greater => {
-                self.message.append(&mut vec![0; padding_length as usize]);
-            }
-            Ordering::Less => {
-                self.message
-                    .append(&mut vec![0; 128 - (padding_length.abs() % 128) as usize]);
-            }
-            Ordering::Equal => (),
-        }
-        match self.bit {
-            // BLAKE-384はパディング末尾が0
-            384 => self.message.push(0x00),
-            // BLAKE-512はパディング末尾が1
-            512 => self.message.push(0x01),
-            _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
-        }
-        // 入力データの長さを追加
-        self.message
-            .append(&mut (self.l as u128).to_be_bytes().to_vec());
-        // バイト列からワードブロックを生成
-        for i in (0..self.message.len()).filter(|i| i % 8 == 0) {
-            self.word_block.push(u64::from_be_bytes([
-                self.message[i],
-                self.message[i + 1],
-                self.message[i + 2],
-                self.message[i + 3],
-                self.message[i + 4],
-                self.message[i + 5],
-                self.message[i + 6],
-                self.message[i + 7],
-            ]));
         }
     }
     #[allow(clippy::too_many_arguments)]

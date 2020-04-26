@@ -1,4 +1,6 @@
 use super::Hash;
+use crate::impl_md4_padding;
+use std::cmp::Ordering;
 
 // K(t) = 5A827999 ( 0 <= t <= 19)
 // K(t) = 6ED9EBA1 (20 <= t <= 39)
@@ -31,8 +33,13 @@ const fn maj(b: u32, c: u32, d: u32) -> u32 {
 
 pub struct Sha0 {
     pub(super) message: Vec<u8>,
-    pub(super) word_block: Vec<u32>,
+    word_block: Vec<u32>,
     status: [u32; 5],
+}
+
+impl Sha0 {
+    // Padding
+    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 55, {});
 }
 
 impl Sha0 {

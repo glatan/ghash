@@ -1,5 +1,7 @@
 use super::Hash;
 use super::{f, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
+use crate::impl_md4_padding;
+use std::cmp::Ordering;
 
 #[rustfmt::skip]
 const H256: [u32; 8] = [
@@ -9,8 +11,13 @@ const H256: [u32; 8] = [
 
 pub struct Ripemd256 {
     pub(crate) message: Vec<u8>,
-    pub(crate) word_block: Vec<u32>,
+    word_block: Vec<u32>,
     status: [u32; 8],
+}
+
+impl Ripemd256 {
+    // Padding
+    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
 }
 
 impl Ripemd256 {
