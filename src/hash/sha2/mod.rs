@@ -1,4 +1,4 @@
-use super::Hash;
+use super::{Hash, Input};
 use crate::{impl_input, impl_md4_padding};
 use std::cmp::Ordering;
 use std::mem;
@@ -103,13 +103,6 @@ struct Sha2<T> {
 }
 
 impl Sha2<u32> {
-    // Set Message
-    impl_input!(self, u64);
-    // Padding
-    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 55, {});
-}
-
-impl Sha2<u32> {
     #[allow(clippy::many_single_char_names)]
     fn round(&mut self) {
         let (mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h);
@@ -161,11 +154,11 @@ impl Sha2<u32> {
     }
 }
 
-impl Sha2<u64> {
+impl Sha2<u32> {
     // Set Message
-    impl_input!(self, u128);
+    impl_input!(self, u64);
     // Padding
-    impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 111, {});
+    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 55, {});
 }
 
 impl Sha2<u64> {
@@ -218,4 +211,10 @@ impl Sha2<u64> {
             self.status[7] = self.status[7].wrapping_add(h);
         }
     }
+}
+
+impl Sha2<u64> {
+    // Padding
+    impl_input!(self, u128);
+    impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 111, {});
 }

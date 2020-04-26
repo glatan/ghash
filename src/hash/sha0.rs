@@ -1,4 +1,4 @@
-use super::Hash;
+use super::{Hash, Input};
 use crate::{impl_input, impl_md4_padding};
 use std::cmp::Ordering;
 use std::mem;
@@ -36,13 +36,6 @@ pub struct Sha0 {
     message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 5],
-}
-
-impl Sha0 {
-    // Set Message
-    impl_input!(self, u64);
-    // Padding
-    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 55, {});
 }
 
 impl Sha0 {
@@ -133,6 +126,16 @@ impl Sha0 {
             self.status[4] = self.status[4].wrapping_add(e);
         }
     }
+}
+
+impl Sha0 {
+    // Padding
+    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 55, {});
+}
+
+impl Input for Sha0 {
+    // Set Message
+    impl_input!(self, u64);
 }
 
 impl Hash for Sha0 {

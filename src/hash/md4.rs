@@ -1,4 +1,4 @@
-use super::Hash;
+use super::{Hash, Input};
 use crate::{impl_input, impl_md4_padding};
 use std::cmp::Ordering;
 use std::mem;
@@ -39,12 +39,6 @@ pub struct Md4 {
     message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
-}
-impl Md4 {
-    // Set Message
-    impl_input!(self, u64);
-    // Padding
-    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
 }
 
 impl Md4 {
@@ -100,6 +94,16 @@ impl Md4 {
             self.status[i] = self.status[i].swap_bytes();
         }
     }
+}
+
+impl Md4 {
+    // Padding
+    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
+}
+
+impl Input for Md4 {
+    // Set Message
+    impl_input!(self, u64);
 }
 
 impl Hash for Md4 {

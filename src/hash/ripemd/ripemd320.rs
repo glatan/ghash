@@ -1,5 +1,5 @@
-use super::Hash;
 use super::{f, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
+use super::{Hash, Input};
 use crate::{impl_input, impl_md4_padding};
 use std::cmp::Ordering;
 use std::mem;
@@ -14,13 +14,6 @@ pub struct Ripemd320 {
     message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 10],
-}
-
-impl Ripemd320 {
-    // Set Message
-    impl_input!(self, u64);
-    // Padding
-    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
 }
 
 impl Ripemd320 {
@@ -105,6 +98,16 @@ impl Ripemd320 {
             self.status[9] = self.status[9].wrapping_add(e_right);
         }
     }
+}
+
+impl Ripemd320 {
+    // Padding
+    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
+}
+
+impl Input for Ripemd320 {
+    // Set Message
+    impl_input!(self, u64);
 }
 
 impl Hash for Ripemd320 {

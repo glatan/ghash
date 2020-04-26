@@ -1,4 +1,4 @@
-use super::Hash;
+use super::{Hash, Input};
 use crate::{impl_input, impl_md4_padding};
 use std::cmp::Ordering;
 use std::mem;
@@ -52,19 +52,6 @@ struct Blake<T> {
     t: [T; 2],  // counter: 処理したビット数
     v: [T; 16], // state
     bit: usize,
-}
-
-impl Blake<u32> {
-    // Set Message
-    impl_input!(self, u64);
-    // Padding
-    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 54, {match self.bit {
-        // BLAKE-224はパディング末尾が0
-        224 => self.message.push(0x00),
-        // BLAKE-256はパディング末尾が1
-        256 => self.message.push(0x01),
-        _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
-    }});
 }
 
 impl Blake<u32> {
@@ -144,15 +131,15 @@ impl Blake<u32> {
     }
 }
 
-impl Blake<u64> {
+impl Blake<u32> {
     // Set Message
-    impl_input!(self, u128);
+    impl_input!(self, u64);
     // Padding
-    impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 110, {match self.bit {
-        // BLAKE-384はパディング末尾が0
-        384 => self.message.push(0x00),
-        // BLAKE-512はパディング末尾が1
-        512 => self.message.push(0x01),
+    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 54, {match self.bit {
+        // BLAKE-224はパディング末尾が0
+        224 => self.message.push(0x00),
+        // BLAKE-256はパディング末尾が1
+        256 => self.message.push(0x01),
         _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
     }});
 }
@@ -232,4 +219,17 @@ impl Blake<u64> {
             }
         }
     }
+}
+
+impl Blake<u64> {
+    // Set Message
+    impl_input!(self, u128);
+    // Padding
+    impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 110, {match self.bit {
+        // BLAKE-384はパディング末尾が0
+        384 => self.message.push(0x00),
+        // BLAKE-512はパディング末尾が1
+        512 => self.message.push(0x01),
+        _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
+    }});
 }

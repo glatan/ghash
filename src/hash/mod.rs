@@ -129,7 +129,14 @@ macro_rules! impl_md4_padding {
     };
 }
 
-pub trait Hash {
+pub trait Input {
+    fn input(&mut self, message: &[u8]);
+}
+
+pub trait Hash<T = Self>
+where
+    T: Input,
+{
     fn hash(message: &[u8]) -> Vec<u8>;
     fn hash_to_lowercase(message: &[u8]) -> String {
         Self::hash(message)
@@ -148,7 +155,7 @@ pub trait Hash {
 #[cfg(test)]
 trait Test<T>
 where
-    T: Hash,
+    T: Hash + Input,
 {
     fn compare_bytes(message: &[u8], expected: &str) {
         fn hex_to_bytes(s: &str) -> Vec<u8> {

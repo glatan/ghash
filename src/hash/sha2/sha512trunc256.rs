@@ -1,4 +1,4 @@
-use super::{Hash, Sha2};
+use super::{Hash, Input, Sha2};
 
 #[rustfmt::skip]
 pub const H512_TRUNC_256: [u64; 8] = [
@@ -15,6 +15,12 @@ impl Sha512Trunc256 {
             word_block: Vec::new(),
             status: H512_TRUNC_256,
         })
+    }
+}
+
+impl Input for Sha512Trunc256 {
+    fn input(&mut self, message: &[u8]) {
+        self.0.input(message)
     }
 }
 

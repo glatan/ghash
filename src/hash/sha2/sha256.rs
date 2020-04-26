@@ -1,4 +1,4 @@
-use super::{Hash, Sha2};
+use super::{Hash, Input, Sha2};
 
 #[rustfmt::skip]
 pub const H256: [u32; 8] = [
@@ -15,6 +15,12 @@ impl Sha256 {
             word_block: Vec::new(),
             status: H256,
         })
+    }
+}
+
+impl Input for Sha256 {
+    fn input(&mut self, message: &[u8]) {
+        self.0.input(message)
     }
 }
 
