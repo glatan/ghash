@@ -64,12 +64,12 @@ impl Sha0 {
             d = self.status[3];
             e = self.status[4];
             // 0 <= t <= 19
-            for wt in w.iter().take(20) {
+            for t in 0..20 {
                 temp = a
                     .rotate_left(5)
                     .wrapping_add(ch(b, c, d))
                     .wrapping_add(e)
-                    .wrapping_add(*wt)
+                    .wrapping_add(w[t])
                     .wrapping_add(K[0]);
                 e = d;
                 d = c;
@@ -78,12 +78,12 @@ impl Sha0 {
                 a = temp;
             }
             // 20 <= t <= 39
-            for wt in w.iter().take(40).skip(20) {
+            for t in 20..40 {
                 temp = a
                     .rotate_left(5)
                     .wrapping_add(parity(b, c, d))
                     .wrapping_add(e)
-                    .wrapping_add(*wt)
+                    .wrapping_add(w[t])
                     .wrapping_add(K[1]);
                 e = d;
                 d = c;
@@ -92,12 +92,12 @@ impl Sha0 {
                 a = temp;
             }
             // 40 <= t <= 59
-            for wt in w.iter().take(60).skip(40) {
+            for t in 40..60 {
                 temp = a
                     .rotate_left(5)
                     .wrapping_add(maj(b, c, d))
                     .wrapping_add(e)
-                    .wrapping_add(*wt)
+                    .wrapping_add(w[t])
                     .wrapping_add(K[2]);
                 e = d;
                 d = c;
@@ -106,12 +106,12 @@ impl Sha0 {
                 a = temp;
             }
             // 60 <= t <= 79
-            for wt in w.iter().skip(60) {
+            for t in 60..80 {
                 temp = a
                     .rotate_left(5)
                     .wrapping_add(parity(b, c, d))
                     .wrapping_add(e)
-                    .wrapping_add(*wt)
+                    .wrapping_add(w[t])
                     .wrapping_add(K[3]);
                 e = d;
                 d = c;
