@@ -13,17 +13,17 @@ cache:
     - cargo/
     - target/
 
-stable-i386:
+stable-i686-unknown-linux-gnu:
   stage: test
   image: i386/rust:slim-buster
   script:
-    - cargo test --verbose
+    - cargo test --verbose --target i686-unknown-linux-gnu
 
-stable-amd64:
+stable-x86_64-unknown-linux-gnu:
   stage: test
   image: rust:slim-buster
   script:
-    - cargo test --verbose
+    - cargo test --verbose --target x86_64-unknown-linux-gnu
 
 stable-wasm32-wasi:
   stage: test
@@ -41,11 +41,11 @@ stable-wasm32-wasi:
     # run tests
     - ./bin/wasmer target/wasm32-wasi/debug/deps/ghash*.wasm
 
-nightly-amd64:
+nightly-x86_64-unknown-linux-gnu:
   stage: test
   image: rustlang/rust:nightly-buster-slim
   script:
-    - cargo test --verbose
+    - cargo test --verbose --target x86_64-unknown-linux-gnu
 
 nightly-wasm32-wasi:
   stage: test
