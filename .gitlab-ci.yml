@@ -3,6 +3,7 @@ stages:
 
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
+  WASMER_VERSION: 0.16.2
 
 before_script:
   - rustc --version
@@ -24,8 +25,40 @@ stable-amd64:
   script:
     - cargo test --verbose
 
+stable-wasm32-wasi:
+  stage: test
+  image: rust:slim-buster
+  script:
+    # add target
+    - rustup target add wasm32-wasi
+    # install Wasmer
+    - apt update -y
+    - apt install -y curl
+    - curl -L "https://github.com/wasmerio/wasmer/releases/download/${WASMER_VERSION}/wasmer-linux-amd64.tar.gz" | tar xz
+    # compile library tests
+    - cargo test --lib --no-run --verbose --target wasm32-wasi
+    - ls target/wasm32-wasi/debug/deps
+    # run tests
+    - ./bin/wasmer target/wasm32-wasi/debug/deps/ghash*.wasm
+
 nightly-amd64:
   stage: test
   image: rustlang/rust:nightly-buster-slim
   script:
     - cargo test --verbose
+
+nightly-wasm32-wasi:
+  stage: test
+  image: rustlang/rust:nightly-buster-slim
+  script:
+    # add target
+    - rustup target add wasm32-wasi
+    # install Wasmer
+    - apt update -y
+    - apt install -y curl
+    - curl -L "https://github.com/wasmerio/wasmer/releases/download/${WASMER_VERSION}/wasmer-linux-amd64.tar.gz" | tar xz
+    # compile library tests
+    - cargo test --lib --no-run --verbose --target wasm32-wasi
+    - ls target/wasm32-wasi/debug/deps
+    # run tests
+    - ./bin/wasmer target/wasm32-wasi/debug/deps/ghash*.wasm
