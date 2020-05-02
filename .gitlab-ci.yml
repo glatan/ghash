@@ -21,7 +21,8 @@ cache:
     # install wasmtime
     - apt update -y
     - apt install -y curl
-    - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" | tar xz
+    - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" > wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
+    - tar -xvf wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
     - mv wasmtime-v${WASMTIME_VERSION}-x86_64-linux/wasmtime /bin/
   script:
     # compile library tests
