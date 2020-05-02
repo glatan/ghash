@@ -23,9 +23,8 @@ cache:
     - apt install -y curl xz-utils
     - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" > wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
     - tar -xvf wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
-    - mv wasmtime-v${WASMTIME_VERSION}-x86_64-linux/wasmtime /bin/
+    - mv wasmtime-v${WASMTIME_VERSION}-x86_64-linux/wasmtime /usr/bin/
   script:
-    # compile library tests
     - cargo test --lib --verbose --target wasm32-wasi
 
 stable-i686-unknown-linux-gnu:
