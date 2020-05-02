@@ -3,7 +3,7 @@ stages:
 
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
-  WASMER_VERSION: 0.16.2
+  WASMTIME_VERSION: 0.15.0
 
 before_script:
   - rustc --version
@@ -18,16 +18,14 @@ cache:
     - rustc --version
     # add target
     - rustup target add wasm32-wasi
-    # install Wasmer
+    # install wasmtime
     - apt update -y
     - apt install -y curl
-    - curl -L "https://github.com/wasmerio/wasmer/releases/download/${WASMER_VERSION}/wasmer-linux-amd64.tar.gz" | tar xz
+    - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" | tar xz
+    - mv wasmtime-v${WASMTIME_VERSION}-x86_64-linux/wasmtime /bin/
   script:
     # compile library tests
-    - cargo test --lib --no-run --verbose --target wasm32-wasi
-    - ls target/wasm32-wasi/debug/deps
-    # run tests
-    - ./bin/wasmer target/wasm32-wasi/debug/deps/ghash*.wasm
+    - cargo test --lib --verbose --target wasm32-wasi
 
 stable-i686-unknown-linux-gnu:
   stage: test
