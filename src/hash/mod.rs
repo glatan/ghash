@@ -1,4 +1,5 @@
 mod blake;
+mod keccak;
 mod md2;
 mod md4;
 mod md5;
