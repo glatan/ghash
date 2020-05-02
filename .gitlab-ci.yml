@@ -20,7 +20,7 @@ cache:
     - rustup target add wasm32-wasi
     # install wasmtime
     - apt update -y
-    - apt install -y curl
+    - apt install -y curl xz-utils
     - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" > wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
     - tar -xvf wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
     - mv wasmtime-v${WASMTIME_VERSION}-x86_64-linux/wasmtime /bin/
