@@ -51,14 +51,13 @@ const R: [[u32; 5]; 5] = [
 
 struct Keccak {
     message: Vec<u8>,
-    word_block: Vec<u8>,
     state: [[u64; 5]; 5], // A, S
     b: usize,
-    c: usize,
+    c: usize, // capacity
     l: usize,
     n: usize,
-    r: usize,
-    w: usize,
+    r: usize, // bitrate
+    w: usize, // lane size
 }
 
 impl Keccak {
@@ -70,7 +69,6 @@ impl Keccak {
         // >> w = 2^l => l = 6
         Self {
             message: Vec::new(),
-            word_block: Vec::new(),
             state: [[0; 5]; 5],
             b: 1600,
             c: 576,
@@ -117,6 +115,9 @@ impl Keccak {
             Ordering::Equal => (),
         }
         self.message.push(0x01);
+        for o in &self.message {
+            print!("{:02x}", o);
+        }
     }
     fn keccak_f(&mut self) {
         fn round(mut a: [[u64; 5]; 5], rc: u64) -> [[u64; 5]; 5] {
@@ -153,29 +154,39 @@ impl Keccak {
             a
         }
         let n = 12 + 2 * self.l;
-        for i in 0..(n - 1) {
+        for i in 0..n {
             // A: self.state
             self.state = round(self.state, RC[i]);
+            // println!("Round {}/{}", i+1,n);
+            // for x in 0..5 {
+            //     println!("{:016x} {:016x} {:016x} {:016x} {:016x}", self.state[x][0],self.state[x][1],self.state[x][2],self.state[x][3],self.state[x][4]);
+            // }
         }
     }
     fn hash(&mut self, message: &[u8]) -> Vec<u8> {
         self.message(message);
-        self.padding(0x01);
+        self.padding(0x06);
         // Initialize (S initialized in Self::new())
         // Absorbing phase
         let word_size = self.r / 8;
-        let word_block_length = self.word_block.len() / word_size;
+        let word_block_length = self.message.len() / word_size;
+        println!("\n{}, {}",word_size,word_block_length);
         for i in 0..word_block_length {
-            let pi = self.word_block[i * word_size..i * word_size * 2].to_vec();
+            let mut pi = self.message[i * word_size..(i + 1) * word_size].to_vec();
+            // #[cfg(target_endian = "little")]
+            // {
+            //     pi.reverse();
+            // }
             for x in 0..5 {
                 for y in 0..5 {
                     if x + 5 * y < (self.r / self.w) {
-                        self.state[x][y] ^= pi[x + 5 * y] as u64;
+                        self.state[x][y] ^= pi[(x + 5 * y)%5] as u64;
                     }
                 }
             }
             self.keccak_f();
         }
+        println!("{:?}", self.state);
         // Squeezing phase
         let mut z = Vec::new();
         for _ in 0..(self.n / word_size) {
@@ -191,7 +202,7 @@ impl Keccak {
             }
             self.keccak_f();
         }
-        z
+        z[0..self.n/8].to_vec()
     }
 }
 
