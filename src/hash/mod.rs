@@ -6,6 +6,7 @@ mod ripemd;
 mod sha0;
 mod sha1;
 mod sha2;
+mod skein;
 
 pub use blake::{Blake224, Blake256, Blake384, Blake512};
 pub use md2::Md2;
