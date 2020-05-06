@@ -6,7 +6,7 @@ fn main() {
     let input: Vec<u8> = {
         let mut input = String::new();
         io::stdin().lock().read_line(&mut input).unwrap();
-        input.trim_end().as_bytes().to_owned()
+        input.trim_end_matches('\n').as_bytes().to_owned()
     };
     println!("input: {:?}", input);
     println!("BLAKE-224\t{:}", Blake224::hash_to_lowerhex(&input));
