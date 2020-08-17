@@ -3,6 +3,18 @@ use crate::{impl_md4_padding, impl_message};
 use std::cmp::Ordering;
 use std::mem;
 
+// Round1/2 submission version
+mod blake28;
+mod blake32;
+mod blake48;
+mod blake64;
+
+pub use blake28::Blake28;
+pub use blake32::Blake32;
+pub use blake48::Blake48;
+pub use blake64::Blake64;
+
+// Final version
 mod blake224;
 mod blake256;
 mod blake384;
@@ -26,13 +38,13 @@ const SIGMA: [[usize; 16]; 10] = [
     [6, 15, 14, 9, 11, 3, 0, 8, 12, 2, 13, 7, 1, 4, 10, 5],
     [10, 2, 8, 4, 7, 6, 1, 5, 15, 11, 9, 14, 3, 12, 13, 0],
 ];
-// BLAKE-224 and BLAKE-256 Constant
+// BLAKE-224(BLAKE-28) and BLAKE-256(BLAKE-32) Constant
 #[rustfmt::skip]
 const C32: [u32; 16] = [
     0x243F_6A88, 0x85A3_08D3, 0x1319_8A2E, 0x0370_7344, 0xA409_3822, 0x299F_31D0, 0x082E_FA98, 0xEC4E_6C89,
     0x4528_21E6, 0x38D0_1377, 0xBE54_66CF, 0x34E9_0C6C, 0xC0AC_29B7, 0xC97C_50DD, 0x3F84_D5B5, 0xB547_0917
 ];
-// BLAKE-384 and BLAKE-512 Constant
+// BLAKE-384(BLAKE-48) and BLAKE-512(BLAKE-64) Constant
 #[rustfmt::skip]
 const C64: [u64; 16] = [
     0x243F_6A88_85A3_08D3, 0x1319_8A2E_0370_7344, 0xA409_3822_299F_31D0, 0x082E_FA98_EC4E_6C89,
@@ -41,8 +53,8 @@ const C64: [u64; 16] = [
     0xBA7C_9045_F12C_7F99, 0x24A1_9947_B391_6CF7, 0x0801_F2E2_858E_FC16, 0x6369_20D8_7157_4E69
 ];
 
-// Blake<u32>: BLAKE-224 and BLAKE-256
-// Blake<u64>: BLAKE-384 and BLAKE-512
+// Blake<u32>: BLAKE-224(BLAKE-28) and BLAKE-256(BLAKE-32)
+// Blake<u64>: BLAKE-384(BLAKE-48) and BLAKE-512(BLAKE-64)
 struct Blake<T> {
     message: Vec<u8>,
     word_block: Vec<T>,
@@ -83,7 +95,7 @@ impl Blake<u32> {
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(7);
     }
-    fn compress(&mut self) {
+    fn compress(&mut self, round_limit: usize) {
         // Compress blocks(1 block == 16 words, 1 word == 32 bit)
         // Compress 1 block in 1 loop
         for n in 0..(self.word_block.len() / 16) {
@@ -113,7 +125,7 @@ impl Blake<u32> {
                 self.t[1] += self.l as u32 - self.t[0];
             }
             // round
-            for r in 0..14 {
+            for r in 0..round_limit {
                 self.g(n, 0, r, 0, 4, 8, 12);
                 self.g(n, 1, r, 1, 5, 9, 13);
                 self.g(n, 2, r, 2, 6, 10, 14);
@@ -136,9 +148,9 @@ impl Blake<u32> {
     impl_message!(self, u64);
     // Padding
     impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 54, {match self.bit {
-        // BLAKE-224はパディング末尾が0
+        // BLAKE-224(BLAKE-28)はパディング末尾が0
         224 => self.message.push(0x00),
-        // BLAKE-256はパディング末尾が1
+        // BLAKE-256(BLAKE-32)はパディング末尾が1
         256 => self.message.push(0x01),
         _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
     }});
@@ -173,7 +185,7 @@ impl Blake<u64> {
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(11);
     }
-    fn compress(&mut self) {
+    fn compress(&mut self, round_limit: usize) {
         // Compress blocks(1 block == 16 words, 1 word == 64 bit)
         // Compress 1 block in 1 loop
         for n in 0..(self.word_block.len() / 16) {
@@ -203,7 +215,7 @@ impl Blake<u64> {
                 self.t[1] += self.l as u64 - self.t[0];
             }
             // round
-            for r in 0..16 {
+            for r in 0..round_limit {
                 self.g(n, 0, r, 0, 4, 8, 12);
                 self.g(n, 1, r, 1, 5, 9, 13);
                 self.g(n, 2, r, 2, 6, 10, 14);
@@ -226,9 +238,9 @@ impl Blake<u64> {
     impl_message!(self, u128);
     // Padding
     impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 110, {match self.bit {
-        // BLAKE-384はパディング末尾が0
+        // BLAKE-384(BLAKE-48)はパディング末尾が0
         384 => self.message.push(0x00),
-        // BLAKE-512はパディング末尾が1
+        // BLAKE-512(BLAKE-64)はパディング末尾が1
         512 => self.message.push(0x01),
         _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
     }});

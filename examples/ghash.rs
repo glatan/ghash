@@ -9,6 +9,10 @@ fn main() {
         input.trim_end_matches('\n').as_bytes().to_owned()
     };
     println!("input: {:?}", input);
+    println!("BLAKE-28\t{:}", Blake28::hash_to_lowerhex(&input));
+    println!("BLAKE-32\t{:}", Blake32::hash_to_lowerhex(&input));
+    println!("BLAKE-48\t{:}", Blake48::hash_to_lowerhex(&input));
+    println!("BLAKE-64\t{:}", Blake64::hash_to_lowerhex(&input));
     println!("BLAKE-224\t{:}", Blake224::hash_to_lowerhex(&input));
     println!("BLAKE-256\t{:}", Blake256::hash_to_lowerhex(&input));
     println!("BLAKE-384\t{:}", Blake384::hash_to_lowerhex(&input));
