@@ -1,7 +1,7 @@
 use super::{Hash, Sha2};
 
 #[rustfmt::skip]
-pub const H256: [u32; 8] = [
+pub const IV256: [u32; 8] = [
     0x6A09_E667, 0xBB67_AE85, 0x3C6E_F372, 0xA54F_F53A,
     0x510E_527F, 0x9B05_688C, 0x1F83_D9AB, 0x5BE0_CD19,
 ];
@@ -13,7 +13,7 @@ impl Sha256 {
         Self(Sha2::<u32> {
             message: message.to_vec(),
             word_block: Vec::new(),
-            status: H256,
+            status: IV256,
         })
     }
 }

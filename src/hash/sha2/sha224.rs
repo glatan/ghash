@@ -1,7 +1,7 @@
 use super::{Hash, Sha2};
 
 #[rustfmt::skip]
-pub const H224: [u32; 8] = [
+pub const IV224: [u32; 8] = [
     0xC105_9ED8, 0x367C_D507, 0x3070_DD17, 0xF70_E5939,
     0xFFC0_0B31, 0x6858_1511, 0x64F9_8FA7, 0xBEF_A4FA4
 ];
@@ -13,7 +13,7 @@ impl Sha224 {
         Self(Sha2::<u32> {
             message: message.to_vec(),
             word_block: Vec::new(),
-            status: H224,
+            status: IV224,
         })
     }
 }
