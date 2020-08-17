@@ -35,7 +35,7 @@ impl Hash for Blake224 {
         blake224.0.message(message);
         blake224.0.set_counter();
         blake224.0.padding();
-        blake224.0.compress();
+        blake224.0.compress(14);
         blake224.0.h[0..7]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
