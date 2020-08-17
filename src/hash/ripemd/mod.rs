@@ -1,4 +1,4 @@
-use super::{Hash, Message};
+use super::Hash;
 
 mod ripemd128;
 mod ripemd160;

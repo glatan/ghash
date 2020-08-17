@@ -1,4 +1,4 @@
-use super::{Blake, Hash, Message};
+use super::{Blake, Hash};
 
 #[rustfmt::skip]
 const IV64: [u64; 8] = [
@@ -11,12 +11,6 @@ pub struct Blake64(Blake<u64>);
 impl Blake64 {
     pub fn new(message: &[u8]) -> Self {
         Self(Blake::<u64>::new(message, IV64, 512))
-    }
-}
-
-impl Message for Blake64 {
-    fn message(&mut self, message: &[u8]) {
-        self.0.message(message);
     }
 }
 

@@ -16,38 +16,6 @@ pub use sha0::Sha0;
 pub use sha1::Sha1;
 pub use sha2::{Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
 
-// Set Message
-#[macro_export(local)]
-macro_rules! impl_message {
-    ($self:ident, $LimitT:ty) => {
-            fn message(&mut $self, message: &[u8]) {
-                match message.len().checked_mul(8) {
-                    Some(_) => {
-                        // input bit length is less than usize::MAX
-                        match mem::size_of::<usize>().cmp(&mem::size_of::<$LimitT>()) {
-                            Ordering::Equal | Ordering::Less => {
-                                // input type limit is less than hash function limit
-                                $self.message = message.to_vec();
-                            }
-                            Ordering::Greater => {
-                                // input bit length is greater than the hash function limit length
-                                panic!(
-                                    "{} takes a input of any length less than 2^{} bits",
-                                    stringify!($SelfT),
-                                    mem::size_of::<$LimitT>()
-                                )
-                            }
-                        }
-                    }
-                    None => panic!(
-                        "{} * 8 is greeter than usize::MAX",
-                        mem::size_of::<$LimitT>()
-                    ),
-                }
-            }
-    };
-}
-
 // MD4 Style Padding
 #[macro_export(local)]
 macro_rules! impl_md4_padding {
@@ -129,14 +97,7 @@ macro_rules! impl_md4_padding {
     };
 }
 
-pub trait Message {
-    fn message(&mut self, message: &[u8]);
-}
-
-pub trait Hash<T = Self>
-where
-    T: Message,
-{
+pub trait Hash<T = Self> {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8>;
     fn hash_to_lowerhex(message: &[u8]) -> String {
         Self::hash_to_bytes(message)
@@ -155,7 +116,7 @@ where
 #[cfg(test)]
 trait Test<T = Self>
 where
-    T: Hash + Message,
+    T: Hash,
 {
     fn compare_bytes(message: &[u8], expected: &str) {
         fn hex_to_bytes(s: &str) -> Vec<u8> {

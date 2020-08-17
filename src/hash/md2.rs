@@ -1,7 +1,4 @@
-use super::{Hash, Message};
-use crate::impl_message;
-use std::cmp::Ordering;
-use std::mem;
+use super::Hash;
 
 const BLOCK_SIZE: usize = 16;
 const STABLE: [u8; 256] = [
@@ -26,9 +23,9 @@ pub struct Md2 {
 }
 
 impl Md2 {
-    pub const fn new() -> Self {
+    pub fn new(message: &[u8]) -> Self {
         Self {
-            message: Vec::new(),
+            message: message.to_vec(),
             state: [0; 48],
         }
     }
@@ -73,15 +70,9 @@ impl Md2 {
     }
 }
 
-impl Message for Md2 {
-    // Set Message
-    impl_message!(self, usize);
-}
-
 impl Hash for Md2 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut md2 = Self::new();
-        md2.message(message);
+        let mut md2 = Self::new(message);
         md2.padding();
         md2.add_check_sum();
         md2.compress();
