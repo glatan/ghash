@@ -1,7 +1,6 @@
-use super::{Hash, Message};
-use crate::{impl_md4_padding, impl_message};
+use super::Hash;
+use crate::impl_md4_padding;
 use std::cmp::Ordering;
-use std::mem;
 
 // Round1/2 submission version
 mod blake28;
@@ -81,11 +80,11 @@ impl Blake<u32> {
             message: message.to_vec(),
             word_block: Vec::new(),
             salt: [0; 4],
-            l: l,
-            h: h,
+            l,
+            h,
             t: [0; 2],
             v: [0; 16],
-            bit: bit,
+            bit,
         }
     }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
@@ -112,7 +111,7 @@ impl Blake<u32> {
         // Compress 1 block in 1 loop
         for n in 0..(self.word_block.len() / 16) {
             // initialize counter
-            self.t[0] = (self.t[0] + self.l[n] as u32) & 0xFFFF_FFFF;
+            self.t[0] += self.l[n] as u32;
             if self.t[0] == 0 {
                 self.t[1] += 1;
             }
@@ -155,8 +154,6 @@ impl Blake<u32> {
 }
 
 impl Blake<u32> {
-    // Set Message
-    impl_message!(self, u64);
     // Padding
     impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 54, {match self.bit {
         // BLAKE-224(BLAKE-28)はパディング末尾が0
@@ -182,11 +179,11 @@ impl Blake<u64> {
             message: message.to_vec(),
             word_block: Vec::new(),
             salt: [0; 4],
-            l: l,
-            h: h,
+            l,
+            h,
             t: [0; 2],
             v: [0; 16],
-            bit: bit,
+            bit,
         }
     }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
@@ -213,7 +210,7 @@ impl Blake<u64> {
         // Compress 1 block in 1 loop
         for n in 0..(self.word_block.len() / 16) {
             // initialize counter
-            self.t[0] = (self.t[0] + self.l[n] as u64) & 0xFFFFFFFF_FFFFFFFF;
+            self.t[0] += self.l[n] as u64;
             if self.t[0] == 0 {
                 self.t[1] += 1;
             }
@@ -256,8 +253,6 @@ impl Blake<u64> {
 }
 
 impl Blake<u64> {
-    // Set Message
-    impl_message!(self, u128);
     // Padding
     impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 110, {match self.bit {
         // BLAKE-384(BLAKE-48)はパディング末尾が0

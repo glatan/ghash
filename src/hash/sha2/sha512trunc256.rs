@@ -1,4 +1,4 @@
-use super::{Hash, Message, Sha2};
+use super::{Hash, Sha2};
 
 #[rustfmt::skip]
 pub const H512_TRUNC_256: [u64; 8] = [
@@ -9,25 +9,18 @@ pub const H512_TRUNC_256: [u64; 8] = [
 pub struct Sha512Trunc256(Sha2<u64>);
 
 impl Sha512Trunc256 {
-    pub const fn new() -> Self {
+    pub fn new(message: &[u8]) -> Self {
         Self(Sha2::<u64> {
-            message: Vec::new(),
+            message: message.to_vec(),
             word_block: Vec::new(),
             status: H512_TRUNC_256,
         })
     }
 }
 
-impl Message for Sha512Trunc256 {
-    fn message(&mut self, message: &[u8]) {
-        self.0.message(message)
-    }
-}
-
 impl Hash for Sha512Trunc256 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha512trunc256 = Self::new();
-        sha512trunc256.0.message(message);
+        let mut sha512trunc256 = Self::new(message);
         sha512trunc256.0.padding();
         sha512trunc256.0.compress();
         sha512trunc256.0.status[0..4]

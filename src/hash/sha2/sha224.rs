@@ -1,4 +1,4 @@
-use super::{Hash, Message, Sha2};
+use super::{Hash, Sha2};
 
 #[rustfmt::skip]
 pub const H224: [u32; 8] = [
@@ -9,25 +9,18 @@ pub const H224: [u32; 8] = [
 pub struct Sha224(Sha2<u32>);
 
 impl Sha224 {
-    pub const fn new() -> Self {
+    pub fn new(message: &[u8]) -> Self {
         Self(Sha2::<u32> {
-            message: Vec::new(),
+            message: message.to_vec(),
             word_block: Vec::new(),
             status: H224,
         })
     }
 }
 
-impl Message for Sha224 {
-    fn message(&mut self, message: &[u8]) {
-        self.0.message(message)
-    }
-}
-
 impl Hash for Sha224 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha224 = Self::new();
-        sha224.0.message(message);
+        let mut sha224 = Self::new(message);
         sha224.0.padding();
         sha224.0.compress();
         sha224.0.status[0..7]

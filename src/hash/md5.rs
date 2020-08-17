@@ -1,7 +1,6 @@
-use super::{Hash, Message};
-use crate::{impl_md4_padding, impl_message};
+use super::Hash;
+use crate::impl_md4_padding;
 use std::cmp::Ordering;
-use std::mem;
 
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
@@ -80,9 +79,9 @@ pub struct Md5 {
 }
 
 impl Md5 {
-    pub const fn new() -> Self {
+    pub fn new(message: &[u8]) -> Self {
         Self {
-            message: Vec::new(),
+            message: message.to_vec(),
             word_block: Vec::new(),
             status: WORD_BUFFER,
         }
@@ -186,15 +185,9 @@ impl Md5 {
     impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
 }
 
-impl Message for Md5 {
-    // Set Message
-    impl_message!(self, u64);
-}
-
 impl Hash for Md5 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut md5 = Self::new();
-        md5.message(message);
+        let mut md5 = Self::new(message);
         md5.padding();
         md5.compress();
         md5.status[0..4]

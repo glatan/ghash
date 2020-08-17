@@ -1,8 +1,7 @@
+use super::Hash;
 use super::{f, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use super::{Hash, Message};
-use crate::{impl_md4_padding, impl_message};
+use crate::impl_md4_padding;
 use std::cmp::Ordering;
-use std::mem;
 
 #[rustfmt::skip]
 const H320: [u32; 10] = [
@@ -17,9 +16,9 @@ pub struct Ripemd320 {
 }
 
 impl Ripemd320 {
-    pub const fn new() -> Self {
+    pub fn new(message: &[u8]) -> Self {
         Self {
-            message: Vec::new(),
+            message: message.to_vec(),
             word_block: Vec::new(),
             status: H320,
         }
@@ -105,15 +104,9 @@ impl Ripemd320 {
     impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
 }
 
-impl Message for Ripemd320 {
-    // Set Message
-    impl_message!(self, u64);
-}
-
 impl Hash for Ripemd320 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut ripemd320 = Self::new();
-        ripemd320.message(message);
+        let mut ripemd320 = Self::new(message);
         ripemd320.padding();
         ripemd320.compress();
         ripemd320

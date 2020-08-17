@@ -1,8 +1,7 @@
+use super::Hash;
 use super::{f, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use super::{Hash, Message};
-use crate::{impl_md4_padding, impl_message};
+use crate::impl_md4_padding;
 use std::cmp::Ordering;
-use std::mem;
 
 const H160: [u32; 5] = [
     0x6745_2301,
@@ -19,9 +18,9 @@ pub struct Ripemd160 {
 }
 
 impl Ripemd160 {
-    pub const fn new() -> Self {
+    pub fn new(message: &[u8]) -> Self {
         Self {
-            message: Vec::new(),
+            message: message.to_vec(),
             word_block: Vec::new(),
             status: H160,
         }
@@ -70,15 +69,9 @@ impl Ripemd160 {
     impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
 }
 
-impl Message for Ripemd160 {
-    // Set Message
-    impl_message!(self, u64);
-}
-
 impl Hash for Ripemd160 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut ripemd160 = Self::new();
-        ripemd160.message(message);
+        let mut ripemd160 = Self::new(message);
         ripemd160.padding();
         ripemd160.compress();
         ripemd160
