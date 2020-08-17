@@ -30,6 +30,8 @@ cache:
 stable-i686-unknown-linux-gnu:
   stage: test
   image: i386/rust:slim-buster
+  before_script:
+    - linux32 rustc --version
   script:
     - linux32 cargo test --verbose --target i686-unknown-linux-gnu
 
