@@ -1,7 +1,7 @@
 use super::{Blake, Hash, Message};
 
 #[rustfmt::skip]
-const H256: [u32; 8] = [
+const IV256: [u32; 8] = [
     0x6A09_E667, 0xBB67_AE85, 0x3C6E_F372, 0xA54F_F53A,
     0x510E_527F, 0x9B05_688C, 0x1F83_D9AB, 0x5BE0_CD19
 ];
@@ -9,17 +9,8 @@ const H256: [u32; 8] = [
 pub struct Blake256(Blake<u32>);
 
 impl Blake256 {
-    pub const fn new() -> Self {
-        Self(Blake::<u32> {
-            message: Vec::new(),
-            word_block: Vec::new(),
-            salt: [0; 4],
-            l: 0,
-            h: H256,
-            t: [0; 2],
-            v: [0; 16],
-            bit: 256,
-        })
+    pub fn new(message: &[u8]) -> Self {
+        Self(Blake::<u32>::new(message, IV256, 256))
     }
 }
 
@@ -31,9 +22,7 @@ impl Message for Blake256 {
 
 impl Hash for Blake256 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut blake256 = Self::new();
-        blake256.0.message(message);
-        blake256.0.set_counter();
+        let mut blake256 = Self::new(message);
         blake256.0.padding();
         blake256.0.compress(14);
         blake256

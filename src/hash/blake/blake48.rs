@@ -1,7 +1,7 @@
 use super::{Blake, Hash, Message};
 
 #[rustfmt::skip]
-const H48: [u64; 8] = [
+const IV48: [u64; 8] = [
     0xCBBB_9D5D_C105_9ED8, 0x629A_292A_367C_D507, 0x9159_015A_3070_DD17, 0x152F_ECD8_F70E_5939,
     0x6733_2667_FFC0_0B31, 0x8EB4_4A87_6858_1511, 0xDB0C_2E0D_64F9_8FA7, 0x47B5_481D_BEFA_4FA4
 ];
@@ -9,17 +9,8 @@ const H48: [u64; 8] = [
 pub struct Blake48(Blake<u64>);
 
 impl Blake48 {
-    pub const fn new() -> Self {
-        Self(Blake::<u64> {
-            message: Vec::new(),
-            word_block: Vec::new(),
-            salt: [0; 4],
-            l: 0,
-            h: H48,
-            t: [0; 2],
-            v: [0; 16],
-            bit: 384,
-        })
+    pub fn new(message: &[u8]) -> Self {
+        Self(Blake::<u64>::new(message, IV48, 384))
     }
 }
 
@@ -31,9 +22,7 @@ impl Message for Blake48 {
 
 impl Hash for Blake48 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut blake48 = Self::new();
-        blake48.0.message(message);
-        blake48.0.set_counter();
+        let mut blake48 = Self::new(message);
         blake48.0.padding();
         blake48.0.compress(14);
         blake48.0.h[0..6]
