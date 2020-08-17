@@ -9,17 +9,8 @@ const H64: [u64; 8] = [
 pub struct Blake64(Blake<u64>);
 
 impl Blake64 {
-    pub const fn new() -> Self {
-        Self(Blake::<u64> {
-            message: Vec::new(),
-            word_block: Vec::new(),
-            salt: [0; 4],
-            l: 0,
-            h: H64,
-            t: [0; 2],
-            v: [0; 16],
-            bit: 512,
-        })
+    pub fn new(message: &[u8]) -> Self {
+        Self(Blake::<u64>::new(message, H64, 512))
     }
 }
 
@@ -31,9 +22,7 @@ impl Message for Blake64 {
 
 impl Hash for Blake64 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut blake64 = Self::new();
-        blake64.0.message(message);
-        blake64.0.set_counter();
+        let mut blake64 = Self::new(message);
         blake64.0.padding();
         blake64.0.compress(14);
         blake64
