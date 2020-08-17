@@ -1,7 +1,7 @@
 use super::{Blake, Hash, Message};
 
 #[rustfmt::skip]
-const H224: [u32; 8] = [
+const IV224: [u32; 8] = [
     0xC105_9ED8, 0x367C_D507, 0x3070_DD17, 0xF70E_5939,
     0xFFC0_0B31, 0x6858_1511, 0x64F9_8FA7, 0xBEF_A4FA4
 ];
@@ -10,7 +10,7 @@ pub struct Blake224(Blake<u32>);
 
 impl Blake224 {
     pub fn new(message: &[u8]) -> Self {
-        Self(Blake::<u32>::new(message, H224, 224))
+        Self(Blake::<u32>::new(message, IV224, 224))
     }
 }
 
