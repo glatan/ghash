@@ -31,7 +31,7 @@ mod tests {
     use super::Blake28;
     use crate::hash::Test;
     impl Test for Blake28 {}
-    const TEST_CASES: [(&[u8], &str); 2] = [
+    const TEST_CASES: [(&[u8], &str); 5] = [
         // https://ehash.iaik.tugraz.at/uploads/0/06/Blake.pdf
         (
             &[0; 1],
@@ -40,6 +40,18 @@ mod tests {
         (
             &[0; 72],
             "6ec8d4b0feaeb49450e172234c0b178e795bdc18d22420a85b6f9bb9",
+        ),
+        (
+            &[0; 54],
+            "72f2b5e6856522009185d308ce01ab3a40ce81e150b20eabb3b2377e",
+        ),
+        (
+            &[0; 56],
+            "b37eb794a950bc1b49666902d0bf5c90187aca4a9d1fd16c588858d4",
+        ),
+        (
+            &[0; 55],
+            "895406f150844ec6e96da9859c1301299970735414a286b4b1e053f1",
         ),
     ];
     #[test]

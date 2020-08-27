@@ -33,7 +33,7 @@ mod tests {
     use super::Blake32;
     use crate::hash::Test;
     impl Test for Blake32 {}
-    const TEST_CASES: [(&[u8], &str); 2] = [
+    const TEST_CASES: [(&[u8], &str); 5] = [
         // https://ehash.iaik.tugraz.at/uploads/0/06/Blake.pdf
         (
             &[0; 1],
@@ -42,6 +42,18 @@ mod tests {
         (
             &[0; 72],
             "8a638488c318c5a8222a1813174c36b4bb66e45b09afddfd7f2b2fe3161b7a6d",
+        ),
+        (
+            &[0; 54],
+            "e48be2d65ce7e11d46154b9559f819e41b4219b550e682d06fcffebfdf7c8859",
+        ),
+        (
+            &[0; 55],
+            "a23e90be90c71273fb1ffb4b04eca3da0d78f63b6562c9b38e27230469e2eb2d",
+        ),
+        (
+            &[0; 56],
+            "3afca2602886add57dd78991e2a86806b76627abb6c8c46cdbaeff937ae10adf",
         ),
     ];
     #[test]
