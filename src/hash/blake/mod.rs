@@ -58,35 +58,60 @@ struct Blake<T> {
     message: Vec<u8>,
     word_block: Vec<T>,
     salt: [T; 4],
-    l: Vec<usize>, // length: 各ブロックのビット数(パディングビットのみのブロックのビット数は、一つ前のブロックのビット数に加算し、そのワードのビット数は0とする。)
+    l: usize, // 未処理のビット数
     h: [T; 8],
     t: [T; 2],  // counter: 処理したビット数(と次に処理をするブロックのビット数?)
     v: [T; 16], // state
-    bit: usize, // padding macro用
+    bit: usize, // padding時の判別用
 }
 
 impl Blake<u32> {
     pub fn new(message: &[u8], h: [u32; 8], bit: usize) -> Self {
-        let mut l = vec![512; message.len() / 64];
-        match (message.len() % 64).cmp(&54) {
-            Ordering::Equal => l.push(54 * 8),
-            Ordering::Less => l.push((message.len() % 64) * 8),
-            Ordering::Greater => {
-                l[message.len() - 1] += (message.len() % 64) * 8;
-                l.push(0);
-            }
-        }
         Self {
             message: message.to_vec(),
             word_block: Vec::new(),
             salt: [0; 4],
-            l,
+            l: message.len() * 8,
             h,
             t: [0; 2],
             v: [0; 16],
             bit,
         }
     }
+    // fn padding(&mut self) {
+    //     // Padding(10000000...00000000)
+    //     self.message.push(0x80);
+    //     match (self.message.len() % 64).cmp(&55) {
+    //         Ordering::Greater => {
+    //             self.message
+    //                 .append(&mut vec![0; 64 + 55 - (self.message.len() % 64)]);
+    //         }
+    //         Ordering::Less => {
+    //             self.message
+    //                 .append(&mut vec![0; 55 - (self.message.len() % 64)]);
+    //         }
+    //         Ordering::Equal => (),
+    //     }
+    //     match self.bit {
+    //         // BLAKE-224(BLAKE-28)は0を付与
+    //         224 => self.message.push(0x00),
+    //         // BLAKE-256(BLAKE-32)は1を付与
+    //         256 => self.message.push(0x01),
+    //         _ => panic!("Invalid bit: BLAKE-{} dose not defined", self.bit),
+    //     }
+    //     // 入力データの長さを追加
+    //     self.message
+    //         .append(&mut (self.l as u64).to_be_bytes().to_vec());
+    //     // バイト列からワードブロックを生成
+    //     for i in (0..self.message.len()).filter(|i| i % 4 == 0) {
+    //         self.word_block.push(u32::from_be_bytes([
+    //             self.message[i],
+    //             self.message[i + 1],
+    //             self.message[i + 2],
+    //             self.message[i + 3],
+    //         ]));
+    //     }
+    // }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
     fn g(&mut self, n: usize, i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
         // a,b,c,d: index of self.v
@@ -110,10 +135,13 @@ impl Blake<u32> {
         // Compress blocks(1 block == 16 words, 1 word == 32 bit)
         // Compress 1 block in 1 loop
         for n in 0..(self.word_block.len() / 16) {
-            // initialize counter
-            self.t[0] += self.l[n] as u32;
-            if self.t[0] == 0 {
-                self.t[1] += 1;
+            // update counter
+            if self.l <= 512 {
+                self.t[0] += self.l as u32;
+                self.l = 0;
+            } else {
+                self.t[0] += 512;
+                self.l -= 512;
             }
             // initialize state
             self.v = [
@@ -166,20 +194,11 @@ impl Blake<u32> {
 
 impl Blake<u64> {
     pub fn new(message: &[u8], h: [u64; 8], bit: usize) -> Self {
-        let mut l = vec![1024; message.len() / 128];
-        match (message.len() % 128).cmp(&110) {
-            Ordering::Equal => l.push(110 * 8),
-            Ordering::Less => l.push((message.len() % 128) * 8),
-            Ordering::Greater => {
-                l[message.len() - 1] += (message.len() % 128) * 8;
-                l.push(0);
-            }
-        }
         Self {
             message: message.to_vec(),
             word_block: Vec::new(),
             salt: [0; 4],
-            l,
+            l: message.len() * 8,
             h,
             t: [0; 2],
             v: [0; 16],
@@ -209,10 +228,13 @@ impl Blake<u64> {
         // Compress blocks(1 block == 16 words, 1 word == 64 bit)
         // Compress 1 block in 1 loop
         for n in 0..(self.word_block.len() / 16) {
-            // initialize counter
-            self.t[0] += self.l[n] as u64;
-            if self.t[0] == 0 {
-                self.t[1] += 1;
+            // update counter
+            if self.l <= 1024 {
+                self.t[0] += self.l as u64;
+                self.l = 0;
+            } else {
+                self.t[0] += 1024;
+                self.l -= 1024;
             }
             // initialize state
             self.v = [
