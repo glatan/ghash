@@ -19,13 +19,25 @@ pub use sha2::{Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
 // MD4 Style Padding
 #[macro_export(local)]
 macro_rules! impl_md4_padding {
+    // from_bytes
+    //// from_be_bytes: SHA-{0, 1, 2}, BLAKE
+    //// from_le_bytes: Others
+    // to_bytes
+    //// to_be_bytes: SHA-{0, 1, 2}, BLAKE
+    //// to_le_bytes: Others
+    // padding_base [byte]
+    //// BLAKE: 64 - 8(message_length) - 1(0x80) - 1(0x00 or 0x01) = 54
+    //// Others: 64 - 8(message_length) - 1(0x80) = 55
+    // optional_padding(after appending 0x80 and zeros, before appending message length)
+    //// BLAKE
+    //// BLAKE-224(24) => push 0x00
+    //// BLAKE-256(32) => push 0x01
+    //// Others(None)
     (u32 => $self:ident, $from_bytes:ident, $to_bytes:ident, $padding_base:expr, $optional_padding:block) => {
         fn padding(&mut $self) {
             let message_length = $self.message.len();
-            // 入力末尾に0x80を追加(0b1000_0000)
+            // append 0b1000_0000
             $self.message.push(0x80);
-            // padding_base [byte]: 64 - 8(message_length) - 1(0x80) - 1(0x00 or 0x01) = 54 => BLAKE
-            // padding_base [byte]: 64 - 8(message_length) - 1(0x80) = 55 => Others
             match (message_length % 64).cmp(&$padding_base) {
                 Ordering::Greater => {
                     $self.message.append(&mut vec![0; 64 + $padding_base - (message_length % 64)]);
@@ -35,13 +47,10 @@ macro_rules! impl_md4_padding {
                 }
                 Ordering::Equal => (),
             }
-            // for BLAKE padding
-            // BLAKE-224 => push 0x00
-            // BLAKE-256 => push 0x01
             $optional_padding
-            // 入力データの長さを追加
+            // append message length
             $self.message.append(&mut (8 * message_length as u64).$to_bytes().to_vec());
-            // バイト列からワードブロックを生成
+            // create 32 bit-words from input bytes(and appending bytes)
             for i in (0..$self.message.len()).filter(|i| i % 4 == 0) {
                 $self.word_block.push(u32::$from_bytes([
                     $self.message[i],
@@ -52,13 +61,25 @@ macro_rules! impl_md4_padding {
             }
         }
     };
+    // from_bytes
+    //// from_be_bytes: SHA-{0, 1, 2}, BLAKE
+    //// from_le_bytes: Others
+    // to_bytes
+    //// to_be_bytes: SHA-{0, 1, 2}, BLAKE
+    //// to_le_bytes: Others
+    // padding_base [byte]
+    //// BLAKE: 128 - 16(input_length) - 1(0x80) - 1(0x00 or 0x01)= 110
+    //// Others: 128 - 16(input_length) - 1(0x80) = 111
+    // optional_padding(after appending 0x80 and zeros, before appending message length)
+    //// BLAKE
+    //// BLAKE-384(48) => push 0x00
+    //// BLAKE-512(64) => push 0x01
+    //// Others(None)
     (u64 => $self:ident, $from_bytes:ident, $to_bytes:ident, $padding_base:expr, $optional_padding:block) => {
         fn padding(&mut $self) {
             let message_length = $self.message.len();
-            // word_block末尾に0x80を追加(0b1000_0000)
+            // append 0b1000_0000
             $self.message.push(0x80);
-            // padding_base [byte]: 128 - 16(input_length) - 1(0x80) - 1(0x00 or 0x01)= 110 => BLAKE
-            // padding_base [byte]: 128 - 16(input_length) - 1(0x80) = 111 => Others
             match (message_length % 128).cmp(&$padding_base) {
                 Ordering::Greater => {
                     $self.message.append(&mut vec![0; 128 + $padding_base - (message_length % 128)]);
@@ -68,13 +89,10 @@ macro_rules! impl_md4_padding {
                 }
                 Ordering::Equal => (),
             }
-            // for BLAKE padding
-            // BLAKE-384 => push 0x00
-            // BLAKE-512 => push 0x01
             $optional_padding
-            // 入力データの長さを追加
+            // append message length
             $self.message.append(&mut (8 * message_length as u128).$to_bytes().to_vec());
-            // 64bitワードにしてpush
+            // create 64 bit-words from input bytes(and appending bytes)
             for i in (0..$self.message.len()).filter(|i| i % 8 == 0) {
                 $self.word_block.push(u64::$from_bytes([
                     $self.message[i],
