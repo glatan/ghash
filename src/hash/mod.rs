@@ -24,16 +24,14 @@ macro_rules! impl_md4_padding {
             let message_length = $self.message.len();
             // 入力末尾に0x80を追加(0b1000_0000)
             $self.message.push(0x80);
-            // [byte]: 64 - 8(message_length) - 1(0x80) - 1(0x00 or 0x01) = 54 => BLAKE
-            // [byte]: 64 - 8(message_length) - 1(0x80) = 55 => Others
-            let padding_length = $padding_base - (message_length as i128);
-            match padding_length.cmp(&0) {
+            // padding_base [byte]: 64 - 8(message_length) - 1(0x80) - 1(0x00 or 0x01) = 54 => BLAKE
+            // padding_base [byte]: 64 - 8(message_length) - 1(0x80) = 55 => Others
+            match (message_length % 64).cmp(&$padding_base) {
                 Ordering::Greater => {
-                    $self.message.append(&mut vec![0; padding_length as usize]);
+                    $self.message.append(&mut vec![0; 64 + $padding_base - (message_length % 64)]);
                 }
                 Ordering::Less => {
-                    $self.message
-                        .append(&mut vec![0; 64 - (padding_length.abs() % 64) as usize]);
+                    $self.message.append(&mut vec![0; $padding_base - (message_length % 64)]);
                 }
                 Ordering::Equal => (),
             }
@@ -42,8 +40,7 @@ macro_rules! impl_md4_padding {
             // BLAKE-256 => push 0x01
             $optional_padding
             // 入力データの長さを追加
-            $self.message
-                .append(&mut (8 * message_length as u64).$to_bytes().to_vec());
+            $self.message.append(&mut (8 * message_length as u64).$to_bytes().to_vec());
             // バイト列からワードブロックを生成
             for i in (0..$self.message.len()).filter(|i| i % 4 == 0) {
                 $self.word_block.push(u32::$from_bytes([
@@ -57,19 +54,17 @@ macro_rules! impl_md4_padding {
     };
     (u64 => $self:ident, $from_bytes:ident, $to_bytes:ident, $padding_base:expr, $optional_padding:block) => {
         fn padding(&mut $self) {
-            let input_length = $self.message.len();
+            let message_length = $self.message.len();
             // word_block末尾に0x80を追加(0b1000_0000)
             $self.message.push(0x80);
-            // [byte]: 128 - 16(input_length) - 1(0x80) - 1(0x00 or 0x00)= 110 => BLAKE
-            // [byte]: 128 - 16(input_length) - 1(0x80) = 111 => Others
-            let padding_length = $padding_base - (input_length as i128);
-            match padding_length.cmp(&0) {
+            // padding_base [byte]: 128 - 16(input_length) - 1(0x80) - 1(0x00 or 0x01)= 110 => BLAKE
+            // padding_base [byte]: 128 - 16(input_length) - 1(0x80) = 111 => Others
+            match (message_length % 128).cmp(&$padding_base) {
                 Ordering::Greater => {
-                    $self.message.append(&mut vec![0; padding_length as usize]);
+                    $self.message.append(&mut vec![0; 128 + $padding_base - (message_length % 128)]);
                 }
                 Ordering::Less => {
-                    $self.message
-                        .append(&mut vec![0; 128 - (padding_length.abs() % 128) as usize]);
+                    $self.message.append(&mut vec![0; $padding_base - (message_length % 128)]);
                 }
                 Ordering::Equal => (),
             }
@@ -78,8 +73,7 @@ macro_rules! impl_md4_padding {
             // BLAKE-512 => push 0x01
             $optional_padding
             // 入力データの長さを追加
-            $self.message
-                .append(&mut (8 * input_length as u128).$to_bytes().to_vec());
+            $self.message.append(&mut (8 * message_length as u128).$to_bytes().to_vec());
             // 64bitワードにしてpush
             for i in (0..$self.message.len()).filter(|i| i % 8 == 0) {
                 $self.word_block.push(u64::$from_bytes([
