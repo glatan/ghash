@@ -1,5 +1,4 @@
 use super::Hash;
-use crate::impl_md4_padding;
 use std::cmp::Ordering;
 
 // Round1/2 submission version
@@ -62,11 +61,11 @@ struct Blake<T> {
     h: [T; 8],
     t: [T; 2],  // counter: 処理したビット数(と次に処理をするブロックのビット数?)
     v: [T; 16], // state
-    bit: usize, // padding時の判別用
+    ignore_counter: bool,
 }
 
 impl Blake<u32> {
-    pub fn new(message: &[u8], h: [u32; 8], bit: usize) -> Self {
+    pub fn new(message: &[u8], h: [u32; 8]) -> Self {
         Self {
             message: message.to_vec(),
             word_block: Vec::new(),
@@ -75,43 +74,48 @@ impl Blake<u32> {
             h,
             t: [0; 2],
             v: [0; 16],
-            bit,
+            ignore_counter: false,
         }
     }
-    // fn padding(&mut self) {
-    //     // Padding(10000000...00000000)
-    //     self.message.push(0x80);
-    //     match (self.message.len() % 64).cmp(&55) {
-    //         Ordering::Greater => {
-    //             self.message
-    //                 .append(&mut vec![0; 64 + 55 - (self.message.len() % 64)]);
-    //         }
-    //         Ordering::Less => {
-    //             self.message
-    //                 .append(&mut vec![0; 55 - (self.message.len() % 64)]);
-    //         }
-    //         Ordering::Equal => (),
-    //     }
-    //     match self.bit {
-    //         // BLAKE-224(BLAKE-28)は0を付与
-    //         224 => self.message.push(0x00),
-    //         // BLAKE-256(BLAKE-32)は1を付与
-    //         256 => self.message.push(0x01),
-    //         _ => panic!("Invalid bit: BLAKE-{} dose not defined", self.bit),
-    //     }
-    //     // 入力データの長さを追加
-    //     self.message
-    //         .append(&mut (self.l as u64).to_be_bytes().to_vec());
-    //     // バイト列からワードブロックを生成
-    //     for i in (0..self.message.len()).filter(|i| i % 4 == 0) {
-    //         self.word_block.push(u32::from_be_bytes([
-    //             self.message[i],
-    //             self.message[i + 1],
-    //             self.message[i + 2],
-    //             self.message[i + 3],
-    //         ]));
-    //     }
-    // }
+    fn padding(&mut self, last_byte: u8) {
+        let message_length = self.message.len();
+        // 64 - 1(0x80) - 8(message_length) = 55
+        match (message_length % 64).cmp(&55) {
+            Ordering::Greater => {
+                self.message.push(0x80);
+                self.message
+                    .append(&mut vec![0; 64 + 54 - (message_length % 64)]);
+                self.message.push(last_byte);
+            }
+            Ordering::Less => {
+                self.message.push(0x80);
+                self.message
+                    .append(&mut vec![0; 54 - (message_length % 64)]);
+                self.message.push(last_byte);
+            }
+            Ordering::Equal => {
+                if last_byte == 0x00 {
+                    self.message.push(0x80);
+                } else if last_byte == 0x01 {
+                    self.message.push(0x81);
+                } else {
+                    unreachable!();
+                }
+            }
+        }
+        // append message length
+        self.message
+            .append(&mut (8 * message_length as u64).to_be_bytes().to_vec());
+        // create 32 bit-words from input bytes(and appending bytes)
+        for i in (0..self.message.len()).filter(|i| i % 4 == 0) {
+            self.word_block.push(u32::from_be_bytes([
+                self.message[i],
+                self.message[i + 1],
+                self.message[i + 2],
+                self.message[i + 3],
+            ]));
+        }
+    }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
     fn g(&mut self, n: usize, i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
         // a,b,c,d: index of self.v
@@ -144,24 +148,30 @@ impl Blake<u32> {
                 self.l -= 512;
             }
             // initialize state
-            self.v = [
-                self.h[0],
-                self.h[1],
-                self.h[2],
-                self.h[3],
-                self.h[4],
-                self.h[5],
-                self.h[6],
-                self.h[7],
-                self.salt[0] ^ C32[0],
-                self.salt[1] ^ C32[1],
-                self.salt[2] ^ C32[2],
-                self.salt[3] ^ C32[3],
-                self.t[0] ^ C32[4],
-                self.t[0] ^ C32[5],
-                self.t[1] ^ C32[6],
-                self.t[1] ^ C32[7],
-            ];
+            self.v[0] = self.h[0];
+            self.v[1] = self.h[1];
+            self.v[2] = self.h[2];
+            self.v[3] = self.h[3];
+            self.v[4] = self.h[4];
+            self.v[5] = self.h[5];
+            self.v[6] = self.h[6];
+            self.v[7] = self.h[7];
+            self.v[8] = self.salt[0] ^ C32[0];
+            self.v[9] = self.salt[1] ^ C32[1];
+            self.v[10] = self.salt[2] ^ C32[2];
+            self.v[11] = self.salt[3] ^ C32[3];
+            // ブロック数が2以上かつ最後のブロックの処理時にカウンター(l)が0のときはこうするらしい(仕様書内に対応する記述を見つけられていない)。
+            if self.ignore_counter {
+                self.v[12] = C32[4];
+                self.v[13] = C32[5];
+                self.v[14] = C32[6];
+                self.v[15] = C32[7];
+            } else {
+                self.v[12] = self.t[0] ^ C32[4];
+                self.v[13] = self.t[0] ^ C32[5];
+                self.v[14] = self.t[1] ^ C32[6];
+                self.v[15] = self.t[1] ^ C32[7];
+            }
             // round
             for r in 0..round_limit {
                 self.g(n, 0, r, 0, 4, 8, 12);
@@ -177,23 +187,16 @@ impl Blake<u32> {
             for i in 0..8 {
                 self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
             }
+            // if next l == 0
+            if self.l == 0 && n < (self.word_block.len() / 16) {
+                self.ignore_counter = true;
+            }
         }
     }
 }
 
-impl Blake<u32> {
-    // Padding
-    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 54, {match self.bit {
-        // BLAKE-224(BLAKE-28)はパディング末尾が0
-        224 => self.message.push(0x00),
-        // BLAKE-256(BLAKE-32)はパディング末尾が1
-        256 => self.message.push(0x01),
-        _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
-    }});
-}
-
 impl Blake<u64> {
-    pub fn new(message: &[u8], h: [u64; 8], bit: usize) -> Self {
+    pub fn new(message: &[u8], h: [u64; 8]) -> Self {
         Self {
             message: message.to_vec(),
             word_block: Vec::new(),
@@ -202,7 +205,51 @@ impl Blake<u64> {
             h,
             t: [0; 2],
             v: [0; 16],
-            bit,
+            ignore_counter: false,
+        }
+    }
+    fn padding(&mut self, last_byte: u8) {
+        let message_length = self.message.len();
+        // append 0b1000_0000
+        // 128 - 1(0x80) - 16(message_length) = 111
+        match (message_length % 128).cmp(&111) {
+            Ordering::Greater => {
+                self.message.push(0x80);
+                self.message
+                    .append(&mut vec![0; 128 + 110 - (message_length % 128)]);
+                self.message.push(last_byte);
+            }
+            Ordering::Less => {
+                self.message.push(0x80);
+                self.message
+                    .append(&mut vec![0; 110 - (message_length % 128)]);
+                self.message.push(last_byte);
+            }
+            Ordering::Equal => {
+                if last_byte == 0x00 {
+                    self.message.push(0x80);
+                } else if last_byte == 0x01 {
+                    self.message.push(0x81);
+                } else {
+                    unreachable!();
+                }
+            }
+        }
+        // append message length
+        self.message
+            .append(&mut (8 * message_length as u128).to_be_bytes().to_vec());
+        // create 64 bit-words from input bytes(and appending bytes)
+        for i in (0..self.message.len()).filter(|i| i % 8 == 0) {
+            self.word_block.push(u64::from_be_bytes([
+                self.message[i],
+                self.message[i + 1],
+                self.message[i + 2],
+                self.message[i + 3],
+                self.message[i + 4],
+                self.message[i + 5],
+                self.message[i + 6],
+                self.message[i + 7],
+            ]));
         }
     }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
@@ -237,24 +284,30 @@ impl Blake<u64> {
                 self.l -= 1024;
             }
             // initialize state
-            self.v = [
-                self.h[0],
-                self.h[1],
-                self.h[2],
-                self.h[3],
-                self.h[4],
-                self.h[5],
-                self.h[6],
-                self.h[7],
-                self.salt[0] ^ C64[0],
-                self.salt[1] ^ C64[1],
-                self.salt[2] ^ C64[2],
-                self.salt[3] ^ C64[3],
-                self.t[0] ^ C64[4],
-                self.t[0] ^ C64[5],
-                self.t[1] ^ C64[6],
-                self.t[1] ^ C64[7],
-            ];
+            self.v[0] = self.h[0];
+            self.v[1] = self.h[1];
+            self.v[2] = self.h[2];
+            self.v[3] = self.h[3];
+            self.v[4] = self.h[4];
+            self.v[5] = self.h[5];
+            self.v[6] = self.h[6];
+            self.v[7] = self.h[7];
+            self.v[8] = self.salt[0] ^ C64[0];
+            self.v[9] = self.salt[1] ^ C64[1];
+            self.v[10] = self.salt[2] ^ C64[2];
+            self.v[11] = self.salt[3] ^ C64[3];
+            // ブロック数が2以上かつ最後のブロックの処理時にカウンター(l)が0のときはこうするらしい(仕様書内に対応する記述を見つけられていない)。
+            if self.ignore_counter {
+                self.v[12] = C64[4];
+                self.v[13] = C64[5];
+                self.v[14] = C64[6];
+                self.v[15] = C64[7];
+            } else {
+                self.v[12] = self.t[0] ^ C64[4];
+                self.v[13] = self.t[0] ^ C64[5];
+                self.v[14] = self.t[1] ^ C64[6];
+                self.v[15] = self.t[1] ^ C64[7];
+            }
             // round
             for r in 0..round_limit {
                 self.g(n, 0, r, 0, 4, 8, 12);
@@ -270,17 +323,10 @@ impl Blake<u64> {
             for i in 0..8 {
                 self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
             }
+            // if next l == 0
+            if self.l == 0 && n < (self.word_block.len() / 16) {
+                self.ignore_counter = true;
+            }
         }
     }
-}
-
-impl Blake<u64> {
-    // Padding
-    impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 110, {match self.bit {
-        // BLAKE-384(BLAKE-48)はパディング末尾が0
-        384 => self.message.push(0x00),
-        // BLAKE-512(BLAKE-64)はパディング末尾が1
-        512 => self.message.push(0x01),
-        _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
-    }});
 }
