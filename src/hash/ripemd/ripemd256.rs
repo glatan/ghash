@@ -89,7 +89,7 @@ impl Ripemd256 {
 
 impl Ripemd256 {
     // Padding
-    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
+    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
 impl Hash for Ripemd256 {

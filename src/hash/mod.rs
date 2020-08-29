@@ -25,29 +25,21 @@ macro_rules! impl_md4_padding {
     // to_bytes
     //// to_be_bytes: SHA-{0, 1, 2}, BLAKE
     //// to_le_bytes: Others
-    // padding_base [byte]
-    //// BLAKE: 64 - 8(message_length) - 1(0x80) - 1(0x00 or 0x01) = 54
-    //// Others: 64 - 8(message_length) - 1(0x80) = 55
-    // optional_padding(after appending 0x80 and zeros, before appending message length)
-    //// BLAKE
-    //// BLAKE-224(24) => push 0x00
-    //// BLAKE-256(32) => push 0x01
-    //// Others(None)
-    (u32 => $self:ident, $from_bytes:ident, $to_bytes:ident, $padding_base:expr, $optional_padding:block) => {
+    (u32 => $self:ident, $from_bytes:ident, $to_bytes:ident) => {
         fn padding(&mut $self) {
             let message_length = $self.message.len();
             // append 0b1000_0000
             $self.message.push(0x80);
-            match (message_length % 64).cmp(&$padding_base) {
+            // 64 - 1(0x80) - 8(message_length) = 55
+            match (message_length % 64).cmp(&55) {
                 Ordering::Greater => {
-                    $self.message.append(&mut vec![0; 64 + $padding_base - (message_length % 64)]);
+                    $self.message.append(&mut vec![0; 64 + 55 - (message_length % 64)]);
                 }
                 Ordering::Less => {
-                    $self.message.append(&mut vec![0; $padding_base - (message_length % 64)]);
+                    $self.message.append(&mut vec![0; 55 - (message_length % 64)]);
                 }
                 Ordering::Equal => (),
             }
-            $optional_padding
             // append message length
             $self.message.append(&mut (8 * message_length as u64).$to_bytes().to_vec());
             // create 32 bit-words from input bytes(and appending bytes)
@@ -67,29 +59,21 @@ macro_rules! impl_md4_padding {
     // to_bytes
     //// to_be_bytes: SHA-{0, 1, 2}, BLAKE
     //// to_le_bytes: Others
-    // padding_base [byte]
-    //// BLAKE: 128 - 16(input_length) - 1(0x80) - 1(0x00 or 0x01)= 110
-    //// Others: 128 - 16(input_length) - 1(0x80) = 111
-    // optional_padding(after appending 0x80 and zeros, before appending message length)
-    //// BLAKE
-    //// BLAKE-384(48) => push 0x00
-    //// BLAKE-512(64) => push 0x01
-    //// Others(None)
-    (u64 => $self:ident, $from_bytes:ident, $to_bytes:ident, $padding_base:expr, $optional_padding:block) => {
+    (u64 => $self:ident, $from_bytes:ident, $to_bytes:ident) => {
         fn padding(&mut $self) {
             let message_length = $self.message.len();
             // append 0b1000_0000
             $self.message.push(0x80);
-            match (message_length % 128).cmp(&$padding_base) {
+            // 128 - 1(0x80) - 16(message_length) = 111
+            match (message_length % 128).cmp(&111) {
                 Ordering::Greater => {
-                    $self.message.append(&mut vec![0; 128 + $padding_base - (message_length % 128)]);
+                    $self.message.append(&mut vec![0; 128 + 111 - (message_length % 128)]);
                 }
                 Ordering::Less => {
-                    $self.message.append(&mut vec![0; $padding_base - (message_length % 128)]);
+                    $self.message.append(&mut vec![0; 111 - (message_length % 128)]);
                 }
                 Ordering::Equal => (),
             }
-            $optional_padding
             // append message length
             $self.message.append(&mut (8 * message_length as u128).$to_bytes().to_vec());
             // create 64 bit-words from input bytes(and appending bytes)
