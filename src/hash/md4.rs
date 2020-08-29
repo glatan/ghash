@@ -97,7 +97,7 @@ impl Md4 {
 
 impl Md4 {
     // Padding
-    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
+    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
 impl Hash for Md4 {

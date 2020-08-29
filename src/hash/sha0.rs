@@ -129,7 +129,7 @@ impl Sha0 {
 
 impl Sha0 {
     // Padding
-    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 55, {});
+    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes);
 }
 
 impl Hash for Sha0 {
