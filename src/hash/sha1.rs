@@ -1,7 +1,6 @@
-use super::{Hash, Message};
-use crate::{impl_md4_padding, impl_message};
+use super::Hash;
+use crate::impl_md4_padding;
 use std::cmp::Ordering;
-use std::mem;
 
 // K(t) = 5A827999 ( 0 <= t <= 19)
 // K(t) = 6ED9EBA1 (20 <= t <= 39)
@@ -39,9 +38,9 @@ pub struct Sha1 {
 }
 
 impl Sha1 {
-    pub const fn new() -> Self {
+    pub fn new(message: &[u8]) -> Self {
         Self {
-            message: Vec::new(),
+            message: message.to_vec(),
             word_block: Vec::new(),
             status: H,
         }
@@ -130,18 +129,12 @@ impl Sha1 {
 
 impl Sha1 {
     // Padding
-    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 55, {});
-}
-
-impl Message for Sha1 {
-    // Set Message
-    impl_message!(self, u64);
+    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes);
 }
 
 impl Hash for Sha1 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha1 = Self::new();
-        sha1.message(message);
+        let mut sha1 = Self::new(message);
         sha1.padding();
         sha1.compress();
         sha1.status

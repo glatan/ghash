@@ -1,7 +1,7 @@
-use super::{Hash, Message, Sha2};
+use super::{Hash, Sha2};
 
 #[rustfmt::skip]
-pub const H256: [u32; 8] = [
+pub const IV256: [u32; 8] = [
     0x6A09_E667, 0xBB67_AE85, 0x3C6E_F372, 0xA54F_F53A,
     0x510E_527F, 0x9B05_688C, 0x1F83_D9AB, 0x5BE0_CD19,
 ];
@@ -9,25 +9,18 @@ pub const H256: [u32; 8] = [
 pub struct Sha256(Sha2<u32>);
 
 impl Sha256 {
-    pub const fn new() -> Self {
+    pub fn new(message: &[u8]) -> Self {
         Self(Sha2::<u32> {
-            message: Vec::new(),
+            message: message.to_vec(),
             word_block: Vec::new(),
-            status: H256,
+            status: IV256,
         })
-    }
-}
-
-impl Message for Sha256 {
-    fn message(&mut self, message: &[u8]) {
-        self.0.message(message)
     }
 }
 
 impl Hash for Sha256 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha256 = Self::new();
-        sha256.0.message(message);
+        let mut sha256 = Self::new(message);
         sha256.0.padding();
         sha256.0.compress();
         sha256

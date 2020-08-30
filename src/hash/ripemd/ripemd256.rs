@@ -1,8 +1,7 @@
+use super::Hash;
 use super::{f, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use super::{Hash, Message};
-use crate::{impl_md4_padding, impl_message};
+use crate::impl_md4_padding;
 use std::cmp::Ordering;
-use std::mem;
 
 #[rustfmt::skip]
 const H256: [u32; 8] = [
@@ -17,9 +16,9 @@ pub struct Ripemd256 {
 }
 
 impl Ripemd256 {
-    pub const fn new() -> Self {
+    pub fn new(message: &[u8]) -> Self {
         Self {
-            message: Vec::new(),
+            message: message.to_vec(),
             word_block: Vec::new(),
             status: H256,
         }
@@ -90,18 +89,12 @@ impl Ripemd256 {
 
 impl Ripemd256 {
     // Padding
-    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
-}
-
-impl Message for Ripemd256 {
-    // Set Message
-    impl_message!(self, u64);
+    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
 impl Hash for Ripemd256 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut ripemd256 = Self::new();
-        ripemd256.message(message);
+        let mut ripemd256 = Self::new(message);
         ripemd256.padding();
         ripemd256.compress();
         ripemd256

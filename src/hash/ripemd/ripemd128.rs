@@ -1,8 +1,7 @@
+use super::Hash;
 use super::{f, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use super::{Hash, Message};
-use crate::{impl_md4_padding, impl_message};
+use crate::impl_md4_padding;
 use std::cmp::Ordering;
-use std::mem;
 
 const H128: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
@@ -13,9 +12,9 @@ pub struct Ripemd128 {
 }
 
 impl Ripemd128 {
-    pub const fn new() -> Self {
+    pub fn new(message: &[u8]) -> Self {
         Self {
-            message: Vec::new(),
+            message: message.to_vec(),
             word_block: Vec::new(),
             status: H128,
         }
@@ -56,18 +55,12 @@ impl Ripemd128 {
 
 impl Ripemd128 {
     // Padding
-    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes, 55, {});
-}
-
-impl Message for Ripemd128 {
-    // Set Message
-    impl_message!(self, u64);
+    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
 impl Hash for Ripemd128 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut ripemd128 = Self::new();
-        ripemd128.message(message);
+        let mut ripemd128 = Self::new(message);
         ripemd128.padding();
         ripemd128.compress();
         ripemd128

@@ -8,7 +8,7 @@ mod sha0;
 mod sha1;
 mod sha2;
 
-pub use blake::{Blake224, Blake256, Blake384, Blake512};
+pub use blake::{Blake224, Blake256, Blake28, Blake32, Blake384, Blake48, Blake512, Blake64};
 pub use md2::Md2;
 pub use md4::Md4;
 pub use md5::Md5;
@@ -17,67 +17,33 @@ pub use sha0::Sha0;
 pub use sha1::Sha1;
 pub use sha2::{Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
 
-// Set Message
-#[macro_export(local)]
-macro_rules! impl_message {
-    ($self:ident, $LimitT:ty) => {
-            fn message(&mut $self, message: &[u8]) {
-                match message.len().checked_mul(8) {
-                    Some(_) => {
-                        // input bit length is less than usize::MAX
-                        match mem::size_of::<usize>().cmp(&mem::size_of::<$LimitT>()) {
-                            Ordering::Equal | Ordering::Less => {
-                                // input type limit is less than hash function limit
-                                $self.message = message.to_vec();
-                            }
-                            Ordering::Greater => {
-                                // input bit length is greater than the hash function limit length
-                                panic!(
-                                    "{} takes a input of any length less than 2^{} bits",
-                                    stringify!($SelfT),
-                                    mem::size_of::<$LimitT>()
-                                )
-                            }
-                        }
-                    }
-                    None => panic!(
-                        "{} * 8 is greeter than usize::MAX",
-                        mem::size_of::<$LimitT>()
-                    ),
-                }
-            }
-    };
-}
-
 // MD4 Style Padding
 #[macro_export(local)]
 macro_rules! impl_md4_padding {
-    (u32 => $self:ident, $from_bytes:ident, $to_bytes:ident, $padding_base:expr, $optional_padding:block) => {
+    // from_bytes
+    //// from_be_bytes: SHA-{0, 1, 2}, BLAKE
+    //// from_le_bytes: Others
+    // to_bytes
+    //// to_be_bytes: SHA-{0, 1, 2}, BLAKE
+    //// to_le_bytes: Others
+    (u32 => $self:ident, $from_bytes:ident, $to_bytes:ident) => {
         fn padding(&mut $self) {
             let message_length = $self.message.len();
-            // 入力末尾に0x80を追加(0b1000_0000)
+            // append 0b1000_0000
             $self.message.push(0x80);
-            // [byte]: 64 - 8(message_length) - 1(0x80) - 1(0x00 or 0x01) = 54 => BLAKE
-            // [byte]: 64 - 8(message_length) - 1(0x80) = 55 => Others
-            let padding_length = $padding_base - (message_length as i128);
-            match padding_length.cmp(&0) {
+            // 64 - 1(0x80) - 8(message_length) = 55
+            match (message_length % 64).cmp(&55) {
                 Ordering::Greater => {
-                    $self.message.append(&mut vec![0; padding_length as usize]);
+                    $self.message.append(&mut vec![0; 64 + 55 - (message_length % 64)]);
                 }
                 Ordering::Less => {
-                    $self.message
-                        .append(&mut vec![0; 64 - (padding_length.abs() % 64) as usize]);
+                    $self.message.append(&mut vec![0; 55 - (message_length % 64)]);
                 }
                 Ordering::Equal => (),
             }
-            // for BLAKE padding
-            // BLAKE-224 => push 0x00
-            // BLAKE-256 => push 0x01
-            $optional_padding
-            // 入力データの長さを追加
-            $self.message
-                .append(&mut (8 * message_length as u64).$to_bytes().to_vec());
-            // バイト列からワードブロックを生成
+            // append message length
+            $self.message.append(&mut (8 * message_length as u64).$to_bytes().to_vec());
+            // create 32 bit-words from input bytes(and appending bytes)
             for i in (0..$self.message.len()).filter(|i| i % 4 == 0) {
                 $self.word_block.push(u32::$from_bytes([
                     $self.message[i],
@@ -88,32 +54,30 @@ macro_rules! impl_md4_padding {
             }
         }
     };
-    (u64 => $self:ident, $from_bytes:ident, $to_bytes:ident, $padding_base:expr, $optional_padding:block) => {
+    // from_bytes
+    //// from_be_bytes: SHA-{0, 1, 2}, BLAKE
+    //// from_le_bytes: Others
+    // to_bytes
+    //// to_be_bytes: SHA-{0, 1, 2}, BLAKE
+    //// to_le_bytes: Others
+    (u64 => $self:ident, $from_bytes:ident, $to_bytes:ident) => {
         fn padding(&mut $self) {
-            let input_length = $self.message.len();
-            // word_block末尾に0x80を追加(0b1000_0000)
+            let message_length = $self.message.len();
+            // append 0b1000_0000
             $self.message.push(0x80);
-            // [byte]: 128 - 16(input_length) - 1(0x80) - 1(0x00 or 0x00)= 110 => BLAKE
-            // [byte]: 128 - 16(input_length) - 1(0x80) = 111 => Others
-            let padding_length = $padding_base - (input_length as i128);
-            match padding_length.cmp(&0) {
+            // 128 - 1(0x80) - 16(message_length) = 111
+            match (message_length % 128).cmp(&111) {
                 Ordering::Greater => {
-                    $self.message.append(&mut vec![0; padding_length as usize]);
+                    $self.message.append(&mut vec![0; 128 + 111 - (message_length % 128)]);
                 }
                 Ordering::Less => {
-                    $self.message
-                        .append(&mut vec![0; 128 - (padding_length.abs() % 128) as usize]);
+                    $self.message.append(&mut vec![0; 111 - (message_length % 128)]);
                 }
                 Ordering::Equal => (),
             }
-            // for BLAKE padding
-            // BLAKE-384 => push 0x00
-            // BLAKE-512 => push 0x01
-            $optional_padding
-            // 入力データの長さを追加
-            $self.message
-                .append(&mut (8 * input_length as u128).$to_bytes().to_vec());
-            // 64bitワードにしてpush
+            // append message length
+            $self.message.append(&mut (8 * message_length as u128).$to_bytes().to_vec());
+            // create 64 bit-words from input bytes(and appending bytes)
             for i in (0..$self.message.len()).filter(|i| i % 8 == 0) {
                 $self.word_block.push(u64::$from_bytes([
                     $self.message[i],
@@ -130,14 +94,7 @@ macro_rules! impl_md4_padding {
     };
 }
 
-pub trait Message {
-    fn message(&mut self, message: &[u8]);
-}
-
-pub trait Hash<T = Self>
-where
-    T: Message,
-{
+pub trait Hash<T = Self> {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8>;
     fn hash_to_lowerhex(message: &[u8]) -> String {
         Self::hash_to_bytes(message)
@@ -156,7 +113,7 @@ where
 #[cfg(test)]
 trait Test<T = Self>
 where
-    T: Hash + Message,
+    T: Hash,
 {
     fn compare_bytes(message: &[u8], expected: &str) {
         fn hex_to_bytes(s: &str) -> Vec<u8> {

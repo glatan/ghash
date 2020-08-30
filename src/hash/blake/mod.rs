@@ -1,8 +1,18 @@
-use super::{Hash, Message};
-use crate::{impl_md4_padding, impl_message};
+use super::Hash;
 use std::cmp::Ordering;
-use std::mem;
 
+// Round1/2 submission version
+mod blake28;
+mod blake32;
+mod blake48;
+mod blake64;
+
+pub use blake28::Blake28;
+pub use blake32::Blake32;
+pub use blake48::Blake48;
+pub use blake64::Blake64;
+
+// Final version
 mod blake224;
 mod blake256;
 mod blake384;
@@ -26,13 +36,13 @@ const SIGMA: [[usize; 16]; 10] = [
     [6, 15, 14, 9, 11, 3, 0, 8, 12, 2, 13, 7, 1, 4, 10, 5],
     [10, 2, 8, 4, 7, 6, 1, 5, 15, 11, 9, 14, 3, 12, 13, 0],
 ];
-// BLAKE-224 and BLAKE-256 Constant
+// BLAKE-224(BLAKE-28) and BLAKE-256(BLAKE-32) Constant
 #[rustfmt::skip]
 const C32: [u32; 16] = [
     0x243F_6A88, 0x85A3_08D3, 0x1319_8A2E, 0x0370_7344, 0xA409_3822, 0x299F_31D0, 0x082E_FA98, 0xEC4E_6C89,
     0x4528_21E6, 0x38D0_1377, 0xBE54_66CF, 0x34E9_0C6C, 0xC0AC_29B7, 0xC97C_50DD, 0x3F84_D5B5, 0xB547_0917
 ];
-// BLAKE-384 and BLAKE-512 Constant
+// BLAKE-384(BLAKE-48) and BLAKE-512(BLAKE-64) Constant
 #[rustfmt::skip]
 const C64: [u64; 16] = [
     0x243F_6A88_85A3_08D3, 0x1319_8A2E_0370_7344, 0xA409_3822_299F_31D0, 0x082E_FA98_EC4E_6C89,
@@ -41,27 +51,69 @@ const C64: [u64; 16] = [
     0xBA7C_9045_F12C_7F99, 0x24A1_9947_B391_6CF7, 0x0801_F2E2_858E_FC16, 0x6369_20D8_7157_4E69
 ];
 
-// Blake<u32>: BLAKE-224 and BLAKE-256
-// Blake<u64>: BLAKE-384 and BLAKE-512
+// Blake<u32>: BLAKE-224(BLAKE-28) and BLAKE-256(BLAKE-32)
+// Blake<u64>: BLAKE-384(BLAKE-48) and BLAKE-512(BLAKE-64)
 struct Blake<T> {
     message: Vec<u8>,
     word_block: Vec<T>,
     salt: [T; 4],
-    l: usize, // length: 入力のビット数
+    l: usize, // 未処理のビット数
     h: [T; 8],
-    t: [T; 2],  // counter: 処理したビット数
+    t: [T; 2],  // counter: 処理したビット数(と次に処理をするブロックのビット数?)
     v: [T; 16], // state
-    bit: usize,
+    ignore_counter: bool,
 }
 
 impl Blake<u32> {
-    fn set_counter(&mut self) {
-        self.l = self.message.len() * 8;
-        // padding bitを含まないblockのビット数をカウントする
-        match (self.l).cmp(&512) {
-            Ordering::Equal => self.t[0] = 512,
-            Ordering::Less => self.t[0] = self.l as u32,
-            Ordering::Greater => self.t[0] = (self.l - self.l % 512) as u32,
+    pub fn new(message: &[u8], h: [u32; 8]) -> Self {
+        Self {
+            message: message.to_vec(),
+            word_block: Vec::new(),
+            salt: [0; 4],
+            l: message.len() * 8,
+            h,
+            t: [0; 2],
+            v: [0; 16],
+            ignore_counter: false,
+        }
+    }
+    fn padding(&mut self, last_byte: u8) {
+        let message_length = self.message.len();
+        // 64 - 1(0x80) - 8(message_length) = 55
+        match (message_length % 64).cmp(&55) {
+            Ordering::Greater => {
+                self.message.push(0x80);
+                self.message
+                    .append(&mut vec![0; 64 + 54 - (message_length % 64)]);
+                self.message.push(last_byte);
+            }
+            Ordering::Less => {
+                self.message.push(0x80);
+                self.message
+                    .append(&mut vec![0; 54 - (message_length % 64)]);
+                self.message.push(last_byte);
+            }
+            Ordering::Equal => {
+                if last_byte == 0x00 {
+                    self.message.push(0x80);
+                } else if last_byte == 0x01 {
+                    self.message.push(0x81);
+                } else {
+                    unreachable!();
+                }
+            }
+        }
+        // append message length
+        self.message
+            .append(&mut (8 * message_length as u64).to_be_bytes().to_vec());
+        // create 32 bit-words from input bytes(and appending bytes)
+        for i in (0..self.message.len()).filter(|i| i % 4 == 0) {
+            self.word_block.push(u32::from_be_bytes([
+                self.message[i],
+                self.message[i + 1],
+                self.message[i + 2],
+                self.message[i + 3],
+            ]));
         }
     }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
@@ -83,37 +135,45 @@ impl Blake<u32> {
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(7);
     }
-    fn compress(&mut self) {
+    fn compress(&mut self, round_limit: usize) {
         // Compress blocks(1 block == 16 words, 1 word == 32 bit)
         // Compress 1 block in 1 loop
         for n in 0..(self.word_block.len() / 16) {
+            // update counter
+            if self.l <= 512 {
+                self.t[0] += self.l as u32;
+                self.l = 0;
+            } else {
+                self.t[0] += 512;
+                self.l -= 512;
+            }
             // initialize state
-            self.v = [
-                self.h[0],
-                self.h[1],
-                self.h[2],
-                self.h[3],
-                self.h[4],
-                self.h[5],
-                self.h[6],
-                self.h[7],
-                self.salt[0] ^ C32[0],
-                self.salt[1] ^ C32[1],
-                self.salt[2] ^ C32[2],
-                self.salt[3] ^ C32[3],
-                self.t[0] ^ C32[4],
-                self.t[0] ^ C32[5],
-                self.t[1] ^ C32[6],
-                self.t[1] ^ C32[7],
-            ];
-            if u32::MAX - self.t[0] >= (self.l as u32 - self.t[0]) {
-                self.t[0] += self.l as u32 - self.t[0];
-            } else if u32::MAX - self.t[0] < (self.l as u32 - self.t[0]) {
-                self.t[0] += u32::MAX - self.t[0];
-                self.t[1] += self.l as u32 - self.t[0];
+            self.v[0] = self.h[0];
+            self.v[1] = self.h[1];
+            self.v[2] = self.h[2];
+            self.v[3] = self.h[3];
+            self.v[4] = self.h[4];
+            self.v[5] = self.h[5];
+            self.v[6] = self.h[6];
+            self.v[7] = self.h[7];
+            self.v[8] = self.salt[0] ^ C32[0];
+            self.v[9] = self.salt[1] ^ C32[1];
+            self.v[10] = self.salt[2] ^ C32[2];
+            self.v[11] = self.salt[3] ^ C32[3];
+            // ブロック数が2以上かつ最後のブロックの処理時にカウンター(l)が0のときはこうするらしい(仕様書内に対応する記述を見つけられていない)。
+            if self.ignore_counter {
+                self.v[12] = C32[4];
+                self.v[13] = C32[5];
+                self.v[14] = C32[6];
+                self.v[15] = C32[7];
+            } else {
+                self.v[12] = self.t[0] ^ C32[4];
+                self.v[13] = self.t[0] ^ C32[5];
+                self.v[14] = self.t[1] ^ C32[6];
+                self.v[15] = self.t[1] ^ C32[7];
             }
             // round
-            for r in 0..14 {
+            for r in 0..round_limit {
                 self.g(n, 0, r, 0, 4, 8, 12);
                 self.g(n, 1, r, 1, 5, 9, 13);
                 self.g(n, 2, r, 2, 6, 10, 14);
@@ -127,31 +187,69 @@ impl Blake<u32> {
             for i in 0..8 {
                 self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
             }
+            // if next l == 0
+            if self.l == 0 && n < (self.word_block.len() / 16) {
+                self.ignore_counter = true;
+            }
         }
     }
 }
 
-impl Blake<u32> {
-    // Set Message
-    impl_message!(self, u64);
-    // Padding
-    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes, 54, {match self.bit {
-        // BLAKE-224はパディング末尾が0
-        224 => self.message.push(0x00),
-        // BLAKE-256はパディング末尾が1
-        256 => self.message.push(0x01),
-        _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
-    }});
-}
-
 impl Blake<u64> {
-    fn set_counter(&mut self) {
-        self.l = self.message.len() * 8;
-        // padding bitを含まないblockのビット数をカウントする
-        match (self.l).cmp(&1024) {
-            Ordering::Equal => self.t[0] = 1024,
-            Ordering::Less => self.t[0] = self.l as u64,
-            Ordering::Greater => self.t[0] = (self.l - self.l % 1024) as u64,
+    pub fn new(message: &[u8], h: [u64; 8]) -> Self {
+        Self {
+            message: message.to_vec(),
+            word_block: Vec::new(),
+            salt: [0; 4],
+            l: message.len() * 8,
+            h,
+            t: [0; 2],
+            v: [0; 16],
+            ignore_counter: false,
+        }
+    }
+    fn padding(&mut self, last_byte: u8) {
+        let message_length = self.message.len();
+        // append 0b1000_0000
+        // 128 - 1(0x80) - 16(message_length) = 111
+        match (message_length % 128).cmp(&111) {
+            Ordering::Greater => {
+                self.message.push(0x80);
+                self.message
+                    .append(&mut vec![0; 128 + 110 - (message_length % 128)]);
+                self.message.push(last_byte);
+            }
+            Ordering::Less => {
+                self.message.push(0x80);
+                self.message
+                    .append(&mut vec![0; 110 - (message_length % 128)]);
+                self.message.push(last_byte);
+            }
+            Ordering::Equal => {
+                if last_byte == 0x00 {
+                    self.message.push(0x80);
+                } else if last_byte == 0x01 {
+                    self.message.push(0x81);
+                } else {
+                    unreachable!();
+                }
+            }
+        }
+        // append message length
+        self.message
+            .append(&mut (8 * message_length as u128).to_be_bytes().to_vec());
+        // create 64 bit-words from input bytes(and appending bytes)
+        for i in (0..self.message.len()).filter(|i| i % 8 == 0) {
+            self.word_block.push(u64::from_be_bytes([
+                self.message[i],
+                self.message[i + 1],
+                self.message[i + 2],
+                self.message[i + 3],
+                self.message[i + 4],
+                self.message[i + 5],
+                self.message[i + 6],
+                self.message[i + 7],
+            ]));
         }
     }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
@@ -173,37 +271,45 @@ impl Blake<u64> {
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(11);
     }
-    fn compress(&mut self) {
+    fn compress(&mut self, round_limit: usize) {
         // Compress blocks(1 block == 16 words, 1 word == 64 bit)
         // Compress 1 block in 1 loop
         for n in 0..(self.word_block.len() / 16) {
+            // update counter
+            if self.l <= 1024 {
+                self.t[0] += self.l as u64;
+                self.l = 0;
+            } else {
+                self.t[0] += 1024;
+                self.l -= 1024;
+            }
             // initialize state
-            self.v = [
-                self.h[0],
-                self.h[1],
-                self.h[2],
-                self.h[3],
-                self.h[4],
-                self.h[5],
-                self.h[6],
-                self.h[7],
-                self.salt[0] ^ C64[0],
-                self.salt[1] ^ C64[1],
-                self.salt[2] ^ C64[2],
-                self.salt[3] ^ C64[3],
-                self.t[0] ^ C64[4],
-                self.t[0] ^ C64[5],
-                self.t[1] ^ C64[6],
-                self.t[1] ^ C64[7],
-            ];
-            if u64::MAX - self.t[0] >= (self.l as u64 - self.t[0]) {
-                self.t[0] += self.l as u64 - self.t[0];
-            } else if u64::MAX - self.t[0] < (self.l as u64 - self.t[0]) {
-                self.t[0] += u64::MAX - self.t[0];
-                self.t[1] += self.l as u64 - self.t[0];
+            self.v[0] = self.h[0];
+            self.v[1] = self.h[1];
+            self.v[2] = self.h[2];
+            self.v[3] = self.h[3];
+            self.v[4] = self.h[4];
+            self.v[5] = self.h[5];
+            self.v[6] = self.h[6];
+            self.v[7] = self.h[7];
+            self.v[8] = self.salt[0] ^ C64[0];
+            self.v[9] = self.salt[1] ^ C64[1];
+            self.v[10] = self.salt[2] ^ C64[2];
+            self.v[11] = self.salt[3] ^ C64[3];
+            // ブロック数が2以上かつ最後のブロックの処理時にカウンター(l)が0のときはこうするらしい(仕様書内に対応する記述を見つけられていない)。
+            if self.ignore_counter {
+                self.v[12] = C64[4];
+                self.v[13] = C64[5];
+                self.v[14] = C64[6];
+                self.v[15] = C64[7];
+            } else {
+                self.v[12] = self.t[0] ^ C64[4];
+                self.v[13] = self.t[0] ^ C64[5];
+                self.v[14] = self.t[1] ^ C64[6];
+                self.v[15] = self.t[1] ^ C64[7];
             }
             // round
-            for r in 0..16 {
+            for r in 0..round_limit {
                 self.g(n, 0, r, 0, 4, 8, 12);
                 self.g(n, 1, r, 1, 5, 9, 13);
                 self.g(n, 2, r, 2, 6, 10, 14);
@@ -217,19 +323,10 @@ impl Blake<u64> {
             for i in 0..8 {
                 self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
             }
+            // if next l == 0
+            if self.l == 0 && n < (self.word_block.len() / 16) {
+                self.ignore_counter = true;
+            }
         }
     }
-}
-
-impl Blake<u64> {
-    // Set Message
-    impl_message!(self, u128);
-    // Padding
-    impl_md4_padding!(u64 => self, from_be_bytes, to_be_bytes, 110, {match self.bit {
-        // BLAKE-384はパディング末尾が0
-        384 => self.message.push(0x00),
-        // BLAKE-512はパディング末尾が1
-        512 => self.message.push(0x01),
-        _ => panic!("Invalid bit: BLAKE-{} is not implemented", self.bit),
-    }});
 }

@@ -1,7 +1,7 @@
-use super::{Hash, Message, Sha2};
+use super::{Hash, Sha2};
 
 #[rustfmt::skip]
-pub const H384: [u64; 8] = [
+pub const IV384: [u64; 8] = [
     0xCBBB_9D5D_C105_9ED8, 0x629A_292A_367C_D507, 0x9159_015A_3070_DD17, 0x152F_ECD8_F70E_5939,
     0x6733_2667_FFC0_0B31, 0x8EB4_4A87_6858_1511, 0xDB0C_2E0D_64F9_8FA7, 0x47B5_481D_BEFA_4FA4,
 ];
@@ -9,25 +9,18 @@ pub const H384: [u64; 8] = [
 pub struct Sha384(Sha2<u64>);
 
 impl Sha384 {
-    pub const fn new() -> Self {
+    pub fn new(message: &[u8]) -> Self {
         Self(Sha2::<u64> {
-            message: Vec::new(),
+            message: message.to_vec(),
             word_block: Vec::new(),
-            status: H384,
+            status: IV384,
         })
-    }
-}
-
-impl Message for Sha384 {
-    fn message(&mut self, message: &[u8]) {
-        self.0.message(message)
     }
 }
 
 impl Hash for Sha384 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha384 = Self::new();
-        sha384.0.message(message);
+        let mut sha384 = Self::new(message);
         sha384.0.padding();
         sha384.0.compress();
         sha384.0.status[0..6]
