@@ -9,7 +9,7 @@ pub const IV512: [u64; 8] = [
 pub struct Sha512(Sha2<u64>);
 
 impl Sha512 {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self(Sha2::<u64>::new(IV512))
     }
 }

@@ -9,7 +9,7 @@ pub const IV256: [u32; 8] = [
 pub struct Sha256(Sha2<u32>);
 
 impl Sha256 {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self(Sha2::<u32>::new(IV256))
     }
 }

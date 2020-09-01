@@ -40,7 +40,7 @@ pub struct Md4 {
 }
 
 impl Md4 {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self {
             word_block: Vec::with_capacity(16),
             status: WORD_BUFFER,

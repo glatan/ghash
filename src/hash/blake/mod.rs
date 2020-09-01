@@ -64,7 +64,7 @@ struct Blake<T> {
 }
 
 impl Blake<u32> {
-    pub fn new(h: [u32; 8]) -> Self {
+    fn new(h: [u32; 8]) -> Self {
         Self {
             word_block: Vec::with_capacity(16),
             salt: [0; 4],
@@ -189,7 +189,7 @@ impl Blake<u32> {
 }
 
 impl Blake<u64> {
-    pub fn new(h: [u64; 8]) -> Self {
+    fn new(h: [u64; 8]) -> Self {
         Self {
             word_block: Vec::with_capacity(16),
             salt: [0; 4],

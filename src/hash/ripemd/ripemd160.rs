@@ -17,7 +17,7 @@ pub struct Ripemd160 {
 }
 
 impl Ripemd160 {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self {
             word_block: Vec::with_capacity(16),
             status: H160,
