@@ -6,15 +6,13 @@ use std::cmp::Ordering;
 const H128: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
 
 pub struct Ripemd128 {
-    message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
 
 impl Ripemd128 {
-    pub fn new(message: &[u8]) -> Self {
+    pub const fn new() -> Self {
         Self {
-            message: message.to_vec(),
             word_block: Vec::new(),
             status: H128,
         }
@@ -60,8 +58,8 @@ impl Ripemd128 {
 
 impl Hash for Ripemd128 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut ripemd128 = Self::new(message);
-        ripemd128.padding();
+        let mut ripemd128 = Self::new();
+        ripemd128.padding(message);
         ripemd128.compress();
         ripemd128
             .status

@@ -9,15 +9,15 @@ const IV64: [u64; 8] = [
 pub struct Blake64(Blake<u64>);
 
 impl Blake64 {
-    pub fn new(message: &[u8]) -> Self {
-        Self(Blake::<u64>::new(message, IV64))
+    pub const fn new() -> Self {
+        Self(Blake::<u64>::new(IV64))
     }
 }
 
 impl Hash for Blake64 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut blake64 = Self::new(message);
-        blake64.0.padding(0x01);
+        let mut blake64 = Self::new();
+        blake64.0.padding(message, 0x01);
         blake64.0.compress(14);
         blake64
             .0

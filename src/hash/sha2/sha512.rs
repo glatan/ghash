@@ -9,9 +9,8 @@ pub const IV512: [u64; 8] = [
 pub struct Sha512(Sha2<u64>);
 
 impl Sha512 {
-    pub fn new(message: &[u8]) -> Self {
+    pub const fn new() -> Self {
         Self(Sha2::<u64> {
-            message: message.to_vec(),
             word_block: Vec::new(),
             status: IV512,
         })
@@ -20,8 +19,8 @@ impl Sha512 {
 
 impl Hash for Sha512 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha512 = Self::new(message);
-        sha512.0.padding();
+        let mut sha512 = Self::new();
+        sha512.0.padding(message);
         sha512.0.compress();
         sha512
             .0

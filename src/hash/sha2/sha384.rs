@@ -9,9 +9,8 @@ pub const IV384: [u64; 8] = [
 pub struct Sha384(Sha2<u64>);
 
 impl Sha384 {
-    pub fn new(message: &[u8]) -> Self {
+    pub const fn new() -> Self {
         Self(Sha2::<u64> {
-            message: message.to_vec(),
             word_block: Vec::new(),
             status: IV384,
         })
@@ -20,8 +19,8 @@ impl Sha384 {
 
 impl Hash for Sha384 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha384 = Self::new(message);
-        sha384.0.padding();
+        let mut sha384 = Self::new();
+        sha384.0.padding(message);
         sha384.0.compress();
         sha384.0.status[0..6]
             .iter()

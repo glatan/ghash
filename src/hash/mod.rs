@@ -26,29 +26,30 @@ macro_rules! impl_md4_padding {
     //// to_be_bytes: SHA-{0, 1, 2}, BLAKE
     //// to_le_bytes: Others
     (u32 => $self:ident, $from_bytes:ident, $to_bytes:ident) => {
-        fn padding(&mut $self) {
-            let message_length = $self.message.len();
+        fn padding(&mut $self, message: &[u8]) {
+            let mut m = message.to_vec();
+            let l = message.len();
             // append 0b1000_0000
-            $self.message.push(0x80);
-            // 64 - 1(0x80) - 8(message_length) = 55
-            match (message_length % 64).cmp(&55) {
+            m.push(0x80);
+            // 64 - 1(0x80) - 8(l) = 55
+            match (l % 64).cmp(&55) {
                 Ordering::Greater => {
-                    $self.message.append(&mut vec![0; 64 + 55 - (message_length % 64)]);
+                    m.append(&mut vec![0; 64 + 55 - (l % 64)]);
                 }
                 Ordering::Less => {
-                    $self.message.append(&mut vec![0; 55 - (message_length % 64)]);
+                    m.append(&mut vec![0; 55 - (l % 64)]);
                 }
                 Ordering::Equal => (),
             }
             // append message length
-            $self.message.append(&mut (8 * message_length as u64).$to_bytes().to_vec());
+            m.append(&mut (8 * l as u64).$to_bytes().to_vec());
             // create 32 bit-words from input bytes(and appending bytes)
-            for i in (0..$self.message.len()).filter(|i| i % 4 == 0) {
+            for i in (0..m.len()).filter(|i| i % 4 == 0) {
                 $self.word_block.push(u32::$from_bytes([
-                    $self.message[i],
-                    $self.message[i + 1],
-                    $self.message[i + 2],
-                    $self.message[i + 3],
+                    m[i],
+                    m[i + 1],
+                    m[i + 2],
+                    m[i + 3],
                 ]));
             }
         }
@@ -60,33 +61,34 @@ macro_rules! impl_md4_padding {
     //// to_be_bytes: SHA-{0, 1, 2}, BLAKE
     //// to_le_bytes: Others
     (u64 => $self:ident, $from_bytes:ident, $to_bytes:ident) => {
-        fn padding(&mut $self) {
-            let message_length = $self.message.len();
+        fn padding(&mut $self, message: &[u8]) {
+            let mut m = message.to_vec();
+            let l = message.len();
             // append 0b1000_0000
-            $self.message.push(0x80);
-            // 128 - 1(0x80) - 16(message_length) = 111
-            match (message_length % 128).cmp(&111) {
+            m.push(0x80);
+            // 128 - 1(0x80) - 16(l) = 111
+            match (l % 128).cmp(&111) {
                 Ordering::Greater => {
-                    $self.message.append(&mut vec![0; 128 + 111 - (message_length % 128)]);
+                    m.append(&mut vec![0; 128 + 111 - (l % 128)]);
                 }
                 Ordering::Less => {
-                    $self.message.append(&mut vec![0; 111 - (message_length % 128)]);
+                    m.append(&mut vec![0; 111 - (l % 128)]);
                 }
                 Ordering::Equal => (),
             }
             // append message length
-            $self.message.append(&mut (8 * message_length as u128).$to_bytes().to_vec());
+            m.append(&mut (8 * l as u128).$to_bytes().to_vec());
             // create 64 bit-words from input bytes(and appending bytes)
-            for i in (0..$self.message.len()).filter(|i| i % 8 == 0) {
+            for i in (0..m.len()).filter(|i| i % 8 == 0) {
                 $self.word_block.push(u64::$from_bytes([
-                    $self.message[i],
-                    $self.message[i + 1],
-                    $self.message[i + 2],
-                    $self.message[i + 3],
-                    $self.message[i + 4],
-                    $self.message[i + 5],
-                    $self.message[i + 6],
-                    $self.message[i + 7],
+                    m[i],
+                    m[i + 1],
+                    m[i + 2],
+                    m[i + 3],
+                    m[i + 4],
+                    m[i + 5],
+                    m[i + 6],
+                    m[i + 7],
                 ]));
             }
         }

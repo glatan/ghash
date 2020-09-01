@@ -9,9 +9,8 @@ pub const IV256: [u32; 8] = [
 pub struct Sha256(Sha2<u32>);
 
 impl Sha256 {
-    pub fn new(message: &[u8]) -> Self {
+    pub const fn new() -> Self {
         Self(Sha2::<u32> {
-            message: message.to_vec(),
             word_block: Vec::new(),
             status: IV256,
         })
@@ -20,8 +19,8 @@ impl Sha256 {
 
 impl Hash for Sha256 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha256 = Self::new(message);
-        sha256.0.padding();
+        let mut sha256 = Self::new();
+        sha256.0.padding(message);
         sha256.0.compress();
         sha256
             .0

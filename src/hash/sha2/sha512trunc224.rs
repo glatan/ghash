@@ -9,9 +9,8 @@ pub const IV512_TRUNC_224: [u64; 8] = [
 pub struct Sha512Trunc224(Sha2<u64>);
 
 impl Sha512Trunc224 {
-    pub fn new(message: &[u8]) -> Self {
+    pub const fn new() -> Self {
         Self(Sha2::<u64> {
-            message: message.to_vec(),
             word_block: Vec::new(),
             status: IV512_TRUNC_224,
         })
@@ -20,8 +19,8 @@ impl Sha512Trunc224 {
 
 impl Hash for Sha512Trunc224 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha512trunc224 = Self::new(message);
-        sha512trunc224.0.padding();
+        let mut sha512trunc224 = Self::new();
+        sha512trunc224.0.padding(message);
         sha512trunc224.0.compress();
         sha512trunc224.0.status[0..4]
             .iter()

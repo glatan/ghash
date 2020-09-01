@@ -32,15 +32,13 @@ const fn maj(b: u32, c: u32, d: u32) -> u32 {
 }
 
 pub struct Sha0 {
-    message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 5],
 }
 
 impl Sha0 {
-    pub fn new(message: &[u8]) -> Self {
+    pub const fn new() -> Self {
         Self {
-            message: message.to_vec(),
             word_block: Vec::new(),
             status: H,
         }
@@ -134,8 +132,8 @@ impl Sha0 {
 
 impl Hash for Sha0 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha0 = Self::new(message);
-        sha0.padding();
+        let mut sha0 = Self::new();
+        sha0.padding(message);
         sha0.compress();
         sha0.status
             .iter()

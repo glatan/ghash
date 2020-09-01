@@ -12,15 +12,13 @@ const H160: [u32; 5] = [
 ];
 
 pub struct Ripemd160 {
-    message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 5],
 }
 
 impl Ripemd160 {
-    pub fn new(message: &[u8]) -> Self {
+    pub const fn new() -> Self {
         Self {
-            message: message.to_vec(),
             word_block: Vec::new(),
             status: H160,
         }
@@ -71,8 +69,8 @@ impl Ripemd160 {
 
 impl Hash for Ripemd160 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut ripemd160 = Self::new(message);
-        ripemd160.padding();
+        let mut ripemd160 = Self::new();
+        ripemd160.padding(message);
         ripemd160.compress();
         ripemd160
             .status
