@@ -101,6 +101,12 @@ struct Sha2<T> {
 }
 
 impl Sha2<u32> {
+    fn new(iv: [u32; 8]) -> Self {
+        Self {
+            word_block: Vec::with_capacity(16),
+            status: iv,
+        }
+    }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self) {
         let (mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h);
@@ -158,6 +164,12 @@ impl Sha2<u32> {
 }
 
 impl Sha2<u64> {
+    fn new(iv: [u64; 8]) -> Self {
+        Self {
+            word_block: Vec::with_capacity(16),
+            status: iv,
+        }
+    }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self) {
         let (mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h);

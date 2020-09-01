@@ -10,10 +10,7 @@ pub struct Sha256(Sha2<u32>);
 
 impl Sha256 {
     pub fn new() -> Self {
-        Self(Sha2::<u32> {
-            word_block: Vec::with_capacity(16),
-            status: IV256,
-        })
+        Self(Sha2::<u32>::new(IV256))
     }
 }
 

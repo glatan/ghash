@@ -10,10 +10,7 @@ pub struct Sha512(Sha2<u64>);
 
 impl Sha512 {
     pub fn new() -> Self {
-        Self(Sha2::<u64> {
-            word_block: Vec::with_capacity(16),
-            status: IV512,
-        })
+        Self(Sha2::<u64>::new(IV512))
     }
 }
 
