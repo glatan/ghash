@@ -54,7 +54,6 @@ const C64: [u64; 16] = [
 // Blake<u32>: BLAKE-224(BLAKE-28) and BLAKE-256(BLAKE-32)
 // Blake<u64>: BLAKE-384(BLAKE-48) and BLAKE-512(BLAKE-64)
 struct Blake<T> {
-    message: Vec<u8>,
     word_block: Vec<T>,
     salt: [T; 4],
     l: usize, // 未処理のビット数
@@ -65,55 +64,49 @@ struct Blake<T> {
 }
 
 impl Blake<u32> {
-    pub fn new(message: &[u8], h: [u32; 8]) -> Self {
+    pub const fn new(h: [u32; 8]) -> Self {
         Self {
-            message: message.to_vec(),
             word_block: Vec::new(),
             salt: [0; 4],
-            l: message.len() * 8,
+            l: 0,
             h,
             t: [0; 2],
             v: [0; 16],
             ignore_counter: false,
         }
     }
-    fn padding(&mut self, last_byte: u8) {
-        let message_length = self.message.len();
-        // 64 - 1(0x80) - 8(message_length) = 55
-        match (message_length % 64).cmp(&55) {
+    fn padding(&mut self, message: &[u8], last_byte: u8) {
+        let mut m = message.to_vec();
+        let l = message.len();
+        self.l = message.len() * 8;
+        // 64 - 1(0x80) - 8(l) = 55
+        match (l % 64).cmp(&55) {
             Ordering::Greater => {
-                self.message.push(0x80);
-                self.message
-                    .append(&mut vec![0; 64 + 54 - (message_length % 64)]);
-                self.message.push(last_byte);
+                m.push(0x80);
+                m.append(&mut vec![0; 64 + 54 - (l % 64)]);
+                m.push(last_byte);
             }
             Ordering::Less => {
-                self.message.push(0x80);
-                self.message
-                    .append(&mut vec![0; 54 - (message_length % 64)]);
-                self.message.push(last_byte);
+                m.push(0x80);
+                m.append(&mut vec![0; 54 - (l % 64)]);
+                m.push(last_byte);
             }
             Ordering::Equal => {
                 if last_byte == 0x00 {
-                    self.message.push(0x80);
+                    m.push(0x80);
                 } else if last_byte == 0x01 {
-                    self.message.push(0x81);
+                    m.push(0x81);
                 } else {
                     unreachable!();
                 }
             }
         }
         // append message length
-        self.message
-            .append(&mut (8 * message_length as u64).to_be_bytes().to_vec());
+        m.append(&mut (8 * l as u64).to_be_bytes().to_vec());
         // create 32 bit-words from input bytes(and appending bytes)
-        for i in (0..self.message.len()).filter(|i| i % 4 == 0) {
-            self.word_block.push(u32::from_be_bytes([
-                self.message[i],
-                self.message[i + 1],
-                self.message[i + 2],
-                self.message[i + 3],
-            ]));
+        for i in (0..m.len()).filter(|i| i % 4 == 0) {
+            self.word_block
+                .push(u32::from_be_bytes([m[i], m[i + 1], m[i + 2], m[i + 3]]));
         }
     }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
@@ -196,59 +189,57 @@ impl Blake<u32> {
 }
 
 impl Blake<u64> {
-    pub fn new(message: &[u8], h: [u64; 8]) -> Self {
+    pub const fn new(h: [u64; 8]) -> Self {
         Self {
-            message: message.to_vec(),
             word_block: Vec::new(),
             salt: [0; 4],
-            l: message.len() * 8,
+            l: 0,
             h,
             t: [0; 2],
             v: [0; 16],
             ignore_counter: false,
         }
     }
-    fn padding(&mut self, last_byte: u8) {
-        let message_length = self.message.len();
+    fn padding(&mut self, message: &[u8], last_byte: u8) {
+        let mut m = message.to_vec();
+        let l = message.len();
+        self.l = message.len() * 8;
         // append 0b1000_0000
-        // 128 - 1(0x80) - 16(message_length) = 111
-        match (message_length % 128).cmp(&111) {
+        // 128 - 1(0x80) - 16(l) = 111
+        match (l % 128).cmp(&111) {
             Ordering::Greater => {
-                self.message.push(0x80);
-                self.message
-                    .append(&mut vec![0; 128 + 110 - (message_length % 128)]);
-                self.message.push(last_byte);
+                m.push(0x80);
+                m.append(&mut vec![0; 128 + 110 - (l % 128)]);
+                m.push(last_byte);
             }
             Ordering::Less => {
-                self.message.push(0x80);
-                self.message
-                    .append(&mut vec![0; 110 - (message_length % 128)]);
-                self.message.push(last_byte);
+                m.push(0x80);
+                m.append(&mut vec![0; 110 - (l % 128)]);
+                m.push(last_byte);
             }
             Ordering::Equal => {
                 if last_byte == 0x00 {
-                    self.message.push(0x80);
+                    m.push(0x80);
                 } else if last_byte == 0x01 {
-                    self.message.push(0x81);
+                    m.push(0x81);
                 } else {
                     unreachable!();
                 }
             }
         }
         // append message length
-        self.message
-            .append(&mut (8 * message_length as u128).to_be_bytes().to_vec());
+        m.append(&mut (8 * l as u128).to_be_bytes().to_vec());
         // create 64 bit-words from input bytes(and appending bytes)
-        for i in (0..self.message.len()).filter(|i| i % 8 == 0) {
+        for i in (0..m.len()).filter(|i| i % 8 == 0) {
             self.word_block.push(u64::from_be_bytes([
-                self.message[i],
-                self.message[i + 1],
-                self.message[i + 2],
-                self.message[i + 3],
-                self.message[i + 4],
-                self.message[i + 5],
-                self.message[i + 6],
-                self.message[i + 7],
+                m[i],
+                m[i + 1],
+                m[i + 2],
+                m[i + 3],
+                m[i + 4],
+                m[i + 5],
+                m[i + 6],
+                m[i + 7],
             ]));
         }
     }

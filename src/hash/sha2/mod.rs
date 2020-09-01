@@ -96,7 +96,6 @@ const fn small_sigma64_1(x: u64) -> u64 {
 // Sha2<u32>: SHA-224 and SHA-256
 // Sha2<u64>: SHA-384, SHA-512, SHA-512/224 and SHA-512/256
 struct Sha2<T> {
-    message: Vec<u8>,
     word_block: Vec<T>,
     status: [T; 8],
 }

@@ -10,15 +10,13 @@ const H256: [u32; 8] = [
 ];
 
 pub struct Ripemd256 {
-    message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 8],
 }
 
 impl Ripemd256 {
-    pub fn new(message: &[u8]) -> Self {
+    pub const fn new() -> Self {
         Self {
-            message: message.to_vec(),
             word_block: Vec::new(),
             status: H256,
         }
@@ -94,8 +92,8 @@ impl Ripemd256 {
 
 impl Hash for Ripemd256 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut ripemd256 = Self::new(message);
-        ripemd256.padding();
+        let mut ripemd256 = Self::new();
+        ripemd256.padding(message);
         ripemd256.compress();
         ripemd256
             .status

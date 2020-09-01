@@ -9,15 +9,15 @@ const IV48: [u64; 8] = [
 pub struct Blake48(Blake<u64>);
 
 impl Blake48 {
-    pub fn new(message: &[u8]) -> Self {
-        Self(Blake::<u64>::new(message, IV48))
+    pub const fn new() -> Self {
+        Self(Blake::<u64>::new(IV48))
     }
 }
 
 impl Hash for Blake48 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut blake48 = Self::new(message);
-        blake48.0.padding(0x00);
+        let mut blake48 = Self::new();
+        blake48.0.padding(message, 0x00);
         blake48.0.compress(14);
         blake48.0.h[0..6]
             .iter()

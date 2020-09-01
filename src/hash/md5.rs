@@ -73,15 +73,13 @@ const fn round4(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
 }
 
 pub struct Md5 {
-    message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 4],
 }
 
 impl Md5 {
-    pub fn new(message: &[u8]) -> Self {
+    pub const fn new() -> Self {
         Self {
-            message: message.to_vec(),
             word_block: Vec::new(),
             status: WORD_BUFFER,
         }
@@ -187,8 +185,8 @@ impl Md5 {
 
 impl Hash for Md5 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut md5 = Self::new(message);
-        md5.padding();
+        let mut md5 = Self::new();
+        md5.padding(message);
         md5.compress();
         md5.status[0..4]
             .iter()

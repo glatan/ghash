@@ -10,15 +10,13 @@ const H320: [u32; 10] = [
 ];
 
 pub struct Ripemd320 {
-    message: Vec<u8>,
     word_block: Vec<u32>,
     status: [u32; 10],
 }
 
 impl Ripemd320 {
-    pub fn new(message: &[u8]) -> Self {
+    pub const fn new() -> Self {
         Self {
-            message: message.to_vec(),
             word_block: Vec::new(),
             status: H320,
         }
@@ -106,8 +104,8 @@ impl Ripemd320 {
 
 impl Hash for Ripemd320 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut ripemd320 = Self::new(message);
-        ripemd320.padding();
+        let mut ripemd320 = Self::new();
+        ripemd320.padding(message);
         ripemd320.compress();
         ripemd320
             .status
