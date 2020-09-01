@@ -10,10 +10,7 @@ pub struct Sha384(Sha2<u64>);
 
 impl Sha384 {
     pub fn new() -> Self {
-        Self(Sha2::<u64> {
-            word_block: Vec::with_capacity(16),
-            status: IV384,
-        })
+        Self(Sha2::<u64>::new(IV384))
     }
 }
 

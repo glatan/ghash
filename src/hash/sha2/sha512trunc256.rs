@@ -10,10 +10,7 @@ pub struct Sha512Trunc256(Sha2<u64>);
 
 impl Sha512Trunc256 {
     pub fn new() -> Self {
-        Self(Sha2::<u64> {
-            word_block: Vec::with_capacity(16),
-            status: IV512_TRUNC_256,
-        })
+        Self(Sha2::<u64>::new(IV512_TRUNC_256))
     }
 }
 
