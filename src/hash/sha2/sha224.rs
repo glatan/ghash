@@ -9,9 +9,9 @@ pub const IV224: [u32; 8] = [
 pub struct Sha224(Sha2<u32>);
 
 impl Sha224 {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
         Self(Sha2::<u32> {
-            word_block: Vec::new(),
+            word_block: Vec::with_capacity(16),
             status: IV224,
         })
     }

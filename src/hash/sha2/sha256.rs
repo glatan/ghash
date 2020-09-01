@@ -9,9 +9,9 @@ pub const IV256: [u32; 8] = [
 pub struct Sha256(Sha2<u32>);
 
 impl Sha256 {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
         Self(Sha2::<u32> {
-            word_block: Vec::new(),
+            word_block: Vec::with_capacity(16),
             status: IV256,
         })
     }
