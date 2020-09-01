@@ -40,9 +40,9 @@ pub struct Md4 {
 }
 
 impl Md4 {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
         Self {
-            word_block: Vec::new(),
+            word_block: Vec::with_capacity(16),
             status: WORD_BUFFER,
         }
     }

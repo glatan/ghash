@@ -9,7 +9,7 @@ const IV224: [u32; 8] = [
 pub struct Blake224(Blake<u32>);
 
 impl Blake224 {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
         Self(Blake::<u32>::new(IV224))
     }
 }

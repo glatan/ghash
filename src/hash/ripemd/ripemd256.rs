@@ -15,9 +15,9 @@ pub struct Ripemd256 {
 }
 
 impl Ripemd256 {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
         Self {
-            word_block: Vec::new(),
+            word_block: Vec::with_capacity(16),
             status: H256,
         }
     }

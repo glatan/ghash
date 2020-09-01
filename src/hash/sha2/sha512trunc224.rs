@@ -9,9 +9,9 @@ pub const IV512_TRUNC_224: [u64; 8] = [
 pub struct Sha512Trunc224(Sha2<u64>);
 
 impl Sha512Trunc224 {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
         Self(Sha2::<u64> {
-            word_block: Vec::new(),
+            word_block: Vec::with_capacity(16),
             status: IV512_TRUNC_224,
         })
     }
