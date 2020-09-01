@@ -9,7 +9,7 @@ pub const IV512_TRUNC_256: [u64; 8] = [
 pub struct Sha512Trunc256(Sha2<u64>);
 
 impl Sha512Trunc256 {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self(Sha2::<u64>::new(IV512_TRUNC_256))
     }
 }

@@ -78,7 +78,7 @@ pub struct Md5 {
 }
 
 impl Md5 {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self {
             word_block: Vec::with_capacity(16),
             status: WORD_BUFFER,
