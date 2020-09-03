@@ -42,4 +42,8 @@ fn main() {
         "SHA-512/256:\t{:}",
         Sha512Trunc256::hash_to_lowerhex(&input)
     );
+    println!("SHA3-224:\t{:}", Sha3_224::hash_to_lowerhex(&input));
+    println!("SHA3-256:\t{:}", Sha3_256::hash_to_lowerhex(&input));
+    println!("SHA3-384:\t{:}", Sha3_384::hash_to_lowerhex(&input));
+    println!("SHA3-512:\t{:}", Sha3_512::hash_to_lowerhex(&input));
 }

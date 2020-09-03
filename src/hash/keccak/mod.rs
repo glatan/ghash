@@ -53,7 +53,7 @@ const R: [[u32; 5]; 5] = [
     [27, 20, 39, 8, 14],
 ];
 
-struct Keccak {
+pub(crate) struct Keccak {
     lane_block: Vec<u64>,
     state: [[u64; 5]; 5], // A, S
     l: usize,
@@ -89,7 +89,7 @@ impl Keccak {
     }
     // 1000...0001 Style
     // (self.r / 8) byteの倍数にパディングする。例: r=1152の場合は144byteの倍数
-    fn padding(&mut self, message: &[u8], suffix: u8) {
+    pub(crate) fn padding(&mut self, message: &[u8], suffix: u8) {
         let mut m = message.to_vec();
         let l = message.len();
         let rate_length = self.r / 8;
@@ -186,7 +186,7 @@ impl Keccak {
             self.state = round(self.state, RC[i]);
         }
     }
-    fn keccak(&mut self) -> Vec<u8> {
+    pub(crate) fn keccak(&mut self) -> Vec<u8> {
         // Initialize (S initialized in Self::new())
         // Absorbing phase
         for n in 0..(self.lane_block.len() / 25) {
