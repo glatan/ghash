@@ -17,6 +17,10 @@ fn main() {
     println!("BLAKE-256\t{:}", Blake256::hash_to_lowerhex(&input));
     println!("BLAKE-384\t{:}", Blake384::hash_to_lowerhex(&input));
     println!("BLAKE-512\t{:}", Blake512::hash_to_lowerhex(&input));
+    println!("Keccak-224\t{:}", Keccak224::hash_to_lowerhex(&input));
+    println!("Keccak-256\t{:}", Keccak256::hash_to_lowerhex(&input));
+    println!("Keccak-384\t{:}", Keccak384::hash_to_lowerhex(&input));
+    println!("Keccak-512\t{:}", Keccak512::hash_to_lowerhex(&input));
     println!("MD2:\t\t{:}", Md2::hash_to_lowerhex(&input));
     println!("MD4:\t\t{:}", Md4::hash_to_lowerhex(&input));
     println!("MD5:\t\t{:}", Md5::hash_to_lowerhex(&input));
