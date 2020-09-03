@@ -13,30 +13,34 @@
 // Keccak-384: [r=832, c=768]
 // Keccak-512: [r=576, c=1024]
 
-use super::{Hash, Message};
-use crate::impl_message;
+use super::Hash;
 use std::cmp::Ordering;
-use std::mem;
 
 mod keccak224;
+mod keccak256;
+mod keccak384;
+mod keccak512;
 
 pub use keccak224::Keccak224;
+pub use keccak256::Keccak256;
+pub use keccak384::Keccak384;
+pub use keccak512::Keccak512;
 
 // RC[i]
 #[rustfmt::skip]
 const RC: [u64; 24] = [
-    0x0000_0000_0000_0001, 0x0000_0000_8000_808B,
-    0x0000_0000_0000_8082, 0x8000_0000_0000_008B,
-    0x8000_0000_0000_808A, 0x8000_0000_0000_8089,
-    0x8000_0000_8000_8000, 0x8000_0000_0000_8003,
-    0x0000_0000_0000_808B, 0x8000_0000_0000_8002,
-    0x0000_0000_8000_0001, 0x8000_0000_0000_0080,
-    0x8000_0000_8000_8081, 0x0000_0000_0000_800A,
-    0x8000_0000_0000_8009, 0x8000_0000_8000_000A,
-    0x0000_0000_0000_008A, 0x8000_0000_8000_8081,
-    0x0000_0000_0000_0088, 0x8000_0000_0000_8080,
-    0x0000_0000_8000_8009, 0x0000_0000_8000_0001,
-    0x0000_0000_8000_000A, 0x8000_0000_8000_8008,
+    0x0000_0000_0000_0001, 0x0000_0000_0000_8082,
+    0x8000_0000_0000_808A, 0x8000_0000_8000_8000,
+    0x0000_0000_0000_808B, 0x0000_0000_8000_0001,
+    0x8000_0000_8000_8081, 0x8000_0000_0000_8009,
+    0x0000_0000_0000_008A, 0x0000_0000_0000_0088,
+    0x0000_0000_8000_8009, 0x0000_0000_8000_000A,
+    0x0000_0000_8000_808B, 0x8000_0000_0000_008B,
+    0x8000_0000_0000_8089, 0x8000_0000_0000_8003,
+    0x8000_0000_0000_8002, 0x8000_0000_0000_0080,
+    0x0000_0000_0000_800A, 0x8000_0000_8000_000A,
+    0x8000_0000_8000_8081, 0x8000_0000_0000_8080,
+    0x0000_0000_8000_0001, 0x8000_0000_8000_8008,
 ];
 
 // r[x,y]
@@ -50,10 +54,8 @@ const R: [[u32; 5]; 5] = [
 ];
 
 struct Keccak {
-    message: Vec<u8>,
+    lane_block: Vec<u64>,
     state: [[u64; 5]; 5], // A, S
-    b: usize,
-    c: usize, // capacity
     l: usize,
     n: usize,
     r: usize, // bitrate
@@ -61,75 +63,100 @@ struct Keccak {
 }
 
 impl Keccak {
-    pub const fn new() -> Self {
-        // > 1.4  The Keccak sponge functions
-        // > The default value for r is 1600 − c and the default value for c is 576:
-        // >> b = r + c = 1600
-        // >> w = b/25 = 1600/25 = 64
-        // >> w = 2^l => l = 6
-        Self {
-            message: Vec::new(),
-            state: [[0; 5]; 5],
-            b: 1600,
-            c: 576,
-            l: 6,
-            n: 1024,
-            r: 1024,
-            w: 64,
-        }
-    }
-    fn set_params(&mut self, r: usize, c: usize, n: usize) {
+    pub fn new(r: usize, c: usize, n: usize) -> Self {
+        // w = b/25
+        // w = 2^l => l = log2(w)
         if r % 8 != 0 {
-            panic!("r must be a multiple of 8 in this implementation.");
+            panic!(
+                "r must be a multiple of 8 in this implementation, but got {}",
+                r
+            );
         }
         if n % 8 != 0 {
-            panic!("output length must be a multiple of 8.");
+            panic!("output length must be a multiple of 8, but got {}", n);
         }
-        self.r = r;
-        self.c = c;
-        self.n = n;
-        self.b = r + c;
-        self.w = self.b / 25;
-        self.l = (self.w as f32).log2() as usize;
+        if ![25, 50, 100, 200, 400, 800, 1600].contains(&(r + c)) {
+            panic!("bitrate must be in [25, 50, 100, 200, 400, 800, 1600], but got {}(rate={}, capacity={})", r + c, r, c);
+        }
+        Self {
+            state: [[0; 5]; 5],
+            lane_block: Vec::new(),
+            l: (((r + c) / 25) as f32).log2() as usize,
+            n,
+            r,
+            w: (r + c) / 25,
+        }
     }
     // 1000...0001 Style
-    fn padding(&mut self, suffix: u8) {
-        let message_length = self.message.len() / 8;
+    // (self.r / 8) byteの倍数にパディングする。例: r=1152の場合は144byteの倍数
+    fn padding(&mut self, message: &[u8], suffix: u8) {
+        let mut m = message.to_vec();
+        let l = message.len();
         let rate_length = self.r / 8;
-        self.message.push(suffix);
-        // [byte]: rate_length - message_length - 2(0x80 and 0x01)
-        let zero_padding_length = rate_length as i128 - message_length as i128 - 2;
-        match zero_padding_length.cmp(&0) {
+        m.push(suffix);
+        match (l % rate_length).cmp(&(rate_length - 1)) {
             Ordering::Greater => {
-                self.message
-                    .append(&mut vec![0; zero_padding_length as usize]);
+                m.append(&mut vec![0; 2 * rate_length - 1 - (l % rate_length)]);
             }
             Ordering::Less => {
-                self.message.append(&mut vec![
-                    0;
-                    rate_length
-                        - zero_padding_length.abs() as usize
-                            % rate_length
-                ]);
+                m.append(&mut vec![0; rate_length - 1 - (l % rate_length)]);
             }
             Ordering::Equal => (),
         }
-        self.message.push(0x01);
-        for o in &self.message {
-            print!("{:02x}", o);
-        }
+        // padded message length must be a multiple of (self.r / 8)[byte]
+        debug_assert_eq!((m.len() % (self.r / 8)), 0);
+        let n = m.len();
+        m[n - 1] |= 0x80;
+        let lane_size = self.w / 8; // byte length of lane
+        let rate_length = self.r / 8; // byte length of rate
+        let padded_lanes = m // パディングして、64バイト(u8 x 8)になったレーン
+            .chunks_exact(lane_size)
+            .flat_map(|chunk| {
+                let mut lane = chunk.to_vec();
+                lane.reverse(); // little endianに変換
+                lane.append(&mut vec![0u8; 8 - lane_size]); // pi[x][y]はu64なので0パディングを行う。
+                lane
+            })
+            .collect::<Vec<u8>>();
+        self.lane_block = {
+            let mut blocks = Vec::with_capacity(m.len() / lane_size);
+            // n: block index
+            for n in 0..(padded_lanes.len() / rate_length) {
+                // m: lane index
+                for m in 0..((padded_lanes.len() / 8) / (padded_lanes.len() / rate_length)) {
+                    // lane_blockはすでにlittle_endianになっているのでエンディアン変換は行わない。
+                    blocks.push(u64::from_be_bytes([
+                        padded_lanes[n * rate_length + m * 8],
+                        padded_lanes[n * rate_length + m * 8 + 1],
+                        padded_lanes[n * rate_length + m * 8 + 2],
+                        padded_lanes[n * rate_length + m * 8 + 3],
+                        padded_lanes[n * rate_length + m * 8 + 4],
+                        padded_lanes[n * rate_length + m * 8 + 5],
+                        padded_lanes[n * rate_length + m * 8 + 6],
+                        padded_lanes[n * rate_length + m * 8 + 7],
+                    ]));
+                }
+                while blocks.len() % 25 != 0 {
+                    blocks.push(0);
+                }
+            }
+            blocks
+        };
     }
     fn keccak_f(&mut self) {
         fn round(mut a: [[u64; 5]; 5], rc: u64) -> [[u64; 5]; 5] {
-            let mut b = vec![vec![0; 5]; 5];
-            let mut c = vec![0; 5];
-            let mut d = vec![0; 5];
+            let mut b = [[0; 5]; 5];
+            let mut c = [0; 5];
+            let mut d = [0; 5];
             // Theta step
             for x in 0..5 {
                 c[x] = a[x][0] ^ a[x][1] ^ a[x][2] ^ a[x][3] ^ a[x][4];
             }
             for x in 0..5 {
-                d[x] = c[(x as isize - 1) as usize %5] ^ c[(x + 1)%5].rotate_left(1);
+                // https://keccak.team/keccak_specs_summary.html
+                // 疑似コードによるとc[x-1]だが、これだとusizeの範囲外の値が発生する。
+                // 4, 0, 1, 2, 3の順に要素を見ればいいので、(x + 4) % 5。
+                d[x] = c[(x + 4) % 5] ^ c[(x + 1) % 5].rotate_left(1);
             }
             for x in 0..5 {
                 for y in 0..5 {
@@ -139,17 +166,17 @@ impl Keccak {
             // Rho and Pi step
             for x in 0..5 {
                 for y in 0..5 {
-                    b[y][(2 * x + 3 * y)%5] = a[x][y].rotate_left(R[x][y]);
+                    b[y][(2 * x + 3 * y) % 5] = a[x][y].rotate_left(R[x][y]);
                 }
             }
             // Chi step
             for x in 0..5 {
                 for y in 0..5 {
-                    a[x][y] = b[x][y] ^ (!b[(x + 1)%5][y] & b[(x + 2)%5][y]);
+                    a[x][y] = b[x][y] ^ ((!b[(x + 1) % 5][y]) & b[(x + 2) % 5][y]);
                 }
             }
             // Iota step
-            a[0][0] = a[0][0] ^ rc;
+            a[0][0] ^= rc;
             // Return A
             a
         }
@@ -157,56 +184,41 @@ impl Keccak {
         for i in 0..n {
             // A: self.state
             self.state = round(self.state, RC[i]);
-            // println!("Round {}/{}", i+1,n);
-            // for x in 0..5 {
-            //     println!("{:016x} {:016x} {:016x} {:016x} {:016x}", self.state[x][0],self.state[x][1],self.state[x][2],self.state[x][3],self.state[x][4]);
-            // }
         }
     }
-    fn hash(&mut self, message: &[u8]) -> Vec<u8> {
-        self.message(message);
-        self.padding(0x06);
+    fn keccak(&mut self) -> Vec<u8> {
         // Initialize (S initialized in Self::new())
         // Absorbing phase
-        let word_size = self.r / 8;
-        let word_block_length = self.message.len() / word_size;
-        println!("\n{}, {}",word_size,word_block_length);
-        for i in 0..word_block_length {
-            let mut pi = self.message[i * word_size..(i + 1) * word_size].to_vec();
-            // #[cfg(target_endian = "little")]
-            // {
-            //     pi.reverse();
-            // }
-            for x in 0..5 {
-                for y in 0..5 {
-                    if x + 5 * y < (self.r / self.w) {
-                        self.state[x][y] ^= pi[(x + 5 * y)%5] as u64;
-                    }
+        for n in 0..(self.lane_block.len() / 25) {
+            let mut pi = [[0; 5]; 5];
+            for y in 0..5 {
+                for x in 0..5 {
+                    pi[x][y] = self.lane_block[(x + 5 * y + n * 25)];
+                }
+            }
+            for y in 0..5 {
+                for x in 0..5 {
+                    self.state[x][y] ^= pi[x][y] as u64;
                 }
             }
             self.keccak_f();
         }
-        println!("{:?}", self.state);
         // Squeezing phase
         let mut z = Vec::new();
-        for _ in 0..(self.n / word_size) {
+        let mut output_length = self.n;
+        while output_length > 0 {
             for x in 0..5 {
                 for y in 0..5 {
-                    if x + 5 * y < (self.r / self.w) {
-                        // trim S[x][y] to r bit and push to z.
-                        let mut trimmed_s =
-                            self.state[x][y].to_be_bytes()[(64 - self.w)..8].to_vec();
-                        z.append(&mut trimmed_s);
-                    }
+                    z.append(&mut self.state[y][x].to_le_bytes().to_vec());
                 }
             }
-            self.keccak_f();
+            if output_length > self.r {
+                self.keccak_f();
+                output_length -= self.r;
+            } else {
+                output_length = 0;
+            }
         }
-        z[0..self.n/8].to_vec()
+        z[0..self.n / 8].to_vec()
     }
-}
-
-impl Message for Keccak {
-    // Set Message
-    impl_message!(self, u64);
 }
