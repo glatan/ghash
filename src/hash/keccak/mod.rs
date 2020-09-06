@@ -180,8 +180,7 @@ impl Keccak {
             // Return A
             a
         }
-        let n = 12 + 2 * self.l;
-        for i in 0..n {
+        for i in 0..(12 + 2 * self.l) {
             // A: self.state
             self.state = round(self.state, RC[i]);
         }
