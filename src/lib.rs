@@ -1,4 +1,5 @@
 mod hash;
+mod macros;
 
 pub use self::hash::{
     Blake224, Blake256, Blake28, Blake32, Blake384, Blake48, Blake512, Blake64, Hash, Keccak224,
