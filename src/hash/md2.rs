@@ -30,14 +30,13 @@ impl Md2 {
         }
     }
     fn padding(&mut self) {
-        let message_length: usize = self.message.len();
-        let padding_byte = (BLOCK_SIZE - (message_length % BLOCK_SIZE)) as u8;
+        let padding_byte = (BLOCK_SIZE - (self.message.len() % BLOCK_SIZE)) as u8;
         self.message
             .append(&mut vec![padding_byte; padding_byte as usize]);
     }
     #[allow(clippy::needless_range_loop)]
     fn add_check_sum(&mut self) {
-        let mut checksum: Vec<u8> = vec![0; BLOCK_SIZE];
+        let mut checksum = vec![0; BLOCK_SIZE];
         let mut c;
         let mut l = 0;
         for i in 0..(self.message.len() / BLOCK_SIZE) {
@@ -62,7 +61,7 @@ impl Md2 {
                     self.state[k] ^= STABLE[t];
                     t = self.state[k] as usize;
                 }
-                t = (t + j) & 0xFF; // (t + j) mod 256
+                t = (t + j) % 256;
             }
         }
     }
