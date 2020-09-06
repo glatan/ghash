@@ -37,13 +37,12 @@ impl Md2 {
     }
     #[allow(clippy::needless_range_loop)]
     fn add_check_sum(&mut self) {
-        let word_block_length: usize = self.message.len() / BLOCK_SIZE;
-        let mut checksum: Vec<u8> = vec![0; 16];
+        let mut checksum: Vec<u8> = vec![0; BLOCK_SIZE];
         let mut c;
         let mut l = 0;
-        for i in 0..word_block_length {
-            for j in 0..16 {
-                c = self.message[16 * i + j] as usize;
+        for i in 0..(self.message.len() / BLOCK_SIZE) {
+            for j in 0..BLOCK_SIZE {
+                c = self.message[BLOCK_SIZE * i + j] as usize;
                 checksum[j] ^= STABLE[c ^ l];
                 l = checksum[j] as usize;
             }
@@ -52,11 +51,10 @@ impl Md2 {
     }
     #[allow(clippy::needless_range_loop)]
     fn compress(&mut self) {
-        let word_block_length = self.message.len() / BLOCK_SIZE;
-        for i in 0..word_block_length {
-            for j in 0..16 {
-                self.state[j + 16] = self.message[16 * i + j];
-                self.state[j + 32] = self.state[j + 16] ^ self.state[j];
+        for i in 0..(self.message.len() / BLOCK_SIZE) {
+            for j in 0..BLOCK_SIZE {
+                self.state[j + 16] = self.message[BLOCK_SIZE * i + j];
+                self.state[j + 32] = self.state[j + BLOCK_SIZE] ^ self.state[j];
             }
             let mut t = 0;
             for j in 0..18 {
@@ -64,7 +62,7 @@ impl Md2 {
                     self.state[k] ^= STABLE[t];
                     t = self.state[k] as usize;
                 }
-                t = (t + j) % 256;
+                t = (t + j) & 0xFF; // (t + j) mod 256
             }
         }
     }
