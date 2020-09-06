@@ -5,8 +5,8 @@ macro_rules! impl_benchmark {
         #[allow(non_snake_case)]
         mod $T {
             extern crate test;
-            use test::Bencher;
             use ghash::{$T, Hash};
+            use test::Bencher;
             #[bench]
             #[allow(non_snake_case)]
             fn B0(b: &mut Bencher) {
@@ -53,7 +53,7 @@ macro_rules! impl_benchmark {
                 b.iter(|| $T::hash_to_bytes(&[0; 1024 * 1024]))
             }
         }
-    }
+    };
 }
 
 impl_benchmark!(Blake224);
