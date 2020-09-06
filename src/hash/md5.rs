@@ -1,5 +1,5 @@
 use super::Hash;
-use crate::impl_md4_padding;
+use crate::impl_padding;
 use std::cmp::Ordering;
 
 const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
@@ -180,7 +180,7 @@ impl Md5 {
 
 impl Md5 {
     // Padding
-    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes);
+    impl_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
 impl Hash for Md5 {

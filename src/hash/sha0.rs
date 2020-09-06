@@ -1,5 +1,5 @@
 use super::Hash;
-use crate::impl_md4_padding;
+use crate::impl_padding;
 use std::cmp::Ordering;
 
 // K(t) = 5A827999 ( 0 <= t <= 19)
@@ -127,7 +127,7 @@ impl Sha0 {
 
 impl Sha0 {
     // Padding
-    impl_md4_padding!(u32 => self, from_be_bytes, to_be_bytes);
+    impl_padding!(u32 => self, from_be_bytes, to_be_bytes);
 }
 
 impl Hash for Sha0 {

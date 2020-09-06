@@ -1,6 +1,6 @@
 use super::Hash;
 use super::{f, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use crate::impl_md4_padding;
+use crate::impl_padding;
 use std::cmp::Ordering;
 
 const H160: [u32; 5] = [
@@ -64,7 +64,7 @@ impl Ripemd160 {
 
 impl Ripemd160 {
     // Padding
-    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes);
+    impl_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
 impl Hash for Ripemd160 {

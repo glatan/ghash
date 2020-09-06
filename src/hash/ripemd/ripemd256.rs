@@ -1,6 +1,6 @@
 use super::Hash;
 use super::{f, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use crate::impl_md4_padding;
+use crate::impl_padding;
 use std::cmp::Ordering;
 
 #[rustfmt::skip]
@@ -87,7 +87,7 @@ impl Ripemd256 {
 
 impl Ripemd256 {
     // Padding
-    impl_md4_padding!(u32 => self, from_le_bytes, to_le_bytes);
+    impl_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
 impl Hash for Ripemd256 {

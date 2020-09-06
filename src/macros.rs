@@ -1,6 +1,6 @@
-// MD4 Style Padding
+// <M: message> || 1000...0000 || <l: bit length>
 #[macro_export]
-macro_rules! impl_md4_padding {
+macro_rules! impl_padding {
     // from_bytes
     //// from_be_bytes: SHA-{0, 1, 2}, BLAKE
     //// from_le_bytes: Others
