@@ -62,7 +62,7 @@ impl Md2 {
                     self.state[k] ^= STABLE[t];
                     t = self.state[k] as usize;
                 }
-                t = (t + j) % 256;
+                t = (t + j) & 0xFF; // (t + j) mod 256
             }
         }
     }
