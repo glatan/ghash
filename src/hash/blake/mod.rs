@@ -133,12 +133,12 @@ impl Blake<u32> {
         // Compress 1 block in 1 loop
         for n in 0..(self.word_block.len() / 16) {
             // update counter
-            if self.l <= 512 {
-                self.t[0] += self.l as u32;
-                self.l = 0;
-            } else {
+            if self.l > 512 {
                 self.t[0] += 512;
                 self.l -= 512;
+            } else {
+                self.t[0] += self.l as u32;
+                self.l = 0;
             }
             // initialize state
             self.v[0] = self.h[0];
@@ -267,12 +267,12 @@ impl Blake<u64> {
         // Compress 1 block in 1 loop
         for n in 0..(self.word_block.len() / 16) {
             // update counter
-            if self.l <= 1024 {
-                self.t[0] += self.l as u64;
-                self.l = 0;
-            } else {
+            if self.l > 1024 {
                 self.t[0] += 1024;
                 self.l -= 1024;
+            } else {
+                self.t[0] += self.l as u64;
+                self.l = 0;
             }
             // initialize state
             self.v[0] = self.h[0];
