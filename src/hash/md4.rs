@@ -86,9 +86,10 @@ impl Md4 {
                 self.status[3].wrapping_add(d),
             ];
         }
-        for i in 0..4 {
-            self.status[i] = self.status[i].swap_bytes();
-        }
+        self.status[0] = self.status[0].swap_bytes();
+        self.status[1] = self.status[1].swap_bytes();
+        self.status[2] = self.status[2].swap_bytes();
+        self.status[3] = self.status[3].swap_bytes();
     }
 }
 
