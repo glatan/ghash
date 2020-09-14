@@ -159,7 +159,6 @@ impl Sha2<u32> {
 }
 
 impl Sha2<u32> {
-    // Padding
     impl_padding!(u32 => self, from_be_bytes, to_be_bytes);
 }
 
@@ -222,6 +221,5 @@ impl Sha2<u64> {
 }
 
 impl Sha2<u64> {
-    // Padding
     impl_padding!(u64 => self, from_be_bytes, to_be_bytes);
 }

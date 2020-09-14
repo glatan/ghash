@@ -63,7 +63,6 @@ impl Ripemd160 {
 }
 
 impl Ripemd160 {
-    // Padding
     impl_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 

@@ -86,10 +86,9 @@ impl Md5 {
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self) {
-        let word_block_length = self.word_block.len() / 16;
         let (mut a, mut b, mut c, mut d);
         let mut x: [u32; 16] = [0; 16];
-        for i in 0..word_block_length {
+        for i in 0..(self.word_block.len() / 16) {
             for j in 0..16 {
                 x[j] = self.word_block[16 * i + j];
             }
@@ -172,14 +171,14 @@ impl Md5 {
                 self.status[3].wrapping_add(d),
             ];
         }
-        for i in 0..4 {
-            self.status[i] = self.status[i].swap_bytes();
-        }
+        self.status[0] = self.status[0].swap_bytes();
+        self.status[1] = self.status[1].swap_bytes();
+        self.status[2] = self.status[2].swap_bytes();
+        self.status[3] = self.status[3].swap_bytes();
     }
 }
 
 impl Md5 {
-    // Padding
     impl_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
