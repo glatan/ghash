@@ -27,13 +27,12 @@ impl Hash for Sha384 {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::Sha384;
-    use crate::hash::Test;
-    impl Test for Sha384 {}
-    // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA384.pdf
-    // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
-    const TEST_CASES: [(&[u8], &str); 14] = [
+use crate::impl_test;
+
+#[cfg(test)]
+// https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA384.pdf
+// https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
+const TEST_CASES: [(&[u8], &str); 14] = [
         // SHA-384("abc") = cb00753f45a35e8bb5a03d699ac65007272c32ab0eded1631a8b605a43ff5bed8086072ba1e7cc2358baeca134c825a7
         (
             "abc".as_bytes(),
@@ -109,22 +108,6 @@ mod tests {
         // 0x41000000 (1090519040) bytes of zeros
         // 0x6000003e (1610612798) bytes of 0x42 ‘B’
     ];
-    #[test]
-    fn bytes() {
-        for (m, e) in TEST_CASES.iter() {
-            Sha384::compare_bytes(m, e);
-        }
-    }
-    #[test]
-    fn lower_hex() {
-        for (m, e) in TEST_CASES.iter() {
-            Sha384::compare_lowerhex(m, e);
-        }
-    }
-    #[test]
-    fn upper_hex() {
-        for (m, e) in TEST_CASES.iter() {
-            Sha384::compare_upperhex(m, e);
-        }
-    }
-}
+
+#[cfg(test)]
+impl_test!(Sha384);

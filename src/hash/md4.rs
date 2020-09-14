@@ -111,62 +111,45 @@ impl Hash for Md4 {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::Md4;
-    use crate::hash::Test;
-    impl Test for Md4 {}
-    // https://tools.ietf.org/html/rfc1320
-    const TEST_CASES: [(&[u8], &str); 10] = [
-        // MD4 ("") = 31d6cfe0d16ae931b73c59d7e0c089c0
-        ("".as_bytes(), "31d6cfe0d16ae931b73c59d7e0c089c0"),
-        // MD4 ("a") = bde52cb31de33e46245e05fbdbd6fb24
-        ("a".as_bytes(), "bde52cb31de33e46245e05fbdbd6fb24"),
-        // MD4 ("abc") = a448017aaf21d8525fc10ae87aa6729d
-        ("abc".as_bytes(), "a448017aaf21d8525fc10ae87aa6729d"),
-        // MD4 ("message digest") = d9130a8164549fe818874806e1c7014b
-        (
-            "message digest".as_bytes(),
-            "d9130a8164549fe818874806e1c7014b",
-        ),
-        // MD4 ("abcdefghijklmnopqrstuvwxyz") = d79e1c308aa5bbcdeea8ed63df412da9
-        (
-            "abcdefghijklmnopqrstuvwxyz".as_bytes(),
-            "d79e1c308aa5bbcdeea8ed63df412da9",
-        ),
-        // MD4 ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") = 043f8582f241db351ce627e153e7f0e4
-        (
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".as_bytes(),
-            "043f8582f241db351ce627e153e7f0e4",
-        ),
-        // MD4 ("12345678901234567890123456789012345678901234567890123456789012345678901234567890") = e33b4ddc9c38f2199c3e7b164fcc0536
-        (
-            "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
-                .as_bytes(),
-            "e33b4ddc9c38f2199c3e7b164fcc0536",
-        ),
-        // padding_length > 0
-        (&[0x30; 54], "374f6c9aa6ee2eef316d1357c4c66e73"),
-        // padding_length == 0
-        (&[0x30; 55], "5df3a07b1fca415a0d196e1cf255ec21"),
-        // padding_length < 0
-        (&[0x30; 56], "ba4591a932374808dc47c89bf7f729b3"),
-    ];
-    #[test]
-    fn bytes() {
-        for (m, e) in TEST_CASES.iter() {
-            Md4::compare_bytes(m, e);
-        }
-    }
-    #[test]
-    fn lower_hex() {
-        for (m, e) in TEST_CASES.iter() {
-            Md4::compare_lowerhex(m, e);
-        }
-    }
-    #[test]
-    fn upper_hex() {
-        for (m, e) in TEST_CASES.iter() {
-            Md4::compare_upperhex(m, e);
-        }
-    }
-}
+use crate::impl_test;
+
+#[cfg(test)]
+// https://tools.ietf.org/html/rfc1320
+const TEST_CASES: [(&[u8], &str); 10] = [
+    // MD4 ("") = 31d6cfe0d16ae931b73c59d7e0c089c0
+    ("".as_bytes(), "31d6cfe0d16ae931b73c59d7e0c089c0"),
+    // MD4 ("a") = bde52cb31de33e46245e05fbdbd6fb24
+    ("a".as_bytes(), "bde52cb31de33e46245e05fbdbd6fb24"),
+    // MD4 ("abc") = a448017aaf21d8525fc10ae87aa6729d
+    ("abc".as_bytes(), "a448017aaf21d8525fc10ae87aa6729d"),
+    // MD4 ("message digest") = d9130a8164549fe818874806e1c7014b
+    (
+        "message digest".as_bytes(),
+        "d9130a8164549fe818874806e1c7014b",
+    ),
+    // MD4 ("abcdefghijklmnopqrstuvwxyz") = d79e1c308aa5bbcdeea8ed63df412da9
+    (
+        "abcdefghijklmnopqrstuvwxyz".as_bytes(),
+        "d79e1c308aa5bbcdeea8ed63df412da9",
+    ),
+    // MD4 ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") = 043f8582f241db351ce627e153e7f0e4
+    (
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".as_bytes(),
+        "043f8582f241db351ce627e153e7f0e4",
+    ),
+    // MD4 ("12345678901234567890123456789012345678901234567890123456789012345678901234567890") = e33b4ddc9c38f2199c3e7b164fcc0536
+    (
+        "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
+            .as_bytes(),
+        "e33b4ddc9c38f2199c3e7b164fcc0536",
+    ),
+    // padding_length > 0
+    (&[0x30; 54], "374f6c9aa6ee2eef316d1357c4c66e73"),
+    // padding_length == 0
+    (&[0x30; 55], "5df3a07b1fca415a0d196e1cf255ec21"),
+    // padding_length < 0
+    (&[0x30; 56], "ba4591a932374808dc47c89bf7f729b3"),
+];
+
+#[cfg(test)]
+impl_test!(Md4);
