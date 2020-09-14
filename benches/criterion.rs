@@ -2,15 +2,7 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 
 use ghash::*;
 
-const TEST_LENGTH: [usize; 7] = [
-    0,
-    512,
-    1024,
-    1024 * 2,
-    1024 * 4,
-    1024 * 8,
-    1024 * 16,
-];
+const TEST_LENGTH: [usize; 7] = [0, 512, 1024, 1024 * 2, 1024 * 4, 1024 * 8, 1024 * 16];
 
 fn small_message(c: &mut Criterion) {
     let mut group = c.benchmark_group("Small Message");

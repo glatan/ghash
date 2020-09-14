@@ -70,54 +70,37 @@ impl Hash for Ripemd128 {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::Ripemd128;
-    use crate::hash::Test;
-    impl Test for Ripemd128 {}
-    // https://homes.esat.kuleuven.be/~bosselae/ripemd160/pdf/AB-9601/AB-9601.pdf
-    const TEST_CASES: [(&[u8], &str); 9] = [
-        ("".as_bytes(), "cdf26213a150dc3ecb610f18f6b38b46"),
-        ("a".as_bytes(), "86be7afa339d0fc7cfc785e72f578d33"),
-        ("abc".as_bytes(), "c14a12199c66e4ba84636b0f69144c77"),
-        (
-            "message digest".as_bytes(),
-            "9e327b3d6e523062afc1132d7df9d1b8",
-        ),
-        (
-            "abcdefghijklmnopqrstuvwxyz".as_bytes(),
-            "fd2aa607f71dc8f510714922b371834e",
-        ),
-        (
-            "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq".as_bytes(),
-            "a1aa0689d0fafa2ddc22e88b49133a06",
-        ),
-        (
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".as_bytes(),
-            "d1e959eb179c911faea4624c60c5c702",
-        ),
-        (
-            "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
-                .as_bytes(),
-            "3f45ef194732c2dbb2c4a2c769795fa3",
-        ),
-        (&[0x61; 1000000], "4a7f5723f954eba1216c9d8f6320431f"),
-    ];
-    #[test]
-    fn bytes() {
-        for (m, e) in TEST_CASES.iter() {
-            Ripemd128::compare_bytes(m, e);
-        }
-    }
-    #[test]
-    fn lower_hex() {
-        for (m, e) in TEST_CASES.iter() {
-            Ripemd128::compare_lowerhex(m, e);
-        }
-    }
-    #[test]
-    fn upper_hex() {
-        for (m, e) in TEST_CASES.iter() {
-            Ripemd128::compare_upperhex(m, e);
-        }
-    }
-}
+use crate::impl_test;
+
+#[cfg(test)]
+// https://homes.esat.kuleuven.be/~bosselae/ripemd160/pdf/AB-9601/AB-9601.pdf
+const TEST_CASES: [(&[u8], &str); 9] = [
+    ("".as_bytes(), "cdf26213a150dc3ecb610f18f6b38b46"),
+    ("a".as_bytes(), "86be7afa339d0fc7cfc785e72f578d33"),
+    ("abc".as_bytes(), "c14a12199c66e4ba84636b0f69144c77"),
+    (
+        "message digest".as_bytes(),
+        "9e327b3d6e523062afc1132d7df9d1b8",
+    ),
+    (
+        "abcdefghijklmnopqrstuvwxyz".as_bytes(),
+        "fd2aa607f71dc8f510714922b371834e",
+    ),
+    (
+        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq".as_bytes(),
+        "a1aa0689d0fafa2ddc22e88b49133a06",
+    ),
+    (
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".as_bytes(),
+        "d1e959eb179c911faea4624c60c5c702",
+    ),
+    (
+        "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
+            .as_bytes(),
+        "3f45ef194732c2dbb2c4a2c769795fa3",
+    ),
+    (&[0x61; 1000000], "4a7f5723f954eba1216c9d8f6320431f"),
+];
+
+#[cfg(test)]
+impl_test!(Ripemd128);

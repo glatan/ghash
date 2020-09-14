@@ -76,3 +76,34 @@ macro_rules! impl_padding {
         }
     };
 }
+
+#[macro_export]
+macro_rules! impl_test {
+    ($self:ident) => {
+        #[cfg(test)]
+        mod tests {
+            use super::$self;
+            use super::TEST_CASES;
+            use crate::hash::Test;
+            impl Test for $self {}
+            #[test]
+            fn bytes() {
+                for (m, e) in TEST_CASES.iter() {
+                    $self::compare_bytes(m, e);
+                }
+            }
+            #[test]
+            fn lower_hex() {
+                for (m, e) in TEST_CASES.iter() {
+                    $self::compare_lowerhex(m, e);
+                }
+            }
+            #[test]
+            fn upper_hex() {
+                for (m, e) in TEST_CASES.iter() {
+                    $self::compare_upperhex(m, e);
+                }
+            }
+        }
+    };
+}

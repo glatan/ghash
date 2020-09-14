@@ -25,13 +25,13 @@ impl Hash for Sha512Trunc256 {
             .collect()
     }
 }
+
 #[cfg(test)]
-mod tests {
-    use super::Sha512Trunc256;
-    use crate::hash::Test;
-    impl Test for Sha512Trunc256 {}
-    // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512_256.pdf
-    const TEST_CASES: [(&[u8], &str); 5] = [
+use crate::impl_test;
+
+#[cfg(test)]
+// https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512_256.pdf
+const TEST_CASES: [(&[u8], &str); 5] = [
         // SHA-512/256("abc") = 53048e2681941ef99b2e29b76b4c7dabe4c2d0c634fc6d46e0e2f13107e7af23
         (
             "abc".as_bytes(),
@@ -58,22 +58,6 @@ mod tests {
             "9a20cd139b1c0a0212362bffdc25230b1f87c0fb24651957febce335818d197e",
         ),
     ];
-    #[test]
-    fn bytes() {
-        for (m, e) in TEST_CASES.iter() {
-            Sha512Trunc256::compare_bytes(m, e);
-        }
-    }
-    #[test]
-    fn lower_hex() {
-        for (m, e) in TEST_CASES.iter() {
-            Sha512Trunc256::compare_lowerhex(m, e);
-        }
-    }
-    #[test]
-    fn upper_hex() {
-        for (m, e) in TEST_CASES.iter() {
-            Sha512Trunc256::compare_upperhex(m, e);
-        }
-    }
-}
+
+#[cfg(test)]
+impl_test!(Sha512Trunc256);

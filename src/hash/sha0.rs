@@ -143,43 +143,26 @@ impl Hash for Sha0 {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::Sha0;
-    use crate::hash::Test;
-    impl Test for Sha0 {}
-    // https://web.archive.org/web/20180905102133/https://www-ljk.imag.fr/membres/Pierre.Karpman/fips180.pdf
-    // https://crypto.stackexchange.com/questions/62055/where-can-i-find-a-description-of-the-sha-0-hash-algorithm/62071#62071
-    const TEST_CASES: [(&[u8], &str); 5] = [
-        // SHA0 ("abc") = 0164b8a914cd2a5e74c4f7ff082c4d97f1edf880
-        ("abc".as_bytes(), "0164b8a914cd2a5e74c4f7ff082c4d97f1edf880"),
-        // SHA0 ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") = d2516ee1acfa5baf33dfc1c471e438449ef134c8
-        (
-            "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq".as_bytes(),
-            "d2516ee1acfa5baf33dfc1c471e438449ef134c8",
-        ),
-        // padding_length > 0
-        (&[0x30; 54], "bea111dd3c7b0b30372a6c85c149eab680c9de9f"),
-        // padding_length == 0
-        (&[0x30; 55], "6b486fba8c9d3c8ba45c10990df5b579f4244235"),
-        // padding_length < 0
-        (&[0x30; 56], "09b8542ca835eaeaf90fd80f0fe59b061fddadee"),
-    ];
-    #[test]
-    fn bytes() {
-        for (m, e) in TEST_CASES.iter() {
-            Sha0::compare_bytes(m, e);
-        }
-    }
-    #[test]
-    fn lower_hex() {
-        for (m, e) in TEST_CASES.iter() {
-            Sha0::compare_lowerhex(m, e);
-        }
-    }
-    #[test]
-    fn upper_hex() {
-        for (m, e) in TEST_CASES.iter() {
-            Sha0::compare_upperhex(m, e);
-        }
-    }
-}
+use crate::impl_test;
+
+#[cfg(test)]
+// https://web.archive.org/web/20180905102133/https://www-ljk.imag.fr/membres/Pierre.Karpman/fips180.pdf
+// https://crypto.stackexchange.com/questions/62055/where-can-i-find-a-description-of-the-sha-0-hash-algorithm/62071#62071
+const TEST_CASES: [(&[u8], &str); 5] = [
+    // SHA0 ("abc") = 0164b8a914cd2a5e74c4f7ff082c4d97f1edf880
+    ("abc".as_bytes(), "0164b8a914cd2a5e74c4f7ff082c4d97f1edf880"),
+    // SHA0 ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") = d2516ee1acfa5baf33dfc1c471e438449ef134c8
+    (
+        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq".as_bytes(),
+        "d2516ee1acfa5baf33dfc1c471e438449ef134c8",
+    ),
+    // padding_length > 0
+    (&[0x30; 54], "bea111dd3c7b0b30372a6c85c149eab680c9de9f"),
+    // padding_length == 0
+    (&[0x30; 55], "6b486fba8c9d3c8ba45c10990df5b579f4244235"),
+    // padding_length < 0
+    (&[0x30; 56], "09b8542ca835eaeaf90fd80f0fe59b061fddadee"),
+];
+
+#[cfg(test)]
+impl_test!(Sha0);

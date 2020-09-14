@@ -27,14 +27,14 @@ impl Hash for Sha512 {
             .collect()
     }
 }
+
 #[cfg(test)]
-mod tests {
-    use super::Sha512;
-    use crate::hash::Test;
-    impl Test for Sha512 {}
-    // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512.pdf
-    // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
-    const TEST_CASES: [(&[u8], &str); 14] = [
+use crate::impl_test;
+
+#[cfg(test)]
+// https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512.pdf
+// https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
+const TEST_CASES: [(&[u8], &str); 14] = [
         // SHA512("abc") = ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f
         (
             "abc".as_bytes(),
@@ -110,22 +110,6 @@ mod tests {
         // 0x41000000 (1090519040) bytes of zeros
         // 0x6000003e (1610612798) bytes of 0x42 ‘B’
     ];
-    #[test]
-    fn bytes() {
-        for (m, e) in TEST_CASES.iter() {
-            Sha512::compare_bytes(m, e);
-        }
-    }
-    #[test]
-    fn lower_hex() {
-        for (m, e) in TEST_CASES.iter() {
-            Sha512::compare_lowerhex(m, e);
-        }
-    }
-    #[test]
-    fn upper_hex() {
-        for (m, e) in TEST_CASES.iter() {
-            Sha512::compare_upperhex(m, e);
-        }
-    }
-}
+
+#[cfg(test)]
+impl_test!(Sha512);
