@@ -2,8 +2,8 @@ use super::{Hash, Sha2};
 
 #[rustfmt::skip]
 pub const IV224: [u32; 8] = [
-    0xC105_9ED8, 0x367C_D507, 0x3070_DD17, 0xF70_E5939,
-    0xFFC0_0B31, 0x6858_1511, 0x64F9_8FA7, 0xBEF_A4FA4
+    0xC105_9ED8, 0x367C_D507, 0x3070_DD17, 0x0F70_E5939,
+    0xFFC0_0B31, 0x6858_1511, 0x64F9_8FA7, 0x0BEF_A4FA4
 ];
 
 pub struct Sha224(Sha2<u32>);
