@@ -86,10 +86,9 @@ impl Md5 {
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self) {
-        let word_block_length = self.word_block.len() / 16;
         let (mut a, mut b, mut c, mut d);
         let mut x: [u32; 16] = [0; 16];
-        for i in 0..word_block_length {
+        for i in 0..(self.word_block.len() / 16) {
             for j in 0..16 {
                 x[j] = self.word_block[16 * i + j];
             }
