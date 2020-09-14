@@ -60,7 +60,6 @@ impl Sha0 {
             c = self.status[2];
             d = self.status[3];
             e = self.status[4];
-            // 0 <= t <= 19
             for t in 0..20 {
                 temp = a
                     .rotate_left(5)
@@ -74,7 +73,6 @@ impl Sha0 {
                 b = a;
                 a = temp;
             }
-            // 20 <= t <= 39
             for t in 20..40 {
                 temp = a
                     .rotate_left(5)
@@ -88,7 +86,6 @@ impl Sha0 {
                 b = a;
                 a = temp;
             }
-            // 40 <= t <= 59
             for t in 40..60 {
                 temp = a
                     .rotate_left(5)
@@ -102,7 +99,6 @@ impl Sha0 {
                 b = a;
                 a = temp;
             }
-            // 60 <= t <= 79
             for t in 60..80 {
                 temp = a
                     .rotate_left(5)
@@ -126,7 +122,6 @@ impl Sha0 {
 }
 
 impl Sha0 {
-    // Padding
     impl_padding!(u32 => self, from_be_bytes, to_be_bytes);
 }
 

@@ -98,7 +98,6 @@ impl Ripemd320 {
 }
 
 impl Ripemd320 {
-    // Padding
     impl_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
