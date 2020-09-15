@@ -161,6 +161,5 @@ mod tests {
             "bdee37f4371e20646b8b0d862dda16292ae36f40965e8c8509e63d1dbddecc503e2b63eb9245bb66",
         ),
     ];
-    impl crate::hash::Test for Ripemd320 {}
     impl_test!(Ripemd320, official, OFFICIAL, Ripemd320::default());
 }

@@ -558,7 +558,6 @@ mod tests {
         (&[0; 254], "7c4fcf3b06847e2b94ceab504c3c63ce7b4ebd3fcd79a9508478fb8efcaa6b14f15bcf259c6048fdc275a02c43d95d9650827f622b1ae00760600a8a96e28cee"),
         (&[0; 255], "db4e6cf8b34ffd27aca71d5949a3aa466cb47556bfa320bda6efc3be78aea6a976274080bff9a10a4d2f33b08ede82c88fa01f83db007c4cc5dd378f2ec38e15"),
     ];
-    impl crate::hash::Test for Blake512 {}
     impl_test!(Blake512, zero_fill, ZERO_FILL, Blake512::default());
     impl_test!(
         Blake512,

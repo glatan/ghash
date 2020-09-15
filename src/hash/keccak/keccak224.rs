@@ -320,6 +320,5 @@ mod tests {
         (&[0; 286], "4856a02dcfd1605d6edc3256b63b011c6612768e450e28188c53059d"),
         (&[0; 287], "3a4843368a3aa9799a38bfbf4510069728caab6aa5a0a0b022521cb4"),
     ];
-    impl crate::hash::Test for Keccak224 {}
     impl_test!(Keccak224, zero_fill, ZERO_FILL, Keccak224::default());
 }

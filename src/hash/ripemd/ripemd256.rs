@@ -149,6 +149,5 @@ mod tests {
             "ac953744e10e31514c150d4d8d7b677342e33399788296e43ae4850ce4f97978",
         ),
     ];
-    impl crate::hash::Test for Ripemd256 {}
     impl_test!(Ripemd256, official, OFFICIAL, Ripemd256::default());
 }

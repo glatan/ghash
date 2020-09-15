@@ -557,7 +557,6 @@ mod tests {
         (&[0; 254], "b054a4591e03d6930566e61d5f8f97c3105154319a7789dda59af397f98ee436b5ed9b0c8f6c1ab7e0d6eacda42e9b18"),
         (&[0; 255], "89eeaf1da49cf4aacb956c45ce811645782dec3e9ec33b1ded2ec799773787ed3d92d16c7c77c03f4d84bd3fd5096986"),
     ];
-    impl crate::hash::Test for Blake384 {}
     impl_test!(Blake384, zero_fill, ZERO_FILL, Blake384::default());
     impl_test!(
         Blake384,

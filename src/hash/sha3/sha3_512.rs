@@ -178,6 +178,5 @@ mod tests {
         (&[0; 142], "3f3782702453ceec26061a713c930eddcf1de33fb0ecdb6dd43e160949b28f391121fc0f4b879b723751271bd388e076a425b5f31a1c6074dd80a055a01fd4ec"),
         (&[0; 143], "b64c8a8454d18fd30321e5188bbd880847491485129d99e75a253950266f5875bdda0491692b18098c6a1a03bc7affb7a2e56e4c25ac3de54ec9c8e25e537e3d"),
     ];
-    impl crate::hash::Test for Sha3_512 {}
     impl_test!(Sha3_512, zero_fill, ZERO_FILL, Sha3_512::default());
 }

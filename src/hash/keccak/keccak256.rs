@@ -304,6 +304,5 @@ mod tests {
         (&[0; 270], "d1ba1135d558e48490db9c68601fc981e184cee873d98e3e62bc8ada3ff43017"),
         (&[0; 271], "3bb611e98ca876adc01436a582979ecfd012389033aca7dbf76dcb424fe02a0c"),
     ];
-    impl crate::hash::Test for Keccak256 {}
     impl_test!(Keccak256, zero_fill, ZERO_FILL, Keccak256::default());
 }

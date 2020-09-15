@@ -225,6 +225,5 @@ mod tests {
             "57edf4a22be3c955ac49da2e2107b67a",
         ),
     ];
-    impl crate::hash::Test for Md5 {}
     impl_test!(Md5, official, OFFICIAL, Md5::default());
 }

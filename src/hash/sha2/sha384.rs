@@ -86,6 +86,5 @@ mod tests {
         // 0x41000000 (1090519040) bytes of zeros
         // 0x6000003e (1610612798) bytes of 0x42 ‘B’
     ];
-    impl crate::hash::Test for Sha384 {}
     impl_test!(Sha384, official, OFFICIAL, Sha384::default());
 }

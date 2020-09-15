@@ -110,6 +110,5 @@ mod tests {
             "d5976f79d83d3a0dc9806c3c66f3efd8",
         ),
     ];
-    impl crate::hash::Test for Md2 {}
     impl_test!(Md2, official, OFFICIAL, Md2::default());
 }
