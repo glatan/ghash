@@ -40,7 +40,7 @@ mod tests {
     use crate::impl_test;
 
     #[rustfmt::skip]
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 256] = [
+    const ZERO_FILL: [(&[u8], &str); 256] = [
         (&[0; 0], "223d88a8c8308c15d479d1668ba97b1b2737aad82debd7d05d32f77a13f820651c36fc9eb18e2101b8e992717e671400be6a7f158cdd64afed6f81e62bf15c37"),
         (&[0; 1], "765f7084548226c3e6f4779b954661df49a272e2ba16635f17a3093756aa93642a92e5bddb21a3218f72b7fd44e9fa19f86a86334ebeda0f4d4204bf3b6bed68"),
         (&[0; 2], "4c33bde178bea1e4015fa515a661a666dc66a06ca81c3e6ff5834cf6100bba9f1b847c968344a777af1a31b3b796dbbe38865550b18e77878ebd50168e20ae97"),
@@ -299,5 +299,5 @@ mod tests {
         (&[0; 255], "fdc6dda8323aa417e3053063b13eb6e32f40b15c3eb1416bb43ea864d0e02abbe9355cfe152ea4b84b6a5365e27fc72e542e76e3bf1499d24693f24e10077c33"),
     ];
     impl crate::hash::Test for Blake64 {}
-    impl_test!(Blake64, default, DEFAULT_TEST_CASES, Blake64::default());
+    impl_test!(Blake64, zero_fill, ZERO_FILL, Blake64::default());
 }

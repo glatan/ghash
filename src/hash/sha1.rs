@@ -142,7 +142,7 @@ mod tests {
     use super::Sha1;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 7] = [
+    const OFFICIAL: [(&[u8], &str); 4] = [
         // https://tools.ietf.org/html/rfc3174
         ("abc".as_bytes(), "a9993e364706816aba3e25717850c26c9cd0d89d"),
         (
@@ -154,13 +154,7 @@ mod tests {
             "0123456701234567012345670123456701234567012345670123456701234567".as_bytes(),
             "e0c094e867ef46c350ef54a7f59dd60bed92ae83",
         ),
-        // padding_length > 0
-        (&[0x30; 54], "fcd2740438dd7a05dc5747d176fd65dda58cfd01"),
-        // padding_length == 0
-        (&[0x30; 55], "8fffd3df3d041baf53b27f42ec802cfb362710bd"),
-        // padding_length < 0
-        (&[0x30; 56], "2a04b5125ba4030ef13232ecf1b72849f6ec9e97"),
     ];
     impl crate::hash::Test for Sha1 {}
-    impl_test!(Sha1, default, DEFAULT_TEST_CASES, Sha1::default());
+    impl_test!(Sha1, official, OFFICIAL, Sha1::default());
 }

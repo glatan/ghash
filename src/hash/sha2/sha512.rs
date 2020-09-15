@@ -35,7 +35,7 @@ mod tests {
     use super::Sha512;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 14] = [
+    const OFFICIAL: [(&[u8], &str); 11] = [
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512.pdf
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
         (
@@ -82,26 +82,11 @@ mod tests {
             &[0; 1000000],
             "ce044bc9fd43269d5bbc946cbebc3bb711341115cc4abdf2edbc3ff2c57ad4b15deb699bda257fea5aef9c6e55fcf4cf9dc25a8c3ce25f2efe90908379bff7ed"
         ),
-        // padding_length > 0
-        (
-            &[0x30; 110],
-            "b7d1445aeac7a4ff6e1e457fb31be7f8799e4d91b62f698365e53b5e36fdfc66191e6050b5d63ebf94f80317ce6d0c20b628d08d5c49907fbf43115e43b51e39",
-        ),
-        // padding_length == 0
-        (
-            &[0x30; 111],
-            "9e14b633e0befc8d09837c9f460f0680f8f7057f5dc4175b1ee18a6e379f8c9212cdde5585eaf29a598fb082ff733d6ea6d34c80e9e04e0a8c0bb0416065399d",
-        ),
-        // padding_length < 0
-        (
-            &[0x30; 112],
-            "92ceff8ce05164a1d75c984e53dc29e4cff9cfe5a51207f6ea03ac37b39bccacad3513f0673a237d233019f71913a4932821b63420e976022753d7179d3bc7c1",
-        ),
         // TOO BIG!
         // 0x20000000 (536870912) bytes of 0x5a ‘Z’
         // 0x41000000 (1090519040) bytes of zeros
         // 0x6000003e (1610612798) bytes of 0x42 ‘B’
     ];
     impl crate::hash::Test for Sha512 {}
-    impl_test!(Sha512, default, DEFAULT_TEST_CASES, Sha512::default());
+    impl_test!(Sha512, official, OFFICIAL, Sha512::default());
 }

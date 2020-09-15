@@ -34,7 +34,7 @@ mod tests {
     use super::Sha224;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 12] = [
+    const OFFICIAL: [(&[u8], &str); 9] = [
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA224.pdf
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
         (
@@ -81,26 +81,11 @@ mod tests {
             &[0; 1000000],
             "3a5d74b68f14f3a4b2be9289b8d370672d0b3d2f53bc303c59032df3",
         ),
-        // padding_length > 0
-        (
-            &[0x30; 54],
-            "ea5469923e2843f54b0d5e75e3e2a161960a044793dd0b57e1f01624",
-        ),
-        // padding_length == 0
-        (
-            &[0x30; 55],
-            "e2feb3ff28b75ce748f128eb8eda46a859b3c2c235ef5bf911c24c1d",
-        ),
-        // padding_length < 0
-        (
-            &[0x30; 56],
-            "556bd9f7bc456d5a75aeb1e5e14cedcf6f2bd9b43f41b604ae7bd1ac",
-        ),
         // TOO BIG!
         // 0x20000000 (536870912) bytes of 0x41 ‘A’
         // 0x41000000 (1090519040) bytes of zeros
         // 0x6000003f (1610612799) bytes of 0x84
     ];
     impl crate::hash::Test for Sha224 {}
-    impl_test!(Sha224, default, DEFAULT_TEST_CASES, Sha224::default());
+    impl_test!(Sha224, official, OFFICIAL, Sha224::default());
 }

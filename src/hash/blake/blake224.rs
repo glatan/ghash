@@ -39,7 +39,7 @@ mod tests {
     use crate::impl_test;
 
     #[rustfmt::skip]
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 128] = [
+    const ZERO_FILL: [(&[u8], &str); 128] = [
         (&[0; 0], "7dc5313b1c04512a174bd6503b89607aecbee0903d40a8a569c94eed"),
         (&[0; 1], "4504cb0314fb2a4f7a692e696e487912fe3f2468fe312c73a5278ec5"),
         (&[0; 2], "a2242fce3ca275d9bf0c0cabd0b83bd48633f19bdad07bf4b8eb6d6c"),
@@ -170,7 +170,7 @@ mod tests {
         (&[0; 127], "05965d871df38e4a66968dfa4632a9c5fe93a3f31007500f6f1c063a"),
     ];
     #[rustfmt::skip]
-    const SALTED_TEST_CASES: [(&[u8], &str); 128] = [
+    const ZERO_FILL_PLUS_SALT: [(&[u8], &str); 128] = [
         // salt = [0, 1, 2, 3]
         (&[0; 0], "ee10e2f23e6f6082fef77187a55bef385d4b2c8664ded1dbee493e60"),
         (&[0; 1], "36263cb368cbe19f2151c4ae02526e0141715f1ba144fb435be73cf7"),
@@ -302,11 +302,11 @@ mod tests {
         (&[0; 127], "e28b76ad127faa002db71090c1eef09cb56e442e9eaa5f6184b60cd8"),
     ];
     impl crate::hash::Test for Blake224 {}
-    impl_test!(Blake224, default, DEFAULT_TEST_CASES, Blake224::default());
+    impl_test!(Blake224, zero_fill, ZERO_FILL, Blake224::default());
     impl_test!(
         Blake224,
-        salt,
-        SALTED_TEST_CASES,
+        zero_fill_plus_salt,
+        ZERO_FILL_PLUS_SALT,
         Blake224::new([0, 1, 2, 3])
     );
 }

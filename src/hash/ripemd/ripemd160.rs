@@ -86,7 +86,7 @@ mod tests {
     use super::Ripemd160;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 9] = [
+    const OFFICIAL: [(&[u8], &str); 9] = [
         // https://homes.esat.kuleuven.be/~bosselae/ripemd160/pdf/AB-9601/AB-9601.pdf
         ("".as_bytes(), "9c1185a5c5e9fc54612808977ee8f548b2258d31"),
         ("a".as_bytes(), "0bdc9d2d256b3ee9daae347be6f4dc835a467ffe"),
@@ -115,5 +115,5 @@ mod tests {
         (&[0x61; 1000000], "52783243c1697bdbe16d37f97f68f08325dc1528"),
     ];
     impl crate::hash::Test for Ripemd160 {}
-    impl_test!(Ripemd160, default, DEFAULT_TEST_CASES, Ripemd160::default());
+    impl_test!(Ripemd160, official, OFFICIAL, Ripemd160::default());
 }

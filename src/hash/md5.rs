@@ -202,7 +202,7 @@ mod tests {
     use super::Md5;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 10] = [
+    const OFFICIAL: [(&[u8], &str); 7] = [
         // https://tools.ietf.org/html/rfc1321
         ("".as_bytes(), "d41d8cd98f00b204e9800998ecf8427e"),
         ("a".as_bytes(), "0cc175b9c0f1b6a831c399e269772661"),
@@ -224,13 +224,7 @@ mod tests {
                 .as_bytes(),
             "57edf4a22be3c955ac49da2e2107b67a",
         ),
-        // padding_length > 0
-        (&[0x30; 54], "978b0444e93c5f7d714575f28a77dca1"),
-        // padding_length == 0
-        (&[0x30; 55], "d7fe636bd28e2ee2ba4d6c5898318699"),
-        // padding_length < 0
-        (&[0x30; 56], "ce992c2ad906967c63c3f9ab0c2294a9"),
     ];
     impl crate::hash::Test for Md5 {}
-    impl_test!(Md5, default, DEFAULT_TEST_CASES, Md5::default());
+    impl_test!(Md5, official, OFFICIAL, Md5::default());
 }

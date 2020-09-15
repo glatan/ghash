@@ -40,7 +40,7 @@ mod tests {
     use crate::impl_test;
 
     #[rustfmt::skip]
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 256] = [
+    const ZERO_FILL: [(&[u8], &str); 256] = [
         (&[0; 0], "a8cfbbd73726062df0c6864dda65defe58ef0cc52a5625090fa17601e1eecd1b628e94f396ae402a00acc9eab77b4d4c2e852aaaa25a636d80af3fc7913ef5b8"),
         (&[0; 1], "97961587f6d970faba6d2478045de6d1fabd09b61ae50932054d52bc29d31be4ff9102b9f69e2bbdb83be13d4b9c06091e5fa0b48bd081b634058be0ec49beb3"),
         (&[0; 2], "0cd686174dc1451dcf2e54bcd55b868bf84f54e4f6454afd599abd0f3361fb85f09dda2c7c6cb9a97fa6dca2ed8068c8e8a69b66c4f8bd819cbfd5a0bd9d8e7c"),
@@ -299,7 +299,7 @@ mod tests {
         (&[0; 255], "1406659a0c230890c6f5336d24132d9cf4f7de4196a7fe904a196d066a1156df2fffbe5bd8bbe05dd2ab2cb1ccb4184440160fee0eda0fe292adaafa83b76f35"),
     ];
     #[rustfmt::skip]
-    const SALTED_TEST_CASES: [(&[u8], &str); 256] = [
+    const ZERO_FILL_PLUS_SALT: [(&[u8], &str); 256] = [
         // salt = [0, 1, 2, 3]
         (&[0; 0], "06cfe61c4c8ef2d92c9680a2726735d2163f792fe8e7d76b25041c5e97a6bae31d59d6b3f0c74f98dbd6a29e422eecf0aeadea792d8136e8bf2a603ed8849acc"),
         (&[0; 1], "48ee6286f26d4ed2499983ba83ba9f790f8e1da665131e705b9c3ebfc2516f70899203561438fba8b1fd9cd41e87566177be199344cdd714c9366d123c05fb95"),
@@ -559,11 +559,11 @@ mod tests {
         (&[0; 255], "db4e6cf8b34ffd27aca71d5949a3aa466cb47556bfa320bda6efc3be78aea6a976274080bff9a10a4d2f33b08ede82c88fa01f83db007c4cc5dd378f2ec38e15"),
     ];
     impl crate::hash::Test for Blake512 {}
-    impl_test!(Blake512, default, DEFAULT_TEST_CASES, Blake512::default());
+    impl_test!(Blake512, zero_fill, ZERO_FILL, Blake512::default());
     impl_test!(
         Blake512,
-        salt,
-        SALTED_TEST_CASES,
+        zero_fill_plus_salt,
+        ZERO_FILL_PLUS_SALT,
         Blake512::new([0, 1, 2, 3])
     );
 }

@@ -117,7 +117,7 @@ mod tests {
     use super::Md4;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 10] = [
+    const OFFICIAL: [(&[u8], &str); 7] = [
         // https://tools.ietf.org/html/rfc1320
         ("".as_bytes(), "31d6cfe0d16ae931b73c59d7e0c089c0"),
         ("a".as_bytes(), "bde52cb31de33e46245e05fbdbd6fb24"),
@@ -139,13 +139,7 @@ mod tests {
                 .as_bytes(),
             "e33b4ddc9c38f2199c3e7b164fcc0536",
         ),
-        // padding_length > 0
-        (&[0x30; 54], "374f6c9aa6ee2eef316d1357c4c66e73"),
-        // padding_length == 0
-        (&[0x30; 55], "5df3a07b1fca415a0d196e1cf255ec21"),
-        // padding_length < 0
-        (&[0x30; 56], "ba4591a932374808dc47c89bf7f729b3"),
     ];
     impl crate::hash::Test for Md4 {}
-    impl_test!(Md4, default, DEFAULT_TEST_CASES, Md4::default());
+    impl_test!(Md4, official, OFFICIAL, Md4::default());
 }

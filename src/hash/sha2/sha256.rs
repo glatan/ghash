@@ -35,7 +35,7 @@ mod tests {
     use super::Sha256;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 15] = [
+    const OFFICIAL: [(&[u8], &str); 12] = [
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA256.pdf
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
         (
@@ -86,26 +86,11 @@ mod tests {
             &[0; 1000000],
             "d29751f2649b32ff572b5e0a9f541ea660a50f94ff0beedfb0b692b924cc8025",
         ),
-        // padding_length > 0
-        (
-            &[0x30; 54],
-            "5e348a8a500ecf192338852a7252ec59b575f5688d8d18e93ba5bb581a980d32",
-        ),
-        // padding_length == 0
-        (
-            &[0x30; 55],
-            "9f8ef876f51f5313c91cc3f6b8119af09d8bbdd72098fa149b2780eb3591d6be",
-        ),
-        // padding_length < 0
-        (
-            &[0x30; 56],
-            "bd03ac1428f0ea86f4b83a731ffc7967bb82866d8545322f888d2f6e857ffc18",
-        ),
         // TOO BIG!
         // 0x20000000 (536870912) bytes of 0x5a ‘Z‘
         // 0x41000000 (1090519040) bytes of zeros
         // 0x6000003e (1610612798) bytes of 0x42 ‘B’
     ];
     impl crate::hash::Test for Sha256 {}
-    impl_test!(Sha256, default, DEFAULT_TEST_CASES, Sha256::default());
+    impl_test!(Sha256, official, OFFICIAL, Sha256::default());
 }

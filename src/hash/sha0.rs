@@ -142,7 +142,7 @@ mod tests {
     use super::Sha0;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 5] = [
+    const OFFICIAL: [(&[u8], &str); 2] = [
         // https://web.archive.org/web/20180905102133/https://www-ljk.imag.fr/membres/Pierre.Karpman/fips180.pdf
         // https://crypto.stackexchange.com/questions/62055/where-can-i-find-a-description-of-the-sha-0-hash-algorithm/62071#62071
         ("abc".as_bytes(), "0164b8a914cd2a5e74c4f7ff082c4d97f1edf880"),
@@ -150,13 +150,7 @@ mod tests {
             "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq".as_bytes(),
             "d2516ee1acfa5baf33dfc1c471e438449ef134c8",
         ),
-        // padding_length > 0
-        (&[0x30; 54], "bea111dd3c7b0b30372a6c85c149eab680c9de9f"),
-        // padding_length == 0
-        (&[0x30; 55], "6b486fba8c9d3c8ba45c10990df5b579f4244235"),
-        // padding_length < 0
-        (&[0x30; 56], "09b8542ca835eaeaf90fd80f0fe59b061fddadee"),
     ];
     impl crate::hash::Test for Sha0 {}
-    impl_test!(Sha0, default, DEFAULT_TEST_CASES, Sha0::default());
+    impl_test!(Sha0, official, OFFICIAL, Sha0::default());
 }

@@ -34,7 +34,7 @@ mod tests {
     use super::Sha384;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 14] = [
+    const OFFICIAL: [(&[u8], &str); 11] = [
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA384.pdf
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
         (
@@ -81,26 +81,11 @@ mod tests {
             &[0; 1000000],
             "8a1979f9049b3fff15ea3a43a4cf84c634fd14acad1c333fecb72c588b68868b66a994386dc0cd1687b9ee2e34983b81",
         ),
-        // padding_length > 0
-        (
-            &[0x30; 110],
-            "30d25fd948cf25eaeba20ef6315593212271e9d1dae6c3770f590c8fadb46e7b29fda2dae7cd27ccdd3b48ad18c8b728",
-        ),
-        // padding_length == 0
-        (
-            &[0x30; 111],
-            "8e3d07afccdca92c400d024c468f61bc1c9283ed3c1132f6d3543495bbf8afa1fc2cd0f230f1669f5b635fccd103b6b8",
-        ),
-        // padding_length < 0
-        (
-            &[0x30; 112],
-            "efbaad694008892f0b040bfe453c573d5e0ca44835eb860e20b17a0ead6df3a58ed61723dcb62d2db564e23bce166f95",
-        ),
         // TOO BIG!
         // 0x20000000 (536870912) bytes of 0x5a ‘Z’
         // 0x41000000 (1090519040) bytes of zeros
         // 0x6000003e (1610612798) bytes of 0x42 ‘B’
     ];
     impl crate::hash::Test for Sha384 {}
-    impl_test!(Sha384, default, DEFAULT_TEST_CASES, Sha384::default());
+    impl_test!(Sha384, official, OFFICIAL, Sha384::default());
 }

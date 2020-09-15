@@ -109,7 +109,7 @@ mod tests {
     use super::Ripemd256;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 9] = [
+    const OFFICIAL: [(&[u8], &str); 9] = [
         // https://homes.esat.kuleuven.be/~bosselae/ripemd160.html
         (
             "".as_bytes(),
@@ -150,5 +150,5 @@ mod tests {
         ),
     ];
     impl crate::hash::Test for Ripemd256 {}
-    impl_test!(Ripemd256, default, DEFAULT_TEST_CASES, Ripemd256::default());
+    impl_test!(Ripemd256, official, OFFICIAL, Ripemd256::default());
 }

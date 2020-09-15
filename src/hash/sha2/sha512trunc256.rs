@@ -34,7 +34,7 @@ mod tests {
     use super::Sha512Trunc256;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 5] = [
+    const OFFICIAL: [(&[u8], &str); 2] = [
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512_256.pdf
         (
             "abc".as_bytes(),
@@ -44,27 +44,12 @@ mod tests {
             "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu".as_bytes(),
             "3928e184fb8690f840da3988121d31be65cb9d3ef83ee6146feac861e19b563a",
         ),
-        // padding_length > 0
-        (
-            &[0x30; 110],
-            "3354c515c767ac237437d3a311ad7f358357b262c0260507f2906ee971a33e3d",
-        ),
-        // padding_length == 0
-        (
-            &[0x30; 111],
-            "c9a229d5e090a803310becdeddb7ad0070b2c87b21d2bdef5ccfe775e27a7f23",
-        ),
-        // padding_length < 0
-        (
-            &[0x30; 112],
-            "9a20cd139b1c0a0212362bffdc25230b1f87c0fb24651957febce335818d197e",
-        ),
     ];
     impl crate::hash::Test for Sha512Trunc256 {}
     impl_test!(
         Sha512Trunc256,
-        default,
-        DEFAULT_TEST_CASES,
+        official,
+        OFFICIAL,
         Sha512Trunc256::default()
     );
 }

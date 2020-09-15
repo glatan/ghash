@@ -121,7 +121,7 @@ mod tests {
     use super::Ripemd320;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 9] = [
+    const OFFICIAL: [(&[u8], &str); 9] = [
         // https://homes.esat.kuleuven.be/~bosselae/ripemd160.html
         (
             "".as_bytes(),
@@ -162,5 +162,5 @@ mod tests {
         ),
     ];
     impl crate::hash::Test for Ripemd320 {}
-    impl_test!(Ripemd320, default, DEFAULT_TEST_CASES, Ripemd320::default());
+    impl_test!(Ripemd320, official, OFFICIAL, Ripemd320::default());
 }

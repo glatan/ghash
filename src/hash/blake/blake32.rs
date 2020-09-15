@@ -40,7 +40,7 @@ mod tests {
     use crate::impl_test;
 
     #[rustfmt::skip]
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 128] = [
+    const ZERO_FILL: [(&[u8], &str); 128] = [
         (&[0; 0], "73be7e1e0a7d0a2f0035edae62d4412ec43c0308145b5046849a53756bcda44b"),
         (&[0; 1], "d1e39b457d2250b4f5b152e74157fba4c1b423b87549106b07fd3a3e7f4aeb28"),
         (&[0; 2], "0800d05680abb4cfa6cd6b6381cf50ebaafb3178f5c3f11afefa215315658c0c"),
@@ -171,5 +171,5 @@ mod tests {
         (&[0; 127], "ba2f02a8871392312d3962e18e5efdc88ff8d253c00e796efdbc58f520eb3607"),
     ];
     impl crate::hash::Test for Blake32 {}
-    impl_test!(Blake32, default, DEFAULT_TEST_CASES, Blake32::default());
+    impl_test!(Blake32, zero_fill, ZERO_FILL, Blake32::default());
 }

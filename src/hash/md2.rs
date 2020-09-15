@@ -88,7 +88,7 @@ mod tests {
     use super::Md2;
     use crate::impl_test;
 
-    const DEFAULT_TEST_CASES: [(&[u8], &str); 6] = [
+    const OFFICIAL: [(&[u8], &str); 6] = [
         // https://tools.ietf.org/html/rfc1319
         ("".as_bytes(), "8350e5a3e24c153df2275c9f80692773"),
         ("a".as_bytes(), "32ec01ec4a6dac72c0ab96fb34c0b5d1"),
@@ -111,5 +111,5 @@ mod tests {
         ),
     ];
     impl crate::hash::Test for Md2 {}
-    impl_test!(Md2, default, DEFAULT_TEST_CASES, Md2::default());
+    impl_test!(Md2, official, OFFICIAL, Md2::default());
 }
