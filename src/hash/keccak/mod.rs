@@ -80,7 +80,7 @@ impl Keccak {
         }
         Self {
             state: [[0; 5]; 5],
-            lane_block: Vec::new(),
+            lane_block: Vec::with_capacity(25),
             l: (((r + c) / 25) as f32).log2() as usize,
             n,
             r,
@@ -89,11 +89,11 @@ impl Keccak {
     }
     // 1000...0001 Style
     // (self.r / 8) byteの倍数にパディングする。例: r=1152の場合は144byteの倍数
-    pub(crate) fn padding(&mut self, message: &[u8], suffix: u8) {
+    pub(crate) fn padding(&mut self, message: &[u8], d: u8) {
         let mut m = message.to_vec();
         let l = message.len();
         let rate_length = self.r / 8;
-        m.push(suffix);
+        m.push(d);
         match (l % rate_length).cmp(&(rate_length - 1)) {
             Ordering::Greater => {
                 m.append(&mut vec![0; 2 * rate_length - 1 - (l % rate_length)]);

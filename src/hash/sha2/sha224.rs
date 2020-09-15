@@ -1,22 +1,26 @@
 use super::{Hash, Sha2};
 
-#[rustfmt::skip]
-pub const IV224: [u32; 8] = [
-    0xC105_9ED8, 0x367C_D507, 0x3070_DD17, 0x0F70_E5939,
-    0xFFC0_0B31, 0x6858_1511, 0x64F9_8FA7, 0x0BEF_A4FA4
-];
-
 pub struct Sha224(Sha2<u32>);
 
 impl Sha224 {
-    fn new() -> Self {
-        Self(Sha2::<u32>::new(IV224))
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl Default for Sha224 {
+    #[rustfmt::skip]
+    fn default() -> Self {
+        Self(Sha2::<u32>::new([
+            0xC105_9ED8, 0x367C_D507, 0x3070_DD17, 0x0F70_E5939,
+            0xFFC0_0B31, 0x6858_1511, 0x64F9_8FA7, 0x0BEF_A4FA4
+        ]))
     }
 }
 
 impl Hash for Sha224 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha224 = Self::new();
+        let mut sha224 = Self::default();
         sha224.0.padding(message);
         sha224.0.compress();
         sha224.0.status[0..7]

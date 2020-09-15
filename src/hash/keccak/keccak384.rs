@@ -6,13 +6,19 @@ pub struct Keccak384(Keccak);
 
 impl Keccak384 {
     pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl Default for Keccak384 {
+    fn default() -> Self {
         Self(Keccak::new(832, 768, 384))
     }
 }
 
 impl Hash for Keccak384 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut keccak384 = Self::new();
+        let mut keccak384 = Self::default();
         keccak384.0.padding(message, 0x01);
         keccak384.0.keccak()
     }

@@ -1,22 +1,26 @@
 use super::{Blake, Hash};
 
-#[rustfmt::skip]
-const IV32: [u32; 8] = [
-    0x6A09_E667, 0xBB67_AE85, 0x3C6E_F372, 0xA54F_F53A,
-    0x510E_527F, 0x9B05_688C, 0x1F83_D9AB, 0x5BE0_CD19
-];
-
 pub struct Blake32(Blake<u32>);
 
 impl Blake32 {
-    fn new() -> Self {
-        Self(Blake::<u32>::new(IV32))
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl Default for Blake32 {
+    #[rustfmt::skip]
+    fn default() -> Self {
+        Self(Blake::<u32>::new([
+            0x6A09_E667, 0xBB67_AE85, 0x3C6E_F372, 0xA54F_F53A,
+            0x510E_527F, 0x9B05_688C, 0x1F83_D9AB, 0x5BE0_CD19
+        ]))
     }
 }
 
 impl Hash for Blake32 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut blake32 = Self::new();
+        let mut blake32 = Self::default();
         blake32.0.padding(message, 0x01);
         blake32.0.compress(10);
         blake32

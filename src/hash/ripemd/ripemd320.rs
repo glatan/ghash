@@ -3,23 +3,14 @@ use super::{f, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
 use crate::impl_padding;
 use std::cmp::Ordering;
 
-#[rustfmt::skip]
-const H320: [u32; 10] = [
-    0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476, 0xC3D2_E1F0,
-    0x7654_3210, 0xFEDC_BA98, 0x89AB_CDEF, 0x0123_4567, 0x3C2D_1E0F
-];
-
 pub struct Ripemd320 {
     word_block: Vec<u32>,
     status: [u32; 10],
 }
 
 impl Ripemd320 {
-    fn new() -> Self {
-        Self {
-            word_block: Vec::with_capacity(16),
-            status: H320,
-        }
+    pub fn new() -> Self {
+        Self::default()
     }
     fn compress(&mut self) {
         let mut t;
@@ -101,9 +92,22 @@ impl Ripemd320 {
     impl_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
+impl Default for Ripemd320 {
+    #[rustfmt::skip]
+    fn default() -> Self {
+        Self {
+            word_block: Vec::with_capacity(16),
+            status: [
+                0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476, 0xC3D2_E1F0,
+                0x7654_3210, 0xFEDC_BA98, 0x89AB_CDEF, 0x0123_4567, 0x3C2D_1E0F
+            ],
+        }
+    }
+}
+
 impl Hash for Ripemd320 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut ripemd320 = Self::new();
+        let mut ripemd320 = Self::default();
         ripemd320.padding(message);
         ripemd320.compress();
         ripemd320

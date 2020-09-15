@@ -1,22 +1,26 @@
 use super::{Hash, Sha2};
 
-#[rustfmt::skip]
-pub const IV384: [u64; 8] = [
-    0xCBBB_9D5D_C105_9ED8, 0x629A_292A_367C_D507, 0x9159_015A_3070_DD17, 0x152F_ECD8_F70E_5939,
-    0x6733_2667_FFC0_0B31, 0x8EB4_4A87_6858_1511, 0xDB0C_2E0D_64F9_8FA7, 0x47B5_481D_BEFA_4FA4,
-];
-
 pub struct Sha384(Sha2<u64>);
 
 impl Sha384 {
-    fn new() -> Self {
-        Self(Sha2::<u64>::new(IV384))
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl Default for Sha384 {
+    #[rustfmt::skip]
+    fn default() -> Self {
+        Self(Sha2::<u64>::new([
+            0xCBBB_9D5D_C105_9ED8, 0x629A_292A_367C_D507, 0x9159_015A_3070_DD17, 0x152F_ECD8_F70E_5939,
+            0x6733_2667_FFC0_0B31, 0x8EB4_4A87_6858_1511, 0xDB0C_2E0D_64F9_8FA7, 0x47B5_481D_BEFA_4FA4,
+        ]))
     }
 }
 
 impl Hash for Sha384 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha384 = Self::new();
+        let mut sha384 = Self::default();
         sha384.0.padding(message);
         sha384.0.compress();
         sha384.0.status[0..6]
