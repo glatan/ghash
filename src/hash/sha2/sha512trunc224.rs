@@ -1,22 +1,26 @@
 use super::{Hash, Sha2};
 
-#[rustfmt::skip]
-pub const IV512_TRUNC_224: [u64; 8] = [
-    0x8C3D_37C8_1954_4DA2, 0x73E1_9966_89DC_D4D6, 0x1DFA_B7AE_32FF_9C82, 0x679D_D514_582F_9FCF,
-    0x0F6D_2B69_7BD4_4DA8, 0x77E3_6F73_04C4_8942, 0x3F9D_85A8_6A1D_36C8, 0x1112_E6AD_91D6_92A1,
-];
-
 pub struct Sha512Trunc224(Sha2<u64>);
 
 impl Sha512Trunc224 {
-    fn new() -> Self {
-        Self(Sha2::<u64>::new(IV512_TRUNC_224))
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl Default for Sha512Trunc224 {
+    #[rustfmt::skip]
+    fn default() -> Self {
+        Self(Sha2::<u64>::new([
+            0x8C3D_37C8_1954_4DA2, 0x73E1_9966_89DC_D4D6, 0x1DFA_B7AE_32FF_9C82, 0x679D_D514_582F_9FCF,
+            0x0F6D_2B69_7BD4_4DA8, 0x77E3_6F73_04C4_8942, 0x3F9D_85A8_6A1D_36C8, 0x1112_E6AD_91D6_92A1,
+        ]))
     }
 }
 
 impl Hash for Sha512Trunc224 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha512trunc224 = Self::new();
+        let mut sha512trunc224 = Self::default();
         sha512trunc224.0.padding(message);
         sha512trunc224.0.compress();
         sha512trunc224.0.status[0..4]

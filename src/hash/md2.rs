@@ -23,7 +23,7 @@ pub struct Md2 {
 }
 
 impl Md2 {
-    fn new(message: &[u8]) -> Self {
+    pub fn new(message: &[u8]) -> Self {
         Self {
             message: message.to_vec(),
             state: [0; 48],

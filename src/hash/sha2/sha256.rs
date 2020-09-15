@@ -1,22 +1,26 @@
 use super::{Hash, Sha2};
 
-#[rustfmt::skip]
-pub const IV256: [u32; 8] = [
-    0x6A09_E667, 0xBB67_AE85, 0x3C6E_F372, 0xA54F_F53A,
-    0x510E_527F, 0x9B05_688C, 0x1F83_D9AB, 0x5BE0_CD19,
-];
-
 pub struct Sha256(Sha2<u32>);
 
 impl Sha256 {
-    fn new() -> Self {
-        Self(Sha2::<u32>::new(IV256))
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl Default for Sha256 {
+    #[rustfmt::skip]
+    fn default() -> Self {
+        Self(Sha2::<u32>::new([
+            0x6A09_E667, 0xBB67_AE85, 0x3C6E_F372, 0xA54F_F53A,
+            0x510E_527F, 0x9B05_688C, 0x1F83_D9AB, 0x5BE0_CD19,
+        ]))
     }
 }
 
 impl Hash for Sha256 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha256 = Self::new();
+        let mut sha256 = Self::default();
         sha256.0.padding(message);
         sha256.0.compress();
         sha256

@@ -2,8 +2,6 @@ use super::Hash;
 use crate::impl_padding;
 use std::cmp::Ordering;
 
-const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
-
 #[rustfmt::skip]
 const T: [u32; 64] = [
     // Round 1
@@ -78,11 +76,8 @@ pub struct Md5 {
 }
 
 impl Md5 {
-    fn new() -> Self {
-        Self {
-            word_block: Vec::with_capacity(16),
-            status: WORD_BUFFER,
-        }
+    pub fn new() -> Self {
+        Self::default()
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self) {
@@ -182,9 +177,18 @@ impl Md5 {
     impl_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
+impl Default for Md5 {
+    fn default() -> Self {
+        Self {
+            word_block: Vec::with_capacity(16),
+            status: [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476],
+        }
+    }
+}
+
 impl Hash for Md5 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut md5 = Self::new();
+        let mut md5 = Self::default();
         md5.padding(message);
         md5.compress();
         md5.status[0..4]

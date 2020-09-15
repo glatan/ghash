@@ -2,8 +2,6 @@ use super::Hash;
 use crate::impl_padding;
 use std::cmp::Ordering;
 
-const WORD_BUFFER: [u32; 4] = [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476];
-
 #[allow(clippy::many_single_char_names)]
 const fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
     const fn f(x: u32, y: u32, z: u32) -> u32 {
@@ -40,11 +38,8 @@ pub struct Md4 {
 }
 
 impl Md4 {
-    fn new() -> Self {
-        Self {
-            word_block: Vec::with_capacity(16),
-            status: WORD_BUFFER,
-        }
+    pub fn new() -> Self {
+        Self::default()
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self) {
@@ -97,9 +92,18 @@ impl Md4 {
     impl_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
+impl Default for Md4 {
+    fn default() -> Self {
+        Self {
+            word_block: Vec::with_capacity(16),
+            status: [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476],
+        }
+    }
+}
+
 impl Hash for Md4 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut md4 = Self::new();
+        let mut md4 = Self::default();
         md4.padding(message);
         md4.compress();
         md4.status[0..4]

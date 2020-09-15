@@ -56,6 +56,7 @@ const R: [[u32; 5]; 5] = [
 pub(crate) struct Keccak {
     lane_block: Vec<u64>,
     state: [[u64; 5]; 5], // A, S
+    d: u8, // suffix(Keccak-{224, 256, 384, 512}: 0x01, SHA3-{224, 256, 384, 512}: 0x06)
     l: usize,
     n: usize,
     r: usize, // bitrate
@@ -63,7 +64,7 @@ pub(crate) struct Keccak {
 }
 
 impl Keccak {
-    pub fn new(r: usize, c: usize, n: usize) -> Self {
+    pub fn new(d: u8, r: usize, c: usize, n: usize) -> Self {
         // w = b/25
         // w = 2^l => l = log2(w)
         if r % 8 != 0 {
@@ -80,7 +81,8 @@ impl Keccak {
         }
         Self {
             state: [[0; 5]; 5],
-            lane_block: Vec::new(),
+            lane_block: Vec::with_capacity(25),
+            d,
             l: (((r + c) / 25) as f32).log2() as usize,
             n,
             r,
@@ -89,11 +91,11 @@ impl Keccak {
     }
     // 1000...0001 Style
     // (self.r / 8) byteの倍数にパディングする。例: r=1152の場合は144byteの倍数
-    pub(crate) fn padding(&mut self, message: &[u8], suffix: u8) {
+    pub(crate) fn padding(&mut self, message: &[u8]) {
         let mut m = message.to_vec();
         let l = message.len();
         let rate_length = self.r / 8;
-        m.push(suffix);
+        m.push(self.d);
         match (l % rate_length).cmp(&(rate_length - 1)) {
             Ordering::Greater => {
                 m.append(&mut vec![0; 2 * rate_length - 1 - (l % rate_length)]);

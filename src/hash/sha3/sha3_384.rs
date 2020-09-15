@@ -8,14 +8,20 @@ pub struct Sha3_384(Keccak);
 
 impl Sha3_384 {
     pub fn new() -> Self {
-        Self(Keccak::new(832, 768, 384))
+        Self::default()
+    }
+}
+
+impl Default for Sha3_384 {
+    fn default() -> Self {
+        Self(Keccak::new(0x06, 832, 768, 384))
     }
 }
 
 impl Hash for Sha3_384 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha3_384 = Self::new();
-        sha3_384.0.padding(message, 0x06);
+        let mut sha3_384 = Self::default();
+        sha3_384.0.padding(message);
         sha3_384.0.keccak()
     }
 }

@@ -8,14 +8,6 @@ use std::cmp::Ordering;
 // K(t) = CA62C1D6 (60 <= t <= 79)
 const K: [u32; 4] = [0x5A82_7999, 0x6ED9_EBA1, 0x8F1B_BCDC, 0xCA62_C1D6];
 
-const H: [u32; 5] = [
-    0x6745_2301,
-    0xEFCD_AB89,
-    0x98BA_DCFE,
-    0x1032_5476,
-    0xC3D2_E1F0,
-];
-
 // 0 <= t <= 19
 const fn ch(b: u32, c: u32, d: u32) -> u32 {
     (b & c) | (!b & d)
@@ -37,11 +29,8 @@ pub struct Sha1 {
 }
 
 impl Sha1 {
-    fn new() -> Self {
-        Self {
-            word_block: Vec::with_capacity(16),
-            status: H,
-        }
+    pub fn new() -> Self {
+        Self::default()
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self) {
@@ -125,9 +114,24 @@ impl Sha1 {
     impl_padding!(u32 => self, from_be_bytes, to_be_bytes);
 }
 
+impl Default for Sha1 {
+    fn default() -> Self {
+        Self {
+            word_block: Vec::with_capacity(16),
+            status: [
+                0x6745_2301,
+                0xEFCD_AB89,
+                0x98BA_DCFE,
+                0x1032_5476,
+                0xC3D2_E1F0,
+            ],
+        }
+    }
+}
+
 impl Hash for Sha1 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha1 = Self::new();
+        let mut sha1 = Self::default();
         sha1.padding(message);
         sha1.compress();
         sha1.status
