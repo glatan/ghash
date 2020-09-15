@@ -92,13 +92,7 @@ impl Blake<u32> {
                 m.push(last_byte);
             }
             Ordering::Equal => {
-                if last_byte == 0x00 {
-                    m.push(0x80);
-                } else if last_byte == 0x01 {
-                    m.push(0x81);
-                } else {
-                    unreachable!();
-                }
+                m.push(0x80 | last_byte);
             }
         }
         // append message length
@@ -218,13 +212,7 @@ impl Blake<u64> {
                 m.push(last_byte);
             }
             Ordering::Equal => {
-                if last_byte == 0x00 {
-                    m.push(0x80);
-                } else if last_byte == 0x01 {
-                    m.push(0x81);
-                } else {
-                    unreachable!();
-                }
+                m.push(0x80 | last_byte);
             }
         }
         // append message length
