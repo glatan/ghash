@@ -151,6 +151,5 @@ mod tests {
             "d2516ee1acfa5baf33dfc1c471e438449ef134c8",
         ),
     ];
-    impl crate::hash::Test for Sha0 {}
     impl_test!(Sha0, official, OFFICIAL, Sha0::default());
 }

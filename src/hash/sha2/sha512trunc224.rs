@@ -46,7 +46,6 @@ mod tests {
             "23fec5bb94d60b23308192640b0c453335d664734fe40e7268674af9",
         ),
     ];
-    impl crate::hash::Test for Sha512Trunc224 {}
     impl_test!(
         Sha512Trunc224,
         official,

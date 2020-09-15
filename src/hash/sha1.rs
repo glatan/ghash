@@ -155,6 +155,5 @@ mod tests {
             "e0c094e867ef46c350ef54a7f59dd60bed92ae83",
         ),
     ];
-    impl crate::hash::Test for Sha1 {}
     impl_test!(Sha1, official, OFFICIAL, Sha1::default());
 }

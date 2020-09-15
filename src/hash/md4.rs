@@ -140,6 +140,5 @@ mod tests {
             "e33b4ddc9c38f2199c3e7b164fcc0536",
         ),
     ];
-    impl crate::hash::Test for Md4 {}
     impl_test!(Md4, official, OFFICIAL, Md4::default());
 }

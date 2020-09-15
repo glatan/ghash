@@ -301,7 +301,6 @@ mod tests {
         (&[0; 126], "3e3fd47130299178b78d3e0b0873904aea14a792a543e7d2a5269bab"),
         (&[0; 127], "4dbe51ae1d046d0440b1f730d040f8a0e6445bfa8afeb9fa9a99a4b1"),
     ];
-    impl crate::hash::Test for Blake28 {}
     impl_test!(Blake28, zero_fill, ZERO_FILL, Blake28::default());
     impl_test!(
         Blake28,

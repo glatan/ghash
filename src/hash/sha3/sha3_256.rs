@@ -306,6 +306,5 @@ mod tests {
         (&[0; 270], "6ce42636bc8d39c00ba7ac3aa822c50fa426e2543ac2e0f264b6ce4f4e6f8d81"),
         (&[0; 271], "d320e3e392e000b3ce18050d143f8fd8dd655d5c80a724a1e1be28f083a35ebc"),
     ];
-    impl crate::hash::Test for Sha3_256 {}
     impl_test!(Sha3_256, zero_fill, ZERO_FILL, Sha3_256::default());
 }

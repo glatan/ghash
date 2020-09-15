@@ -35,13 +35,3 @@ pub trait Hash<T = Self> {
             .collect()
     }
 }
-
-#[cfg(test)]
-trait Test<T = Self>
-where
-    T: Default + Hash,
-{
-    fn compare_lowerhex(hasher: &mut T, message: &[u8], expected: &str) {
-        assert_eq!(hasher.hash_to_lowerhex(message), expected);
-    }
-}

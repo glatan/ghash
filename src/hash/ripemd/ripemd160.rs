@@ -114,6 +114,5 @@ mod tests {
         ),
         (&[0x61; 1000000], "52783243c1697bdbe16d37f97f68f08325dc1528"),
     ];
-    impl crate::hash::Test for Ripemd160 {}
     impl_test!(Ripemd160, official, OFFICIAL, Ripemd160::default());
 }

@@ -242,6 +242,5 @@ mod tests {
         (&[0; 206], "48cb66de22e34d51594b1dfec99e7b4fca43b04e607bdb4bf6ebf7719e2fd3346e1b4eb37d462b90db8f38ff3b22f2fe"),
         (&[0; 207], "4cdb348926c394a906bca5bd07b2fb3a955f68438a17b524df1dee5ff290440dce6a969400d1d8f318602a3abc3ff695"),
     ];
-    impl crate::hash::Test for Sha3_384 {}
     impl_test!(Sha3_384, zero_fill, ZERO_FILL, Sha3_384::default());
 }

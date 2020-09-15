@@ -87,6 +87,5 @@ mod tests {
         // 0x41000000 (1090519040) bytes of zeros
         // 0x6000003e (1610612798) bytes of 0x42 ‘B’
     ];
-    impl crate::hash::Test for Sha512 {}
     impl_test!(Sha512, official, OFFICIAL, Sha512::default());
 }
