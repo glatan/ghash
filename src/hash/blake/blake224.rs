@@ -307,4 +307,9 @@ impl crate::hash::Test for Blake224 {}
 #[cfg(test)]
 impl_test!(Blake224, default, DEFAULT_TEST_CASES, Blake224::default());
 #[cfg(test)]
-impl_test!(Blake224, salt, SALTED_TEST_CASES, Blake224::new([0, 1, 2, 3]));
+impl_test!(
+    Blake224,
+    salt,
+    SALTED_TEST_CASES,
+    Blake224::new([0, 1, 2, 3])
+);
