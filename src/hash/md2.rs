@@ -23,13 +23,11 @@ pub struct Md2 {
 }
 
 impl Md2 {
-    pub fn new(message: &[u8]) -> Self {
-        Self {
-            message: message.to_vec(),
-            state: [0; 48],
-        }
+    pub fn new() -> Self {
+        Self::default()
     }
-    fn padding(&mut self) {
+    fn padding(&mut self, message: &[u8]) {
+        self.message = message.to_vec();
         let padding_byte = (BLOCK_SIZE - (self.message.len() % BLOCK_SIZE)) as u8;
         self.message
             .append(&mut vec![padding_byte; padding_byte as usize]);
@@ -67,13 +65,21 @@ impl Md2 {
     }
 }
 
+impl Default for Md2 {
+    fn default() -> Self {
+        Self {
+            message: Vec::with_capacity(BLOCK_SIZE),
+            state: [0; 48],
+        }
+    }
+}
+
 impl Hash for Md2 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut md2 = Self::new(message);
-        md2.padding();
-        md2.add_check_sum();
-        md2.compress();
-        md2.state.iter().take(16).copied().collect()
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.padding(message);
+        self.add_check_sum();
+        self.compress();
+        self.state.iter().take(16).copied().collect()
     }
 }
 

@@ -94,12 +94,10 @@ impl Default for Ripemd256 {
 }
 
 impl Hash for Ripemd256 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut ripemd256 = Self::default();
-        ripemd256.padding(message);
-        ripemd256.compress();
-        ripemd256
-            .status
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.padding(message);
+        self.compress();
+        self.status
             .iter()
             .flat_map(|word| word.to_le_bytes().to_vec())
             .collect()

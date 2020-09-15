@@ -19,11 +19,10 @@ impl Default for Sha224 {
 }
 
 impl Hash for Sha224 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha224 = Self::default();
-        sha224.0.padding(message);
-        sha224.0.compress();
-        sha224.0.status[0..7]
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.0.padding(message);
+        self.0.compress();
+        self.0.status[0..7]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()

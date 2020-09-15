@@ -102,11 +102,10 @@ impl Default for Md4 {
 }
 
 impl Hash for Md4 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut md4 = Self::default();
-        md4.padding(message);
-        md4.compress();
-        md4.status[0..4]
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.padding(message);
+        self.compress();
+        self.status[0..4]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()

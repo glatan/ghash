@@ -19,12 +19,10 @@ impl Default for Sha256 {
 }
 
 impl Hash for Sha256 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha256 = Self::default();
-        sha256.0.padding(message);
-        sha256.0.compress();
-        sha256
-            .0
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.0.padding(message);
+        self.0.compress();
+        self.0
             .status
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())

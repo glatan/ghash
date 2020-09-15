@@ -187,11 +187,10 @@ impl Default for Md5 {
 }
 
 impl Hash for Md5 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut md5 = Self::default();
-        md5.padding(message);
-        md5.compress();
-        md5.status[0..4]
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.padding(message);
+        self.compress();
+        self.status[0..4]
             .iter()
             .flat_map(|byte| byte.to_be_bytes().to_vec())
             .collect()

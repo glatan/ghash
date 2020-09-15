@@ -71,12 +71,10 @@ impl Default for Ripemd160 {
 }
 
 impl Hash for Ripemd160 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut ripemd160 = Self::default();
-        ripemd160.padding(message);
-        ripemd160.compress();
-        ripemd160
-            .status
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.padding(message);
+        self.compress();
+        self.status
             .iter()
             .flat_map(|word| word.to_le_bytes().to_vec())
             .collect()

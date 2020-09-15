@@ -19,11 +19,10 @@ impl Default for Sha512Trunc224 {
 }
 
 impl Hash for Sha512Trunc224 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha512trunc224 = Self::default();
-        sha512trunc224.0.padding(message);
-        sha512trunc224.0.compress();
-        sha512trunc224.0.status[0..4]
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.0.padding(message);
+        self.0.compress();
+        self.0.status[0..4]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
             .take(224 / 8) // (224 / 8) bytes

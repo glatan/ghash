@@ -89,19 +89,19 @@ macro_rules! impl_test {
             #[test]
             fn bytes() {
                 for (m, e) in TEST_CASES.iter() {
-                    $self::compare_bytes(m, e);
+                    $self::compare_bytes(&mut $self::default(), m, e);
                 }
             }
             #[test]
             fn lower_hex() {
                 for (m, e) in TEST_CASES.iter() {
-                    $self::compare_lowerhex(m, e);
+                    $self::compare_lowerhex(&mut $self::default(), m, e);
                 }
             }
             #[test]
             fn upper_hex() {
                 for (m, e) in TEST_CASES.iter() {
-                    $self::compare_upperhex(m, e);
+                    $self::compare_upperhex(&mut $self::default(), m, e);
                 }
             }
         }

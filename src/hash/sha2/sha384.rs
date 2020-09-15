@@ -19,11 +19,10 @@ impl Default for Sha384 {
 }
 
 impl Hash for Sha384 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha384 = Self::default();
-        sha384.0.padding(message);
-        sha384.0.compress();
-        sha384.0.status[0..6]
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.0.padding(message);
+        self.0.compress();
+        self.0.status[0..6]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()

@@ -19,12 +19,10 @@ impl Default for Sha512 {
 }
 
 impl Hash for Sha512 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha512 = Self::default();
-        sha512.0.padding(message);
-        sha512.0.compress();
-        sha512
-            .0
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.0.padding(message);
+        self.0.compress();
+        self.0
             .status
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())

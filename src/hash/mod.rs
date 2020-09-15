@@ -21,15 +21,15 @@ pub use sha2::{Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
 pub use sha3::{Sha3_224, Sha3_256, Sha3_384, Sha3_512};
 
 pub trait Hash<T = Self> {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8>;
-    fn hash_to_lowerhex(message: &[u8]) -> String {
-        Self::hash_to_bytes(message)
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8>;
+    fn hash_to_lowerhex(&mut self, message: &[u8]) -> String {
+        self.hash_to_bytes(message)
             .iter()
             .map(|byte| format!("{:02x}", byte))
             .collect()
     }
-    fn hash_to_upperhex(message: &[u8]) -> String {
-        Self::hash_to_bytes(message)
+    fn hash_to_upperhex(&mut self, message: &[u8]) -> String {
+        self.hash_to_bytes(message)
             .iter()
             .map(|byte| format!("{:02X}", byte))
             .collect()
@@ -39,9 +39,9 @@ pub trait Hash<T = Self> {
 #[cfg(test)]
 trait Test<T = Self>
 where
-    T: Hash,
+    T: Default + Hash,
 {
-    fn compare_bytes(message: &[u8], expected: &str) {
+    fn compare_bytes(hasher: &mut T, message: &[u8], expected: &str) {
         fn hex_to_bytes(s: &str) -> Vec<u8> {
             // 上位4ビット
             let s1: Vec<u8> = s
@@ -71,9 +71,9 @@ where
             };
             bytes
         }
-        assert_eq!(T::hash_to_bytes(message), hex_to_bytes(expected));
+        assert_eq!(hasher.hash_to_bytes(message), hex_to_bytes(expected));
     }
-    fn compare_lowerhex(message: &[u8], expected: &str) {
+    fn compare_lowerhex(hasher: &mut T, message: &[u8], expected: &str) {
         fn to_lowerhex(s: &str) -> String {
             let mut lower = s.to_string();
             if s.is_ascii() {
@@ -83,9 +83,9 @@ where
                 unreachable!()
             }
         }
-        assert_eq!(T::hash_to_lowerhex(message), to_lowerhex(expected));
+        assert_eq!(hasher.hash_to_lowerhex(message), to_lowerhex(expected));
     }
-    fn compare_upperhex(message: &[u8], expected: &str) {
+    fn compare_upperhex(hasher: &mut T, message: &[u8], expected: &str) {
         fn to_upperhex(s: &str) -> String {
             let mut upper = s.to_string();
             if s.is_ascii() {
@@ -95,6 +95,6 @@ where
                 unreachable!()
             }
         }
-        assert_eq!(T::hash_to_upperhex(message), to_upperhex(expected));
+        assert_eq!(hasher.hash_to_upperhex(message), to_upperhex(expected));
     }
 }

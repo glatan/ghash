@@ -130,11 +130,10 @@ impl Default for Sha1 {
 }
 
 impl Hash for Sha1 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha1 = Self::default();
-        sha1.padding(message);
-        sha1.compress();
-        sha1.status
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.padding(message);
+        self.compress();
+        self.status
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()

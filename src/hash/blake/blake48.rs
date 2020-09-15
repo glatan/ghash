@@ -23,11 +23,10 @@ impl Default for Blake48 {
 }
 
 impl Hash for Blake48 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut blake48 = Self::default();
-        blake48.0.padding(message, 0x00);
-        blake48.0.compress(14);
-        blake48.0.h[0..6]
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.0.padding(message, 0x00);
+        self.0.compress(14);
+        self.0.h[0..6]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()

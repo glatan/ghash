@@ -17,10 +17,9 @@ impl Default for Keccak256 {
 }
 
 impl Hash for Keccak256 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut keccak256 = Self::default();
-        keccak256.0.padding(message, 0x01);
-        keccak256.0.keccak()
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.0.padding(message, 0x01);
+        self.0.keccak()
     }
 }
 

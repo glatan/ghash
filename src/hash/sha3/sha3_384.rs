@@ -19,10 +19,9 @@ impl Default for Sha3_384 {
 }
 
 impl Hash for Sha3_384 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha3_384 = Self::default();
-        sha3_384.0.padding(message, 0x06);
-        sha3_384.0.keccak()
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.0.padding(message, 0x06);
+        self.0.keccak()
     }
 }
 
