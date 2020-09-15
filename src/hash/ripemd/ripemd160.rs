@@ -115,4 +115,6 @@ const DEFAULT_TEST_CASES: [(&[u8], &str); 9] = [
 ];
 
 #[cfg(test)]
+impl crate::hash::Test for Ripemd160 {}
+#[cfg(test)]
 impl_test!(Ripemd160, default, DEFAULT_TEST_CASES, Ripemd160::default());

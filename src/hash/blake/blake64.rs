@@ -299,4 +299,6 @@ const DEFAULT_TEST_CASES: [(&[u8], &str); 256] = [
 ];
 
 #[cfg(test)]
+impl crate::hash::Test for Blake64 {}
+#[cfg(test)]
 impl_test!(Blake64, default, DEFAULT_TEST_CASES, Blake64::default());

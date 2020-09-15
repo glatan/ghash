@@ -307,4 +307,6 @@ const DEFAULT_TEST_CASES: [(&[u8], &str); (1088 / 8) * 2] = [
 ];
 
 #[cfg(test)]
+impl crate::hash::Test for Sha3_256 {}
+#[cfg(test)]
 impl_test!(Sha3_256, default, DEFAULT_TEST_CASES, Sha3_256::default());

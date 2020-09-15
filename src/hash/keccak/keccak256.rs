@@ -305,4 +305,6 @@ const DEFAULT_TEST_CASES: [(&[u8], &str); (1088 / 8) * 2] = [
 ];
 
 #[cfg(test)]
+impl crate::hash::Test for Keccak256 {}
+#[cfg(test)]
 impl_test!(Keccak256, default, DEFAULT_TEST_CASES, Keccak256::default());

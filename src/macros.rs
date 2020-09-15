@@ -85,7 +85,6 @@ macro_rules! impl_test {
             use super::$self;
             use super::$test_cases;
             use crate::hash::Test;
-            impl Test for $self {}
             #[test]
             fn bytes() {
                 for (m, e) in $test_cases.iter() {

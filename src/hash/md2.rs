@@ -116,4 +116,6 @@ const DEFAULT_TEST_CASES: [(&[u8], &str); 6] = [
 ];
 
 #[cfg(test)]
+impl crate::hash::Test for Md2 {}
+#[cfg(test)]
 impl_test!(Md2, default, DEFAULT_TEST_CASES, Md2::default());

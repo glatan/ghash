@@ -166,4 +166,6 @@ const DEFAULT_TEST_CASES: [(&[u8], &str); 7] = [
 ];
 
 #[cfg(test)]
+impl crate::hash::Test for Sha1 {}
+#[cfg(test)]
 impl_test!(Sha1, default, DEFAULT_TEST_CASES, Sha1::default());

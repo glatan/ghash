@@ -177,4 +177,6 @@ const DEFAULT_TEST_CASES: [(&[u8], &str); (576 / 8) * 2] = [
 ];
 
 #[cfg(test)]
+impl crate::hash::Test for Keccak512 {}
+#[cfg(test)]
 impl_test!(Keccak512, default, DEFAULT_TEST_CASES, Keccak512::default());
