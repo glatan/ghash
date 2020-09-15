@@ -79,29 +79,28 @@ macro_rules! impl_padding {
 
 #[macro_export]
 macro_rules! impl_test {
-    ($self:ident) => {
+    ($self:ident, $test_name:ident, $test_cases:ident, $hasher:expr) => {
         #[cfg(test)]
-        mod tests {
+        mod $test_name {
             use super::$self;
-            use super::TEST_CASES;
+            use super::$test_cases;
             use crate::hash::Test;
-            impl Test for $self {}
             #[test]
             fn bytes() {
-                for (m, e) in TEST_CASES.iter() {
-                    $self::compare_bytes(m, e);
+                for (m, e) in $test_cases.iter() {
+                    $self::compare_bytes(&mut $hasher, m, e);
                 }
             }
             #[test]
             fn lower_hex() {
-                for (m, e) in TEST_CASES.iter() {
-                    $self::compare_lowerhex(m, e);
+                for (m, e) in $test_cases.iter() {
+                    $self::compare_lowerhex(&mut $hasher, m, e);
                 }
             }
             #[test]
             fn upper_hex() {
-                for (m, e) in TEST_CASES.iter() {
-                    $self::compare_upperhex(m, e);
+                for (m, e) in $test_cases.iter() {
+                    $self::compare_upperhex(&mut $hasher, m, e);
                 }
             }
         }

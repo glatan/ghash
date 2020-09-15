@@ -19,11 +19,10 @@ impl Default for Sha512Trunc224 {
 }
 
 impl Hash for Sha512Trunc224 {
-    fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
-        let mut sha512trunc224 = Self::default();
-        sha512trunc224.0.padding(message);
-        sha512trunc224.0.compress();
-        sha512trunc224.0.status[0..4]
+    fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        self.0.padding(message);
+        self.0.compress();
+        self.0.status[0..4]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
             .take(224 / 8) // (224 / 8) bytes
@@ -32,37 +31,26 @@ impl Hash for Sha512Trunc224 {
 }
 
 #[cfg(test)]
-use crate::impl_test;
+mod tests {
+    use super::Sha512Trunc224;
+    use crate::impl_test;
 
-#[cfg(test)]
-// https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512_224.pdf
-const TEST_CASES: [(&[u8], &str); 5] = [
-        // SHA-512/224("abc") = 4634270f707b6a54daae7530460842e20e37ed265ceee9a43e8924aa
+    const OFFICIAL: [(&[u8], &str); 2] = [
+        // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512_224.pdf
         (
             "abc".as_bytes(),
             "4634270f707b6a54daae7530460842e20e37ed265ceee9a43e8924aa",
         ),
-        // SHA-512/224("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu") = 23fec5bb94d60b23308192640b0c453335d664734fe40e7268674af9
         (
             "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu".as_bytes(),
             "23fec5bb94d60b23308192640b0c453335d664734fe40e7268674af9",
         ),
-        // padding_length > 0
-        (
-            &[0x30; 110],
-            "2a3a18266ef16749c7e346a3179df983860eb87da02b3837f2b0aec9",
-        ),
-        // padding_length == 0
-        (
-            &[0x30; 111],
-            "3e4fc8cc1265b73e7ab857d3b78d84c481d4a8d7641792f5d2d450d0",
-        ),
-        // padding_length < 0
-        (
-            &[0x30; 112],
-            "7802ccf8034072805bcabc1487718da25f3894848cb43ac509b9f4b7",
-        ),
     ];
-
-#[cfg(test)]
-impl_test!(Sha512Trunc224);
+    impl crate::hash::Test for Sha512Trunc224 {}
+    impl_test!(
+        Sha512Trunc224,
+        official,
+        OFFICIAL,
+        Sha512Trunc224::default()
+    );
+}
