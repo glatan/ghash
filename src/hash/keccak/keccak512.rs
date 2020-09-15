@@ -12,14 +12,14 @@ impl Keccak512 {
 
 impl Default for Keccak512 {
     fn default() -> Self {
-        Self(Keccak::new(0x01, 576, 1024, 512))
+        Self(Keccak::new(576, 1024, 512))
     }
 }
 
 impl Hash for Keccak512 {
     fn hash_to_bytes(message: &[u8]) -> Vec<u8> {
         let mut keccak512 = Self::default();
-        keccak512.0.padding(message);
+        keccak512.0.padding(message, 0x01);
         keccak512.0.keccak()
     }
 }
