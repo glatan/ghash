@@ -86,21 +86,9 @@ macro_rules! impl_test {
             use super::$test_cases;
             use crate::hash::Test;
             #[test]
-            fn bytes() {
-                for (m, e) in $test_cases.iter() {
-                    $self::compare_bytes(&mut $hasher, m, e);
-                }
-            }
-            #[test]
             fn lower_hex() {
                 for (m, e) in $test_cases.iter() {
                     $self::compare_lowerhex(&mut $hasher, m, e);
-                }
-            }
-            #[test]
-            fn upper_hex() {
-                for (m, e) in $test_cases.iter() {
-                    $self::compare_upperhex(&mut $hasher, m, e);
                 }
             }
         }
