@@ -87,7 +87,7 @@ impl Hash for Md2 {
 use crate::impl_test;
 
 #[cfg(test)]
-const TEST_CASES: [(&[u8], &str); 6] = [
+const DEFAULT_TEST_CASES: [(&[u8], &str); 6] = [
     // MD2 ("") = 8350e5a3e24c153df2275c9f80692773
     ("".as_bytes(), "8350e5a3e24c153df2275c9f80692773"),
     // MD2 ("abc") = da853b0d3f88d99b30283a69e6ded6bb
@@ -116,4 +116,4 @@ const TEST_CASES: [(&[u8], &str); 6] = [
 ];
 
 #[cfg(test)]
-impl_test!(Md2);
+impl_test!(Md2, default, DEFAULT_TEST_CASES, Md2::default());

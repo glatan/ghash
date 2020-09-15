@@ -142,7 +142,7 @@ use crate::impl_test;
 
 #[cfg(test)]
 // https://tools.ietf.org/html/rfc3174
-const TEST_CASES: [(&[u8], &str); 7] = [
+const DEFAULT_TEST_CASES: [(&[u8], &str); 7] = [
     // SHA1 ("abc") = a9993e364706816aba3e25717850c26c9cd0d89d
     ("abc".as_bytes(), "a9993e364706816aba3e25717850c26c9cd0d89d"),
     // SHA1 ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") = 84983e441c3bd26ebaae4aa1f95129e5e54670f1
@@ -166,4 +166,4 @@ const TEST_CASES: [(&[u8], &str); 7] = [
 ];
 
 #[cfg(test)]
-impl_test!(Sha1);
+impl_test!(Sha1, default, DEFAULT_TEST_CASES, Sha1::default());

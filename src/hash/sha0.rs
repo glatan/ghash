@@ -143,7 +143,7 @@ use crate::impl_test;
 #[cfg(test)]
 // https://web.archive.org/web/20180905102133/https://www-ljk.imag.fr/membres/Pierre.Karpman/fips180.pdf
 // https://crypto.stackexchange.com/questions/62055/where-can-i-find-a-description-of-the-sha-0-hash-algorithm/62071#62071
-const TEST_CASES: [(&[u8], &str); 5] = [
+const DEFAULT_TEST_CASES: [(&[u8], &str); 5] = [
     // SHA0 ("abc") = 0164b8a914cd2a5e74c4f7ff082c4d97f1edf880
     ("abc".as_bytes(), "0164b8a914cd2a5e74c4f7ff082c4d97f1edf880"),
     // SHA0 ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") = d2516ee1acfa5baf33dfc1c471e438449ef134c8
@@ -160,4 +160,4 @@ const TEST_CASES: [(&[u8], &str); 5] = [
 ];
 
 #[cfg(test)]
-impl_test!(Sha0);
+impl_test!(Sha0, default, DEFAULT_TEST_CASES, Sha0::default());

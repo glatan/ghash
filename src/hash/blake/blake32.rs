@@ -39,7 +39,7 @@ use crate::impl_test;
 
 #[cfg(test)]
 #[rustfmt::skip]
-const TEST_CASES: [(&[u8], &str); 128] = [
+const DEFAULT_TEST_CASES: [(&[u8], &str); 128] = [
     (&[0; 0], "73be7e1e0a7d0a2f0035edae62d4412ec43c0308145b5046849a53756bcda44b"),
     (&[0; 1], "d1e39b457d2250b4f5b152e74157fba4c1b423b87549106b07fd3a3e7f4aeb28"),
     (&[0; 2], "0800d05680abb4cfa6cd6b6381cf50ebaafb3178f5c3f11afefa215315658c0c"),
@@ -171,4 +171,4 @@ const TEST_CASES: [(&[u8], &str); 128] = [
 ];
 
 #[cfg(test)]
-impl_test!(Blake32);
+impl_test!(Blake32, default, DEFAULT_TEST_CASES, Blake32::default());

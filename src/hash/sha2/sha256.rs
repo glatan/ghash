@@ -36,7 +36,7 @@ use crate::impl_test;
 #[cfg(test)]
 // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA256.pdf
 // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
-const TEST_CASES: [(&[u8], &str); 15] = [
+const DEFAULT_TEST_CASES: [(&[u8], &str); 15] = [
     // SHA-256 ("abc") = ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
     (
         "abc".as_bytes(),
@@ -119,4 +119,4 @@ const TEST_CASES: [(&[u8], &str); 15] = [
 ];
 
 #[cfg(test)]
-impl_test!(Sha256);
+impl_test!(Sha256, default, DEFAULT_TEST_CASES, Sha256::default());

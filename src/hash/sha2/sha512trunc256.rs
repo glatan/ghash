@@ -34,7 +34,7 @@ use crate::impl_test;
 
 #[cfg(test)]
 // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512_256.pdf
-const TEST_CASES: [(&[u8], &str); 5] = [
+const DEFAULT_TEST_CASES: [(&[u8], &str); 5] = [
         // SHA-512/256("abc") = 53048e2681941ef99b2e29b76b4c7dabe4c2d0c634fc6d46e0e2f13107e7af23
         (
             "abc".as_bytes(),
@@ -63,4 +63,9 @@ const TEST_CASES: [(&[u8], &str); 5] = [
     ];
 
 #[cfg(test)]
-impl_test!(Sha512Trunc256);
+impl_test!(
+    Sha512Trunc256,
+    default,
+    DEFAULT_TEST_CASES,
+    Sha512Trunc256::default()
+);

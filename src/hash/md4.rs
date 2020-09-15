@@ -117,7 +117,7 @@ use crate::impl_test;
 
 #[cfg(test)]
 // https://tools.ietf.org/html/rfc1320
-const TEST_CASES: [(&[u8], &str); 10] = [
+const DEFAULT_TEST_CASES: [(&[u8], &str); 10] = [
     // MD4 ("") = 31d6cfe0d16ae931b73c59d7e0c089c0
     ("".as_bytes(), "31d6cfe0d16ae931b73c59d7e0c089c0"),
     // MD4 ("a") = bde52cb31de33e46245e05fbdbd6fb24
@@ -154,4 +154,4 @@ const TEST_CASES: [(&[u8], &str); 10] = [
 ];
 
 #[cfg(test)]
-impl_test!(Md4);
+impl_test!(Md4, default, DEFAULT_TEST_CASES, Md4::default());

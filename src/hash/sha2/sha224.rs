@@ -35,7 +35,7 @@ use crate::impl_test;
 #[cfg(test)]
 // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA224.pdf
 // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
-const TEST_CASES: [(&[u8], &str); 12] = [
+const DEFAULT_TEST_CASES: [(&[u8], &str); 12] = [
     (
         "abc".as_bytes(),
         "23097d223405d8228642a477bda255b32aadbce4bda0b3f7e36c9da7",
@@ -102,4 +102,4 @@ const TEST_CASES: [(&[u8], &str); 12] = [
 ];
 
 #[cfg(test)]
-impl_test!(Sha224);
+impl_test!(Sha224, default, DEFAULT_TEST_CASES, Sha224::default());

@@ -202,7 +202,7 @@ use crate::impl_test;
 
 #[cfg(test)]
 // https://tools.ietf.org/html/rfc1321
-const TEST_CASES: [(&[u8], &str); 10] = [
+const DEFAULT_TEST_CASES: [(&[u8], &str); 10] = [
     // MD5 ("") = d41d8cd98f00b204e9800998ecf8427e
     ("".as_bytes(), "d41d8cd98f00b204e9800998ecf8427e"),
     // MD5 ("a") = 0cc175b9c0f1b6a831c399e269772661
@@ -239,4 +239,4 @@ const TEST_CASES: [(&[u8], &str); 10] = [
 ];
 
 #[cfg(test)]
-impl_test!(Md5);
+impl_test!(Md5, default, DEFAULT_TEST_CASES, Md5::default());

@@ -121,7 +121,7 @@ use crate::impl_test;
 
 #[cfg(test)]
 // https://homes.esat.kuleuven.be/~bosselae/ripemd160.html
-const TEST_CASES: [(&[u8], &str); 9] = [
+const DEFAULT_TEST_CASES: [(&[u8], &str); 9] = [
     (
         "".as_bytes(),
         "22d65d5661536cdc75c1fdf5c6de7b41b9f27325ebc61e8557177d705a0ec880151c3a32a00899b8",
@@ -162,4 +162,4 @@ const TEST_CASES: [(&[u8], &str); 9] = [
 ];
 
 #[cfg(test)]
-impl_test!(Ripemd320);
+impl_test!(Ripemd320, default, DEFAULT_TEST_CASES, Ripemd320::default());

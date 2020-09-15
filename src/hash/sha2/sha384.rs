@@ -35,7 +35,7 @@ use crate::impl_test;
 #[cfg(test)]
 // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA384.pdf
 // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA2_Additional.pdf
-const TEST_CASES: [(&[u8], &str); 14] = [
+const DEFAULT_TEST_CASES: [(&[u8], &str); 14] = [
         // SHA-384("abc") = cb00753f45a35e8bb5a03d699ac65007272c32ab0eded1631a8b605a43ff5bed8086072ba1e7cc2358baeca134c825a7
         (
             "abc".as_bytes(),
@@ -113,4 +113,4 @@ const TEST_CASES: [(&[u8], &str); 14] = [
     ];
 
 #[cfg(test)]
-impl_test!(Sha384);
+impl_test!(Sha384, default, DEFAULT_TEST_CASES, Sha384::default());
