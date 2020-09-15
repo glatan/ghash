@@ -115,15 +115,12 @@ impl Sha1 {
 }
 
 impl Default for Sha1 {
+    #[rustfmt::skip]
     fn default() -> Self {
         Self {
             word_block: Vec::with_capacity(16),
             status: [
-                0x6745_2301,
-                0xEFCD_AB89,
-                0x98BA_DCFE,
-                0x1032_5476,
-                0xC3D2_E1F0,
+                0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476, 0xC3D2_E1F0,
             ],
         }
     }
