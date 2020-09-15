@@ -172,6 +172,7 @@ const DEFAULT_TEST_CASES: [(&[u8], &str); 128] = [
 #[cfg(test)]
 #[rustfmt::skip]
 const SALTED_TEST_CASES: [(&[u8], &str); 128] = [
+    // salt = [0, 1, 2, 3]
     (&[0; 0], "ee10e2f23e6f6082fef77187a55bef385d4b2c8664ded1dbee493e60"),
     (&[0; 1], "36263cb368cbe19f2151c4ae02526e0141715f1ba144fb435be73cf7"),
     (&[0; 2], "acca6625e45e3e2829299ed4de0368877e7dc0201f46a74530907c22"),
