@@ -138,34 +138,29 @@ impl Hash for Sha1 {
 }
 
 #[cfg(test)]
-use crate::impl_test;
+mod tests {
+    use super::Sha1;
+    use crate::impl_test;
 
-#[cfg(test)]
-// https://tools.ietf.org/html/rfc3174
-const DEFAULT_TEST_CASES: [(&[u8], &str); 7] = [
-    // SHA1 ("abc") = a9993e364706816aba3e25717850c26c9cd0d89d
-    ("abc".as_bytes(), "a9993e364706816aba3e25717850c26c9cd0d89d"),
-    // SHA1 ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") = 84983e441c3bd26ebaae4aa1f95129e5e54670f1
-    (
-        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq".as_bytes(),
-        "84983e441c3bd26ebaae4aa1f95129e5e54670f1",
-    ),
-    // SHA1 ("a") = 86f7e437faa5a7fce15d1ddcb9eaeaea377667b8
-    ("a".as_bytes(), "86f7e437faa5a7fce15d1ddcb9eaeaea377667b8"),
-    // SHA1 ("0123456701234567012345670123456701234567012345670123456701234567") = e0c094e867ef46c350ef54a7f59dd60bed92ae83
-    (
-        "0123456701234567012345670123456701234567012345670123456701234567".as_bytes(),
-        "e0c094e867ef46c350ef54a7f59dd60bed92ae83",
-    ),
-    // padding_length > 0
-    (&[0x30; 54], "fcd2740438dd7a05dc5747d176fd65dda58cfd01"),
-    // padding_length == 0
-    (&[0x30; 55], "8fffd3df3d041baf53b27f42ec802cfb362710bd"),
-    // padding_length < 0
-    (&[0x30; 56], "2a04b5125ba4030ef13232ecf1b72849f6ec9e97"),
-];
-
-#[cfg(test)]
-impl crate::hash::Test for Sha1 {}
-#[cfg(test)]
-impl_test!(Sha1, default, DEFAULT_TEST_CASES, Sha1::default());
+    const DEFAULT_TEST_CASES: [(&[u8], &str); 7] = [
+        // https://tools.ietf.org/html/rfc3174
+        ("abc".as_bytes(), "a9993e364706816aba3e25717850c26c9cd0d89d"),
+        (
+            "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq".as_bytes(),
+            "84983e441c3bd26ebaae4aa1f95129e5e54670f1",
+        ),
+        ("a".as_bytes(), "86f7e437faa5a7fce15d1ddcb9eaeaea377667b8"),
+        (
+            "0123456701234567012345670123456701234567012345670123456701234567".as_bytes(),
+            "e0c094e867ef46c350ef54a7f59dd60bed92ae83",
+        ),
+        // padding_length > 0
+        (&[0x30; 54], "fcd2740438dd7a05dc5747d176fd65dda58cfd01"),
+        // padding_length == 0
+        (&[0x30; 55], "8fffd3df3d041baf53b27f42ec802cfb362710bd"),
+        // padding_length < 0
+        (&[0x30; 56], "2a04b5125ba4030ef13232ecf1b72849f6ec9e97"),
+    ];
+    impl crate::hash::Test for Sha1 {}
+    impl_test!(Sha1, default, DEFAULT_TEST_CASES, Sha1::default());
+}

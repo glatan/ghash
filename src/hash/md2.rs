@@ -84,38 +84,32 @@ impl Hash for Md2 {
 }
 
 #[cfg(test)]
-use crate::impl_test;
+mod tests {
+    use super::Md2;
+    use crate::impl_test;
 
-#[cfg(test)]
-const DEFAULT_TEST_CASES: [(&[u8], &str); 6] = [
-    // MD2 ("") = 8350e5a3e24c153df2275c9f80692773
-    ("".as_bytes(), "8350e5a3e24c153df2275c9f80692773"),
-    // MD2 ("abc") = da853b0d3f88d99b30283a69e6ded6bb
-    ("a".as_bytes(), "32ec01ec4a6dac72c0ab96fb34c0b5d1"),
-    // MD2 ("message digest") = ab4f496bfb2a530b219ff33031fe06b0
-    (
-        "message digest".as_bytes(),
-        "ab4f496bfb2a530b219ff33031fe06b0",
-    ),
-    // MD2 ("abcdefghijklmnopqrstuvwxyz") = 4e8ddff3650292ab5a4108c3aa47940b
-    (
-        "abcdefghijklmnopqrstuvwxyz".as_bytes(),
-        "4e8ddff3650292ab5a4108c3aa47940b",
-    ),
-    // MD2 ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") = da33def2a42df13975352846c30338cd
-    (
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".as_bytes(),
-        "da33def2a42df13975352846c30338cd",
-    ),
-    // MD2 ("12345678901234567890123456789012345678901234567890123456789012345678901234567890") = d5976f79d83d3a0dc9806c3c66f3efd8
-    (
-        "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
-            .as_bytes(),
-        "d5976f79d83d3a0dc9806c3c66f3efd8",
-    ),
-];
-
-#[cfg(test)]
-impl crate::hash::Test for Md2 {}
-#[cfg(test)]
-impl_test!(Md2, default, DEFAULT_TEST_CASES, Md2::default());
+    const DEFAULT_TEST_CASES: [(&[u8], &str); 6] = [
+        // https://tools.ietf.org/html/rfc1319
+        ("".as_bytes(), "8350e5a3e24c153df2275c9f80692773"),
+        ("a".as_bytes(), "32ec01ec4a6dac72c0ab96fb34c0b5d1"),
+        (
+            "message digest".as_bytes(),
+            "ab4f496bfb2a530b219ff33031fe06b0",
+        ),
+        (
+            "abcdefghijklmnopqrstuvwxyz".as_bytes(),
+            "4e8ddff3650292ab5a4108c3aa47940b",
+        ),
+        (
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".as_bytes(),
+            "da33def2a42df13975352846c30338cd",
+        ),
+        (
+            "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
+                .as_bytes(),
+            "d5976f79d83d3a0dc9806c3c66f3efd8",
+        ),
+    ];
+    impl crate::hash::Test for Md2 {}
+    impl_test!(Md2, default, DEFAULT_TEST_CASES, Md2::default());
+}

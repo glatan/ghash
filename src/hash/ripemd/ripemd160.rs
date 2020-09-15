@@ -82,39 +82,38 @@ impl Hash for Ripemd160 {
 }
 
 #[cfg(test)]
-use crate::impl_test;
+mod tests {
+    use super::Ripemd160;
+    use crate::impl_test;
 
-#[cfg(test)]
-// https://homes.esat.kuleuven.be/~bosselae/ripemd160/pdf/AB-9601/AB-9601.pdf
-const DEFAULT_TEST_CASES: [(&[u8], &str); 9] = [
-    ("".as_bytes(), "9c1185a5c5e9fc54612808977ee8f548b2258d31"),
-    ("a".as_bytes(), "0bdc9d2d256b3ee9daae347be6f4dc835a467ffe"),
-    ("abc".as_bytes(), "8eb208f7e05d987a9b044a8e98c6b087f15a0bfc"),
-    (
-        "message digest".as_bytes(),
-        "5d0689ef49d2fae572b881b123a85ffa21595f36",
-    ),
-    (
-        "abcdefghijklmnopqrstuvwxyz".as_bytes(),
-        "f71c27109c692c1b56bbdceb5b9d2865b3708dbc",
-    ),
-    (
-        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq".as_bytes(),
-        "12a053384a9c0c88e405a06c27dcf49ada62eb2b",
-    ),
-    (
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".as_bytes(),
-        "b0e20b6e3116640286ed3a87a5713079b21f5189",
-    ),
-    (
-        "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
-            .as_bytes(),
-        "9b752e45573d4b39f4dbd3323cab82bf63326bfb",
-    ),
-    (&[0x61; 1000000], "52783243c1697bdbe16d37f97f68f08325dc1528"),
-];
-
-#[cfg(test)]
-impl crate::hash::Test for Ripemd160 {}
-#[cfg(test)]
-impl_test!(Ripemd160, default, DEFAULT_TEST_CASES, Ripemd160::default());
+    const DEFAULT_TEST_CASES: [(&[u8], &str); 9] = [
+        // https://homes.esat.kuleuven.be/~bosselae/ripemd160/pdf/AB-9601/AB-9601.pdf
+        ("".as_bytes(), "9c1185a5c5e9fc54612808977ee8f548b2258d31"),
+        ("a".as_bytes(), "0bdc9d2d256b3ee9daae347be6f4dc835a467ffe"),
+        ("abc".as_bytes(), "8eb208f7e05d987a9b044a8e98c6b087f15a0bfc"),
+        (
+            "message digest".as_bytes(),
+            "5d0689ef49d2fae572b881b123a85ffa21595f36",
+        ),
+        (
+            "abcdefghijklmnopqrstuvwxyz".as_bytes(),
+            "f71c27109c692c1b56bbdceb5b9d2865b3708dbc",
+        ),
+        (
+            "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq".as_bytes(),
+            "12a053384a9c0c88e405a06c27dcf49ada62eb2b",
+        ),
+        (
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".as_bytes(),
+            "b0e20b6e3116640286ed3a87a5713079b21f5189",
+        ),
+        (
+            "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
+                .as_bytes(),
+            "9b752e45573d4b39f4dbd3323cab82bf63326bfb",
+        ),
+        (&[0x61; 1000000], "52783243c1697bdbe16d37f97f68f08325dc1528"),
+    ];
+    impl crate::hash::Test for Ripemd160 {}
+    impl_test!(Ripemd160, default, DEFAULT_TEST_CASES, Ripemd160::default());
+}

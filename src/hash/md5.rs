@@ -198,47 +198,39 @@ impl Hash for Md5 {
 }
 
 #[cfg(test)]
-use crate::impl_test;
+mod tests {
+    use super::Md5;
+    use crate::impl_test;
 
-#[cfg(test)]
-// https://tools.ietf.org/html/rfc1321
-const DEFAULT_TEST_CASES: [(&[u8], &str); 10] = [
-    // MD5 ("") = d41d8cd98f00b204e9800998ecf8427e
-    ("".as_bytes(), "d41d8cd98f00b204e9800998ecf8427e"),
-    // MD5 ("a") = 0cc175b9c0f1b6a831c399e269772661
-    ("a".as_bytes(), "0cc175b9c0f1b6a831c399e269772661"),
-    // MD5 ("abc") = 900150983cd24fb0d6963f7d28e17f72
-    ("abc".as_bytes(), "900150983cd24fb0d6963f7d28e17f72"),
-    // MD5 ("message digest") = f96b697d7cb7938d525a2f31aaf161d0
-    (
-        "message digest".as_bytes(),
-        "f96b697d7cb7938d525a2f31aaf161d0",
-    ),
-    // MD5 ("abcdefghijklmnopqrstuvwxyz") = c3fcd3d76192e4007dfb496cca67e13b
-    (
-        "abcdefghijklmnopqrstuvwxyz".as_bytes(),
-        "c3fcd3d76192e4007dfb496cca67e13b",
-    ),
-    // MD5 ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") = d174ab98d277d9f5a5611c2c9f419d9f
-    (
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".as_bytes(),
-        "d174ab98d277d9f5a5611c2c9f419d9f",
-    ),
-    // MD5 ("12345678901234567890123456789012345678901234567890123456789012345678901234567890") = 57edf4a22be3c955ac49da2e2107b67a
-    (
-        "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
-            .as_bytes(),
-        "57edf4a22be3c955ac49da2e2107b67a",
-    ),
-    // padding_length > 0
-    (&[0x30; 54], "978b0444e93c5f7d714575f28a77dca1"),
-    // padding_length == 0
-    (&[0x30; 55], "d7fe636bd28e2ee2ba4d6c5898318699"),
-    // padding_length < 0
-    (&[0x30; 56], "ce992c2ad906967c63c3f9ab0c2294a9"),
-];
-
-#[cfg(test)]
-impl crate::hash::Test for Md5 {}
-#[cfg(test)]
-impl_test!(Md5, default, DEFAULT_TEST_CASES, Md5::default());
+    const DEFAULT_TEST_CASES: [(&[u8], &str); 10] = [
+        // https://tools.ietf.org/html/rfc1321
+        ("".as_bytes(), "d41d8cd98f00b204e9800998ecf8427e"),
+        ("a".as_bytes(), "0cc175b9c0f1b6a831c399e269772661"),
+        ("abc".as_bytes(), "900150983cd24fb0d6963f7d28e17f72"),
+        (
+            "message digest".as_bytes(),
+            "f96b697d7cb7938d525a2f31aaf161d0",
+        ),
+        (
+            "abcdefghijklmnopqrstuvwxyz".as_bytes(),
+            "c3fcd3d76192e4007dfb496cca67e13b",
+        ),
+        (
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".as_bytes(),
+            "d174ab98d277d9f5a5611c2c9f419d9f",
+        ),
+        (
+            "12345678901234567890123456789012345678901234567890123456789012345678901234567890"
+                .as_bytes(),
+            "57edf4a22be3c955ac49da2e2107b67a",
+        ),
+        // padding_length > 0
+        (&[0x30; 54], "978b0444e93c5f7d714575f28a77dca1"),
+        // padding_length == 0
+        (&[0x30; 55], "d7fe636bd28e2ee2ba4d6c5898318699"),
+        // padding_length < 0
+        (&[0x30; 56], "ce992c2ad906967c63c3f9ab0c2294a9"),
+    ];
+    impl crate::hash::Test for Md5 {}
+    impl_test!(Md5, default, DEFAULT_TEST_CASES, Md5::default());
+}
