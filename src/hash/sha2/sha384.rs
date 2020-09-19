@@ -87,7 +87,7 @@ mod tests {
         // 0x6000003e (1610612798) bytes of 0x42 ‘B’
     ];
     #[rustfmt::skip]
-    const ZERO_FILL: [(&[u8], &str); 256] = [
+    const ZERO_FILL: [(&[u8], &str); (1024 * 2) / 8] = [
         (&[0; 0], "38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b"),
         (&[0; 1], "bec021b4f368e3069134e012c2b4307083d3a9bdd206e24e5f0d86e13d6636655933ec2b413465966817a9c208a11717"),
         (&[0; 2], "1dd6f7b457ad880d840d41c961283bab688e94e4b59359ea45686581e90feccea3c624b1226113f824f315eb60ae0a7c"),

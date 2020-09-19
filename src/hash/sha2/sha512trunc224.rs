@@ -47,7 +47,7 @@ mod tests {
         ),
     ];
     #[rustfmt::skip]
-    const ZERO_FILL: [(&[u8], &str); 256] = [
+    const ZERO_FILL: [(&[u8], &str); (1024 * 2) / 8] = [
         (&[0; 0], "6ed0dd02806fa89e25de060c19d3ac86cabb87d6a0ddd05c333b84f4"),
         (&[0; 1], "283bb59af7081ed08197227d8f65b9591ffe1155be43e9550e57f941"),
         (&[0; 2], "763f90c3901fe2da63b6d254307dd5fda19cb8f6e605d32131911ed0"),

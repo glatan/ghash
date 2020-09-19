@@ -87,7 +87,7 @@ mod tests {
         // 0x6000003f (1610612799) bytes of 0x84
     ];
     #[rustfmt::skip]
-    const ZERO_FILL: [(&[u8], &str); 128] = [
+    const ZERO_FILL: [(&[u8], &str); (512 * 2) / 8] = [
         (&[0; 0], "d14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f"),
         (&[0; 1], "fff9292b4201617bdc4d3053fce02734166a683d7d858a7f5f59b073"),
         (&[0; 2], "ce415cdb385b7a540779f1ed33ae41bac19ac1e55370ac9bc454586d"),
