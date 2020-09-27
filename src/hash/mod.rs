@@ -1,4 +1,5 @@
 mod blake;
+mod blake2;
 mod keccak;
 mod md2;
 mod md4;
@@ -10,6 +11,7 @@ mod sha2;
 mod sha3;
 
 pub use blake::{Blake224, Blake256, Blake28, Blake32, Blake384, Blake48, Blake512, Blake64};
+pub use blake2::{Blake2b, Blake2s};
 pub use keccak::{Keccak224, Keccak256, Keccak384, Keccak512};
 pub use md2::Md2;
 pub use md4::Md4;
