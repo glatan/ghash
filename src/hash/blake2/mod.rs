@@ -79,6 +79,14 @@ impl Blake2<u32> {
             panic!("{} is not a valid number. n must be between 1 and 32.", n);
         }
         let p = init_params32(n, k, salt);
+        #[cfg(test)]
+        {
+            print!("P: ");
+            for i in p.iter() {
+                print!("{:08x} ", i);
+            }
+            println!();
+        }
         Self {
             word_block: Vec::with_capacity(16),
             f: false,
@@ -169,11 +177,14 @@ impl Blake2<u32> {
             }
             // round
             for r in 0..10 {
-                // print!("Round[{:}]: ", r);
-                // for i in 0..16 {
-                //     print!("{:08x}", self.v[i]);
-                // }
-                // println!();
+                #[cfg(test)]
+                {
+                    print!("Round[{:}]: ", r);
+                    for i in 0..16 {
+                        print!("{:08x}", self.v[i]);
+                    }
+                    println!();
+                }
                 self.g(n, 0, r, 0, 4, 8, 12);
                 self.g(n, 1, r, 1, 5, 9, 13);
                 self.g(n, 2, r, 2, 6, 10, 14);
@@ -183,11 +194,14 @@ impl Blake2<u32> {
                 self.g(n, 6, r, 2, 7, 8, 13);
                 self.g(n, 7, r, 3, 4, 9, 14);
             }
-            // print!("Round[{:}]: ", 10);
-            // for i in 0..16 {
-            //     print!("{:08x}", self.v[i]);
-            // }
-            // println!();
+            #[cfg(test)]
+            {
+                print!("Round[{:}]: ", 10);
+                for i in 0..16 {
+                    print!("{:08x}", self.v[i]);
+                }
+                println!();
+            }
             // finalize
             for i in 0..8 {
                 self.h[i] = self.h[i] ^ self.v[i] ^ self.v[i + 8];
@@ -199,10 +213,14 @@ impl Blake2<u32> {
 impl Default for Blake2<u32> {
     fn default() -> Self {
         let p = init_params32(32, 0, [0; 2]);
-        // for i in p.iter() {
-        //     print!("{:08x} ", i);
-        // }
-        // println!();
+        #[cfg(test)]
+        {
+            print!("P: ");
+            for i in p.iter() {
+                print!("{:08x} ", i);
+            }
+            println!();
+        }
         Self {
             word_block: Vec::with_capacity(16),
             f: false,
@@ -231,6 +249,14 @@ impl Blake2<u64> {
             panic!("{} is not a valid number. n must be between 1 and 32.", n);
         }
         let p = init_params64(n, k, salt);
+        #[cfg(test)]
+        {
+            print!("P: ");
+            for i in p.iter() {
+                print!("{:08x} ", i);
+            }
+            println!();
+        }
         Self {
             word_block: Vec::with_capacity(16),
             f: false,
@@ -329,11 +355,14 @@ impl Blake2<u64> {
             }
             // round
             for r in 0..12 {
-                // print!("Round[{:}]: ", r);
-                // for i in 0..16 {
-                //     print!("{:08x}", self.v[i]);
-                // }
-                // println!();
+                #[cfg(test)]
+                {
+                    print!("Round[{:}]: ", r);
+                    for i in 0..16 {
+                        print!("{:08x}", self.v[i]);
+                    }
+                    println!();
+                }
                 self.g(n, 0, r, 0, 4, 8, 12);
                 self.g(n, 1, r, 1, 5, 9, 13);
                 self.g(n, 2, r, 2, 6, 10, 14);
@@ -343,11 +372,14 @@ impl Blake2<u64> {
                 self.g(n, 6, r, 2, 7, 8, 13);
                 self.g(n, 7, r, 3, 4, 9, 14);
             }
-            // print!("Round[{:}]: ", 12);
-            // for i in 0..16 {
-            //     print!("{:08x}", self.v[i]);
-            // }
-            // println!();
+            #[cfg(test)]
+            {
+                print!("Round[{:}]: ", 12);
+                for i in 0..16 {
+                    print!("{:08x}", self.v[i]);
+                }
+                println!();
+            }
             // finalize
             for i in 0..8 {
                 self.h[i] = self.h[i] ^ self.v[i] ^ self.v[i + 8];
@@ -359,10 +391,14 @@ impl Blake2<u64> {
 impl Default for Blake2<u64> {
     fn default() -> Self {
         let p = init_params64(64, 0, [0; 2]);
-        // for i in p.iter() {
-        //     print!("{:016x} ", i);
-        // }
-        // println!();
+        #[cfg(test)]
+        {
+            print!("P: ");
+            for i in p.iter() {
+                print!("{:016x} ", i);
+            }
+            println!();
+        }
         Self {
             word_block: Vec::with_capacity(16),
             f: false,
