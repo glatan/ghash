@@ -227,7 +227,7 @@ impl Default for Blake2<u32> {
 // Blake2b
 impl Blake2<u64> {
     fn new(n: usize, k: usize, salt: [u64; 2]) -> Self {
-        if n < 1 || n > 32 {
+        if n < 1 || n > 64 {
             panic!("{} is not a valid number. n must be between 1 and 32.", n);
         }
         let p = init_params64(n, k, salt);
