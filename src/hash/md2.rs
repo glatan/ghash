@@ -1,6 +1,5 @@
 use super::Hash;
 
-const BLOCK_SIZE: usize = 16;
 const STABLE: [u8; 256] = [
     41, 46, 67, 201, 162, 216, 124, 1, 61, 54, 84, 161, 236, 240, 6, 19, 98, 167, 5, 243, 192, 199,
     115, 140, 152, 147, 43, 217, 188, 76, 130, 202, 30, 155, 87, 60, 253, 212, 224, 22, 103, 66,
@@ -18,7 +17,6 @@ const STABLE: [u8; 256] = [
 ];
 
 pub struct Md2 {
-    message: Vec<u8>, // message, word_block: input message + padding_byte + checksum
     state: [u8; 48],
 }
 
@@ -26,59 +24,67 @@ impl Md2 {
     pub fn new() -> Self {
         Self::default()
     }
-    fn padding(&mut self, message: &[u8]) {
-        self.message = message.to_vec();
-        let padding_byte = (BLOCK_SIZE - (self.message.len() % BLOCK_SIZE)) as u8;
-        self.message
-            .append(&mut vec![padding_byte; padding_byte as usize]);
-    }
     #[allow(clippy::needless_range_loop)]
-    fn add_check_sum(&mut self) {
-        let mut checksum = vec![0; BLOCK_SIZE];
+    fn compress(&mut self, block: &[u8]) {
+        self.state[16..32].copy_from_slice(block);
+        for i in 0..16 {
+            self.state[i + 32] = block[i] ^ self.state[i];
+        }
+        let mut t = 0;
+        for i in 0..18 {
+            for k in 0..48 {
+                self.state[k] ^= STABLE[t as usize];
+                t = self.state[k] as usize;
+            }
+            t = (t + i) % 256;
+        }
+    }
+    fn compress_checksum(&mut self, message: &[u8], padded_block: &[u8; 16]) {
+        let mut checksum = [0u8; 16];
         let mut c;
         let mut l = 0;
-        for i in 0..(self.message.len() / BLOCK_SIZE) {
-            for j in 0..BLOCK_SIZE {
-                c = self.message[BLOCK_SIZE * i + j] as usize;
-                checksum[j] ^= STABLE[c ^ l];
-                l = checksum[j] as usize;
+        for i in 0..(message.len() / 16) {
+            for j in 0..16 {
+                c = message[16 * i + j];
+                checksum[j] ^= STABLE[(c ^ l) as usize];
+                l = checksum[j];
             }
         }
-        self.message.append(&mut checksum);
-    }
-    #[allow(clippy::needless_range_loop)]
-    fn compress(&mut self) {
-        for i in 0..(self.message.len() / BLOCK_SIZE) {
-            for j in 0..BLOCK_SIZE {
-                self.state[j + 16] = self.message[BLOCK_SIZE * i + j];
-                self.state[j + 32] = self.state[j + BLOCK_SIZE] ^ self.state[j];
-            }
-            let mut t = 0;
-            for j in 0..18 {
-                for k in 0..48 {
-                    self.state[k] ^= STABLE[t];
-                    t = self.state[k] as usize;
-                }
-                t = (t + j) % 256;
-            }
+        for i in 0..16 {
+            c = padded_block[i];
+            checksum[i] ^= STABLE[(c ^ l) as usize];
+            l = checksum[i];
         }
+        self.compress(&checksum);
     }
 }
 
 impl Default for Md2 {
     fn default() -> Self {
-        Self {
-            message: Vec::with_capacity(BLOCK_SIZE),
-            state: [0; 48],
-        }
+        Self { state: [0; 48] }
     }
 }
 
 impl Hash for Md2 {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
-        self.padding(message);
-        self.add_check_sum();
-        self.compress();
+        let len = message.len();
+        if len == 0 {
+            // First block is filled with 16 (padding bytes)
+            self.compress(&[16; 16]);
+            self.compress_checksum(&[], &[16; 16]);
+        } else if len >= 16 {
+            message
+                .chunks_exact(16)
+                .for_each(|block| self.compress(block));
+        }
+        if len != 0 {
+            let paddlen = len % 16;
+            let mut block = [(16 - paddlen) as u8; 16]; // padding
+            let offset = len - paddlen;
+            block[..paddlen].clone_from_slice(&message[offset..len]);
+            self.compress(&block);
+            self.compress_checksum(message, &block);
+        }
         self.state.iter().take(16).copied().collect()
     }
 }
