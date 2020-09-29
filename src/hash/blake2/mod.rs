@@ -212,28 +212,20 @@ impl Blake2<u32> {
 
 impl Default for Blake2<u32> {
     fn default() -> Self {
-        let p = init_params32(32, 0, [0; 2]);
-        #[cfg(test)]
-        {
-            print!("P: ");
-            for i in p.iter() {
-                print!("{:08x} ", i);
-            }
-            println!();
-        }
         Self {
             word_block: Vec::with_capacity(16),
             f: false,
             l: 0,
             h: [
-                IV32[0] ^ p[0],
-                IV32[1] ^ p[1],
-                IV32[2] ^ p[2],
-                IV32[3] ^ p[3],
-                IV32[4] ^ p[4],
-                IV32[5] ^ p[5],
-                IV32[6] ^ p[6],
-                IV32[7] ^ p[7],
+                // Default parameter(0x20 bytes of output length, 0x00 byte of key length, set fanout and depth to 0x01)
+                IV32[0] ^ 0x0101_0020,
+                IV32[1],
+                IV32[2],
+                IV32[3],
+                IV32[4],
+                IV32[5],
+                IV32[6],
+                IV32[7],
             ],
             t: [0; 2],
             n: 32,
@@ -390,28 +382,20 @@ impl Blake2<u64> {
 
 impl Default for Blake2<u64> {
     fn default() -> Self {
-        let p = init_params64(64, 0, [0; 2]);
-        #[cfg(test)]
-        {
-            print!("P: ");
-            for i in p.iter() {
-                print!("{:016x} ", i);
-            }
-            println!();
-        }
         Self {
             word_block: Vec::with_capacity(16),
             f: false,
             l: 0,
             h: [
-                IV64[0] ^ p[0],
-                IV64[1] ^ p[1],
-                IV64[2] ^ p[2],
-                IV64[3] ^ p[3],
-                IV64[4] ^ p[4],
-                IV64[5] ^ p[5],
-                IV64[6] ^ p[6],
-                IV64[7] ^ p[7],
+                // Default parameter(0x40 bytes of output length, 0x00 byte of key length, set fanout and depth to 0x01)
+                IV64[0] ^ 0x0101_0040,
+                IV64[1],
+                IV64[2],
+                IV64[3],
+                IV64[4],
+                IV64[5],
+                IV64[6],
+                IV64[7],
             ],
             t: [0; 2],
             n: 64,
