@@ -56,7 +56,7 @@ macro_rules! impl_md_flow {
                     let mut byte_block = [0u8; 128];
                     byte_block[..remainder].copy_from_slice(&$message[offset..]);
                     byte_block[remainder] = 0x80;
-                    byte_block[120..].copy_from_slice(&(8 * l).$to_bytes());
+                    byte_block[120..].copy_from_slice(&(8 * l as u64).$to_bytes());
                     byte_block.chunks_exact(64).for_each(|bytes| {
                         for i in 0..16 {
                             block[i] = u32::$from_bytes([
@@ -74,7 +74,7 @@ macro_rules! impl_md_flow {
                     let mut byte_block = [0u8; 64];
                     byte_block[..remainder].copy_from_slice(&$message[offset..]);
                     byte_block[remainder] = 0x80;
-                    byte_block[56..].copy_from_slice(&(8 * l).$to_bytes());
+                    byte_block[56..].copy_from_slice(&(8 * l as u64).$to_bytes());
                     for i in 0..16 {
                         block[i] = u32::$from_bytes([
                             byte_block[i * 4],
@@ -136,7 +136,7 @@ macro_rules! impl_md_flow {
                     let mut byte_block = [0u8; 256];
                     byte_block[..remainder].copy_from_slice(&$message[offset..]);
                     byte_block[remainder] = 0x80;
-                    byte_block[248..].copy_from_slice(&(8 * l).$to_bytes());
+                    byte_block[240..].copy_from_slice(&(8 * l as u128).$to_bytes());
                     byte_block.chunks_exact(128).for_each(|bytes| {
                         for i in 0..16 {
                             block[i] = u64::$from_bytes([
@@ -158,7 +158,7 @@ macro_rules! impl_md_flow {
                     let mut byte_block = [0u8; 128];
                     byte_block[..remainder].copy_from_slice(&$message[offset..]);
                     byte_block[remainder] = 0x80;
-                    byte_block[120..].copy_from_slice(&(8 * l).$to_bytes());
+                    byte_block[112..].copy_from_slice(&(8 * l as u128).$to_bytes());
                     for i in 0..16 {
                         block[i] = u64::$from_bytes([
                             byte_block[i * 8],
