@@ -1,77 +1,178 @@
-// <M: message> || 1000...0000 || <l: bit length>
+// main flow for MD4, MD5, RIPEMD-{128, 160, 256, 320}, SHA-0, SHA-1 and SHA-2
 #[macro_export]
-macro_rules! impl_padding {
-    // from_bytes
-    //// from_be_bytes: SHA-{0, 1, 2}, BLAKE
+macro_rules! impl_md_flow {
+    // $self: T, $message: input bytes
+    // $from_bytes
+    //// from_be_bytes: SHA-{0, 1, 2}
     //// from_le_bytes: Others
-    // to_bytes
-    //// to_be_bytes: SHA-{0, 1, 2}, BLAKE
+    // $to_bytes
+    //// to_be_bytes: SHA-{0, 1, 2}
     //// to_le_bytes: Others
-    (u32 => $self:ident, $from_bytes:ident, $to_bytes:ident) => {
-        fn padding(&mut $self, message: &[u8]) {
-            let mut m = message.to_vec();
-            let l = message.len();
-            // append 0b1000_0000
-            m.push(0x80);
-            // 64 - 1(0x80) - 8(l) = 55
+    // u32
+    // 64 - 1(0x80) - 8(l) = 55
+    // u64
+    // 128 - 1(0x80) - 16(l) = 111
+    (u32 => $self:expr, $message:ident, $from_bytes:ident, $to_bytes:ident) => {
+        let l = $message.len();
+        let mut block = [0u32; 16];
+        if l >= 64 {
+            $message.chunks_exact(64).for_each(|bytes| {
+                for i in 0..16 {
+                    block[i] = u32::$from_bytes([
+                        bytes[i * 4],
+                        bytes[i * 4 + 1],
+                        bytes[i * 4 + 2],
+                        bytes[i * 4 + 3],
+                    ]);
+                }
+                $self.compress(&block);
+            });
+        } else if l == 0 {
+            $self.compress(&[
+                u32::$from_bytes([0x80, 0, 0, 0]),
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ])
+        }
+        if l != 0 {
+            let offset = (l / 64) * 64;
+            let remainder = l % 64;
             match (l % 64).cmp(&55) {
                 Ordering::Greater => {
-                    m.append(&mut vec![0; 64 + 55 - (l % 64)]);
+                    // two blocks
+                    let mut byte_block = [0u8; 128];
+                    byte_block[..remainder].copy_from_slice(&$message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[120..].copy_from_slice(&(8 * l as u64).$to_bytes());
+                    byte_block.chunks_exact(64).for_each(|bytes| {
+                        for i in 0..16 {
+                            block[i] = u32::$from_bytes([
+                                bytes[i * 4],
+                                bytes[i * 4 + 1],
+                                bytes[i * 4 + 2],
+                                bytes[i * 4 + 3],
+                            ]);
+                        }
+                        $self.compress(&block);
+                    });
                 }
-                Ordering::Less => {
-                    m.append(&mut vec![0; 55 - (l % 64)]);
+                Ordering::Less | Ordering::Equal => {
+                    // one block
+                    let mut byte_block = [0u8; 64];
+                    byte_block[..remainder].copy_from_slice(&$message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[56..].copy_from_slice(&(8 * l as u64).$to_bytes());
+                    for i in 0..16 {
+                        block[i] = u32::$from_bytes([
+                            byte_block[i * 4],
+                            byte_block[i * 4 + 1],
+                            byte_block[i * 4 + 2],
+                            byte_block[i * 4 + 3],
+                        ]);
+                    }
+                    $self.compress(&block);
                 }
-                Ordering::Equal => (),
-            }
-            // append message length
-            m.append(&mut (8 * l as u64).$to_bytes().to_vec());
-            // create 32 bit-words from input bytes(and appending bytes)
-            for i in (0..m.len()).filter(|i| i % 4 == 0) {
-                $self.word_block.push(u32::$from_bytes([
-                    m[i],
-                    m[i + 1],
-                    m[i + 2],
-                    m[i + 3],
-                ]));
             }
         }
     };
-    // from_bytes
-    //// from_be_bytes: SHA-{0, 1, 2}, BLAKE
-    //// from_le_bytes: Others
-    // to_bytes
-    //// to_be_bytes: SHA-{0, 1, 2}, BLAKE
-    //// to_le_bytes: Others
-    (u64 => $self:ident, $from_bytes:ident, $to_bytes:ident) => {
-        fn padding(&mut $self, message: &[u8]) {
-            let mut m = message.to_vec();
-            let l = message.len();
-            // append 0b1000_0000
-            m.push(0x80);
-            // 128 - 1(0x80) - 16(l) = 111
+    (u64 => $self:expr, $message:ident, $from_bytes:ident, $to_bytes:ident) => {
+        let l = $message.len();
+        let mut block = [0u64; 16];
+        if l >= 128 {
+            $message.chunks_exact(128).for_each(|bytes| {
+                for i in 0..16 {
+                    block[i] = u64::$from_bytes([
+                        bytes[i * 8],
+                        bytes[i * 8 + 1],
+                        bytes[i * 8 + 2],
+                        bytes[i * 8 + 3],
+                        bytes[i * 8 + 4],
+                        bytes[i * 8 + 5],
+                        bytes[i * 8 + 6],
+                        bytes[i * 8 + 7],
+                    ]);
+                }
+                $self.compress(&block);
+            });
+        } else if l == 0 {
+            $self.compress(&[
+                u64::$from_bytes([0x80, 0, 0, 0, 0, 0, 0, 0]),
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ])
+        }
+        if l != 0 {
+            let offset = (l / 128) * 128;
+            let remainder = l % 128;
             match (l % 128).cmp(&111) {
                 Ordering::Greater => {
-                    m.append(&mut vec![0; 128 + 111 - (l % 128)]);
+                    // two blocks
+                    let mut byte_block = [0u8; 256];
+                    byte_block[..remainder].copy_from_slice(&$message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[240..].copy_from_slice(&(8 * l as u128).$to_bytes());
+                    byte_block.chunks_exact(128).for_each(|bytes| {
+                        for i in 0..16 {
+                            block[i] = u64::$from_bytes([
+                                bytes[i * 8],
+                                bytes[i * 8 + 1],
+                                bytes[i * 8 + 2],
+                                bytes[i * 8 + 3],
+                                bytes[i * 8 + 4],
+                                bytes[i * 8 + 5],
+                                bytes[i * 8 + 6],
+                                bytes[i * 8 + 7],
+                            ]);
+                        }
+                        $self.compress(&block);
+                    });
                 }
-                Ordering::Less => {
-                    m.append(&mut vec![0; 111 - (l % 128)]);
+                Ordering::Less | Ordering::Equal => {
+                    // one block
+                    let mut byte_block = [0u8; 128];
+                    byte_block[..remainder].copy_from_slice(&$message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[112..].copy_from_slice(&(8 * l as u128).$to_bytes());
+                    for i in 0..16 {
+                        block[i] = u64::$from_bytes([
+                            byte_block[i * 8],
+                            byte_block[i * 8 + 1],
+                            byte_block[i * 8 + 2],
+                            byte_block[i * 8 + 3],
+                            byte_block[i * 8 + 4],
+                            byte_block[i * 8 + 5],
+                            byte_block[i * 8 + 6],
+                            byte_block[i * 8 + 7],
+                        ]);
+                    }
+                    $self.compress(&block);
                 }
-                Ordering::Equal => (),
-            }
-            // append message length
-            m.append(&mut (8 * l as u128).$to_bytes().to_vec());
-            // create 64 bit-words from input bytes(and appending bytes)
-            for i in (0..m.len()).filter(|i| i % 8 == 0) {
-                $self.word_block.push(u64::$from_bytes([
-                    m[i],
-                    m[i + 1],
-                    m[i + 2],
-                    m[i + 3],
-                    m[i + 4],
-                    m[i + 5],
-                    m[i + 6],
-                    m[i + 7],
-                ]));
             }
         }
     };
