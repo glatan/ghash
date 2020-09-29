@@ -30,6 +30,14 @@ fn main() {
         Blake512::default().hash_to_lowerhex(&input)
     );
     println!(
+        "BLAKE2s-256\t{:}",
+        Blake2s::default().hash_to_lowerhex(&input)
+    );
+    println!(
+        "BLAKE2b-512\t{:}",
+        Blake2b::default().hash_to_lowerhex(&input)
+    );
+    println!(
         "Keccak-224\t{:}",
         Keccak224::default().hash_to_lowerhex(&input)
     );
