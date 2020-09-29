@@ -23,6 +23,10 @@
 * SHA-{224, 256, 384, 512, 512/224, 512/256}
 * SHA3-{224, 256, 384, 512}
 
+### Demo
+
+WebAssemblyターゲットでビルドしたデモが[ここ](https://ghash.glatan.vercel.app/)にあります。
+
 ## License
 
 This project is licensed under either of
