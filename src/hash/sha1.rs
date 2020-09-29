@@ -1,5 +1,5 @@
 use super::Hash;
-use crate::impl_padding;
+use crate::impl_md_flow;
 use std::cmp::Ordering;
 
 // K(t) = 5A827999 ( 0 <= t <= 19)
@@ -24,7 +24,6 @@ const fn maj(b: u32, c: u32, d: u32) -> u32 {
 }
 
 pub struct Sha1 {
-    word_block: Vec<u32>,
     status: [u32; 5],
 }
 
@@ -33,92 +32,83 @@ impl Sha1 {
         Self::default()
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
-    fn compress(&mut self) {
+    fn compress(&mut self, m: &[u32; 16]) {
         let (mut a, mut b, mut c, mut d, mut e);
         let mut temp;
         let mut w = [0; 80];
-        for i in 0..(self.word_block.len() / 16) {
-            for t in 0..16 {
-                w[t] = self.word_block[t + i * 16];
-            }
-            for t in 16..80 {
-                w[t] = (w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16]).rotate_left(1);
-            }
-            a = self.status[0];
-            b = self.status[1];
-            c = self.status[2];
-            d = self.status[3];
-            e = self.status[4];
-            for t in 0..20 {
-                temp = a
-                    .rotate_left(5)
-                    .wrapping_add(ch(b, c, d))
-                    .wrapping_add(e)
-                    .wrapping_add(w[t])
-                    .wrapping_add(K[0]);
-                e = d;
-                d = c;
-                c = b.rotate_left(30);
-                b = a;
-                a = temp;
-            }
-            for t in 20..40 {
-                temp = a
-                    .rotate_left(5)
-                    .wrapping_add(parity(b, c, d))
-                    .wrapping_add(e)
-                    .wrapping_add(w[t])
-                    .wrapping_add(K[1]);
-                e = d;
-                d = c;
-                c = b.rotate_left(30);
-                b = a;
-                a = temp;
-            }
-            for t in 40..60 {
-                temp = a
-                    .rotate_left(5)
-                    .wrapping_add(maj(b, c, d))
-                    .wrapping_add(e)
-                    .wrapping_add(w[t])
-                    .wrapping_add(K[2]);
-                e = d;
-                d = c;
-                c = b.rotate_left(30);
-                b = a;
-                a = temp;
-            }
-            for t in 60..80 {
-                temp = a
-                    .rotate_left(5)
-                    .wrapping_add(parity(b, c, d))
-                    .wrapping_add(e)
-                    .wrapping_add(w[t])
-                    .wrapping_add(K[3]);
-                e = d;
-                d = c;
-                c = b.rotate_left(30);
-                b = a;
-                a = temp;
-            }
-            self.status[0] = self.status[0].wrapping_add(a);
-            self.status[1] = self.status[1].wrapping_add(b);
-            self.status[2] = self.status[2].wrapping_add(c);
-            self.status[3] = self.status[3].wrapping_add(d);
-            self.status[4] = self.status[4].wrapping_add(e);
+        w[..16].copy_from_slice(m);
+        for t in 16..80 {
+            w[t] = (w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16]).rotate_left(1);
         }
+        a = self.status[0];
+        b = self.status[1];
+        c = self.status[2];
+        d = self.status[3];
+        e = self.status[4];
+        for t in 0..20 {
+            temp = a
+                .rotate_left(5)
+                .wrapping_add(ch(b, c, d))
+                .wrapping_add(e)
+                .wrapping_add(w[t])
+                .wrapping_add(K[0]);
+            e = d;
+            d = c;
+            c = b.rotate_left(30);
+            b = a;
+            a = temp;
+        }
+        for t in 20..40 {
+            temp = a
+                .rotate_left(5)
+                .wrapping_add(parity(b, c, d))
+                .wrapping_add(e)
+                .wrapping_add(w[t])
+                .wrapping_add(K[1]);
+            e = d;
+            d = c;
+            c = b.rotate_left(30);
+            b = a;
+            a = temp;
+        }
+        for t in 40..60 {
+            temp = a
+                .rotate_left(5)
+                .wrapping_add(maj(b, c, d))
+                .wrapping_add(e)
+                .wrapping_add(w[t])
+                .wrapping_add(K[2]);
+            e = d;
+            d = c;
+            c = b.rotate_left(30);
+            b = a;
+            a = temp;
+        }
+        for t in 60..80 {
+            temp = a
+                .rotate_left(5)
+                .wrapping_add(parity(b, c, d))
+                .wrapping_add(e)
+                .wrapping_add(w[t])
+                .wrapping_add(K[3]);
+            e = d;
+            d = c;
+            c = b.rotate_left(30);
+            b = a;
+            a = temp;
+        }
+        self.status[0] = self.status[0].wrapping_add(a);
+        self.status[1] = self.status[1].wrapping_add(b);
+        self.status[2] = self.status[2].wrapping_add(c);
+        self.status[3] = self.status[3].wrapping_add(d);
+        self.status[4] = self.status[4].wrapping_add(e);
     }
-}
-
-impl Sha1 {
-    impl_padding!(u32 => self, from_be_bytes, to_be_bytes);
 }
 
 impl Default for Sha1 {
     #[rustfmt::skip]
     fn default() -> Self {
         Self {
-            word_block: Vec::with_capacity(16),
             status: [
                 0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476, 0xC3D2_E1F0,
             ],
@@ -128,8 +118,7 @@ impl Default for Sha1 {
 
 impl Hash for Sha1 {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
-        self.padding(message);
-        self.compress();
+        impl_md_flow!(u32=> self, message, from_be_bytes, to_be_bytes);
         self.status
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())

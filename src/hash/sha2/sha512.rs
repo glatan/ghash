@@ -1,4 +1,6 @@
 use super::{Hash, Sha2};
+use crate::impl_md_flow;
+use std::cmp::Ordering;
 
 pub struct Sha512(Sha2<u64>);
 
@@ -20,8 +22,7 @@ impl Default for Sha512 {
 
 impl Hash for Sha512 {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
-        self.0.padding(message);
-        self.0.compress();
+        impl_md_flow!(u64=> self.0, message, from_be_bytes, to_be_bytes);
         self.0
             .status
             .iter()

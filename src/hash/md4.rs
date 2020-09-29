@@ -1,5 +1,5 @@
 use super::Hash;
-use crate::impl_padding;
+use crate::impl_md_flow;
 use std::cmp::Ordering;
 
 #[allow(clippy::many_single_char_names)]
@@ -33,7 +33,6 @@ const fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
 }
 
 pub struct Md4 {
-    word_block: Vec<u32>,
     status: [u32; 4],
 }
 
@@ -42,60 +41,42 @@ impl Md4 {
         Self::default()
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
-    fn compress(&mut self) {
+    fn compress(&mut self, x: &[u32; 16]) {
         let (mut a, mut b, mut c, mut d);
-        let mut x: [u32; 16] = [0; 16];
-        for i in 0..(self.word_block.len() / 16) {
-            for j in 0..16 {
-                x[j] = self.word_block[16 * i + j];
-            }
-            a = self.status[0];
-            b = self.status[1];
-            c = self.status[2];
-            d = self.status[3];
-            // Round 1
-            for &k in &[0, 4, 8, 12] {
-                a = round1(a, b, c, d, x[k], 3);
-                d = round1(d, a, b, c, x[k + 1], 7);
-                c = round1(c, d, a, b, x[k + 2], 11);
-                b = round1(b, c, d, a, x[k + 3], 19);
-            }
-            // Round 2
-            for k in 0..4 {
-                a = round2(a, b, c, d, x[k], 3);
-                d = round2(d, a, b, c, x[k + 4], 5);
-                c = round2(c, d, a, b, x[k + 8], 9);
-                b = round2(b, c, d, a, x[k + 12], 13);
-            }
-            // Round 3
-            for &k in &[0, 2, 1, 3] {
-                a = round3(a, b, c, d, x[k], 3);
-                d = round3(d, a, b, c, x[k + 8], 9);
-                c = round3(c, d, a, b, x[k + 4], 11);
-                b = round3(b, c, d, a, x[k + 12], 15);
-            }
-            self.status = [
-                self.status[0].wrapping_add(a),
-                self.status[1].wrapping_add(b),
-                self.status[2].wrapping_add(c),
-                self.status[3].wrapping_add(d),
-            ];
+        a = self.status[0];
+        b = self.status[1];
+        c = self.status[2];
+        d = self.status[3];
+        for &k in &[0, 4, 8, 12] {
+            a = round1(a, b, c, d, x[k], 3);
+            d = round1(d, a, b, c, x[k + 1], 7);
+            c = round1(c, d, a, b, x[k + 2], 11);
+            b = round1(b, c, d, a, x[k + 3], 19);
         }
-        self.status[0] = self.status[0].swap_bytes();
-        self.status[1] = self.status[1].swap_bytes();
-        self.status[2] = self.status[2].swap_bytes();
-        self.status[3] = self.status[3].swap_bytes();
+        for k in 0..4 {
+            a = round2(a, b, c, d, x[k], 3);
+            d = round2(d, a, b, c, x[k + 4], 5);
+            c = round2(c, d, a, b, x[k + 8], 9);
+            b = round2(b, c, d, a, x[k + 12], 13);
+        }
+        for &k in &[0, 2, 1, 3] {
+            a = round3(a, b, c, d, x[k], 3);
+            d = round3(d, a, b, c, x[k + 8], 9);
+            c = round3(c, d, a, b, x[k + 4], 11);
+            b = round3(b, c, d, a, x[k + 12], 15);
+        }
+        self.status = [
+            self.status[0].wrapping_add(a),
+            self.status[1].wrapping_add(b),
+            self.status[2].wrapping_add(c),
+            self.status[3].wrapping_add(d),
+        ];
     }
-}
-
-impl Md4 {
-    impl_padding!(u32 => self, from_le_bytes, to_le_bytes);
 }
 
 impl Default for Md4 {
     fn default() -> Self {
         Self {
-            word_block: Vec::with_capacity(16),
             status: [0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476],
         }
     }
@@ -103,11 +84,10 @@ impl Default for Md4 {
 
 impl Hash for Md4 {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
-        self.padding(message);
-        self.compress();
+        impl_md_flow!(u32=> self, message, from_le_bytes, to_le_bytes);
         self.status[0..4]
             .iter()
-            .flat_map(|word| word.to_be_bytes().to_vec())
+            .flat_map(|word| word.to_le_bytes().to_vec())
             .collect()
     }
 }
