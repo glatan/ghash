@@ -20,7 +20,7 @@ CPU ファミリー:                      6
 モデル:                              158
 モデル名:                            Intel(R) Core(TM) i5-8600 CPU @ 3.10GHz
 ステッピング:                        10
-CPU MHz:                             4100.105
+CPU MHz:                             3843.832
 CPU 最大 MHz:                        4300.0000
 CPU 最小 MHz:                        800.0000
 BogoMIPS:                            6199.99
@@ -42,250 +42,304 @@ Vulnerability Tsx async abort:       Vulnerable: Clear CPU buffers attempted, no
 フラグ:                              fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single pti ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp
 
 
-running 243 tests
-test Blake224::B0          ... bench:       1,003 ns/iter (+/- 18)
-test Blake224::B512        ... bench:       6,467 ns/iter (+/- 527)
-test Blake224::KB1         ... bench:      11,974 ns/iter (+/- 325)
-test Blake224::KB16        ... bench:     172,525 ns/iter (+/- 7,553)
-test Blake224::KB2         ... bench:      22,705 ns/iter (+/- 1,155)
-test Blake224::KB4         ... bench:      44,059 ns/iter (+/- 1,938)
-test Blake224::KB512       ... bench:   5,607,968 ns/iter (+/- 91,049)
-test Blake224::KB64        ... bench:     687,449 ns/iter (+/- 39,327)
-test Blake224::MB1         ... bench:  11,217,205 ns/iter (+/- 201,145)
-test Blake256::B0          ... bench:         966 ns/iter (+/- 63)
-test Blake256::B512        ... bench:       6,462 ns/iter (+/- 189)
-test Blake256::KB1         ... bench:      11,953 ns/iter (+/- 788)
-test Blake256::KB16        ... bench:     168,340 ns/iter (+/- 8,281)
-test Blake256::KB2         ... bench:      22,212 ns/iter (+/- 1,156)
-test Blake256::KB4         ... bench:      44,073 ns/iter (+/- 1,654)
-test Blake256::KB512       ... bench:   5,375,156 ns/iter (+/- 111,075)
-test Blake256::KB64        ... bench:     685,945 ns/iter (+/- 44,655)
-test Blake256::MB1         ... bench:  11,227,645 ns/iter (+/- 241,595)
-test Blake384::B0          ... bench:       1,189 ns/iter (+/- 77)
-test Blake384::B512        ... bench:       4,542 ns/iter (+/- 216)
-test Blake384::KB1         ... bench:       7,587 ns/iter (+/- 224)
-test Blake384::KB16        ... bench:     102,608 ns/iter (+/- 4,246)
-test Blake384::KB2         ... bench:      13,854 ns/iter (+/- 409)
-test Blake384::KB4         ... bench:      26,378 ns/iter (+/- 891)
-test Blake384::KB512       ... bench:   3,179,368 ns/iter (+/- 85,846)
-test Blake384::KB64        ... bench:     396,438 ns/iter (+/- 20,736)
-test Blake384::MB1         ... bench:   6,915,882 ns/iter (+/- 303,749)
-test Blake512::B0          ... bench:       1,297 ns/iter (+/- 18)
-test Blake512::B512        ... bench:       4,672 ns/iter (+/- 104)
-test Blake512::KB1         ... bench:       7,832 ns/iter (+/- 386)
-test Blake512::KB16        ... bench:     102,707 ns/iter (+/- 1,308)
-test Blake512::KB2         ... bench:      14,156 ns/iter (+/- 235)
-test Blake512::KB4         ... bench:      26,796 ns/iter (+/- 335)
-test Blake512::KB512       ... bench:   3,245,815 ns/iter (+/- 118,065)
-test Blake512::KB64        ... bench:     400,354 ns/iter (+/- 18,932)
-test Blake512::MB1         ... bench:   6,823,009 ns/iter (+/- 156,758)
-test Keccak224::B0         ... bench:       2,721 ns/iter (+/- 198)
-test Keccak224::B512       ... bench:       8,141 ns/iter (+/- 323)
-test Keccak224::KB1        ... bench:      15,239 ns/iter (+/- 1,112)
-test Keccak224::KB16       ... bench:     199,462 ns/iter (+/- 7,956)
-test Keccak224::KB2        ... bench:      27,302 ns/iter (+/- 1,132)
-test Keccak224::KB4        ... bench:      50,774 ns/iter (+/- 4,077)
-test Keccak224::KB512      ... bench:   6,198,999 ns/iter (+/- 157,876)
-test Keccak224::KB64       ... bench:     781,725 ns/iter (+/- 47,122)
-test Keccak224::MB1        ... bench:  13,369,251 ns/iter (+/- 237,279)
-test Keccak256::B0         ... bench:       2,757 ns/iter (+/- 227)
-test Keccak256::B512       ... bench:       8,132 ns/iter (+/- 128)
-test Keccak256::KB1        ... bench:      15,033 ns/iter (+/- 234)
-test Keccak256::KB16       ... bench:     206,823 ns/iter (+/- 7,181)
-test Keccak256::KB2        ... bench:      28,114 ns/iter (+/- 1,553)
-test Keccak256::KB4        ... bench:      54,052 ns/iter (+/- 2,812)
-test Keccak256::KB512      ... bench:   6,402,429 ns/iter (+/- 128,680)
-test Keccak256::KB64       ... bench:     820,973 ns/iter (+/- 49,386)
-test Keccak256::MB1        ... bench:  14,060,848 ns/iter (+/- 680,851)
-test Keccak384::B0         ... bench:       2,505 ns/iter (+/- 171)
-test Keccak384::B512       ... bench:       8,667 ns/iter (+/- 260)
-test Keccak384::KB1        ... bench:      16,254 ns/iter (+/- 1,110)
-test Keccak384::KB16       ... bench:     240,314 ns/iter (+/- 12,424)
-test Keccak384::KB2        ... bench:      31,667 ns/iter (+/- 551)
-test Keccak384::KB4        ... bench:      61,847 ns/iter (+/- 3,674)
-test Keccak384::KB512      ... bench:   7,634,992 ns/iter (+/- 242,623)
-test Keccak384::KB64       ... bench:     959,529 ns/iter (+/- 58,696)
-test Keccak384::MB1        ... bench:  16,517,146 ns/iter (+/- 336,553)
-test Keccak512::B0         ... bench:       2,384 ns/iter (+/- 59)
-test Keccak512::B512       ... bench:      11,954 ns/iter (+/- 270)
-test Keccak512::KB1        ... bench:      21,408 ns/iter (+/- 369)
-test Keccak512::KB16       ... bench:     308,316 ns/iter (+/- 10,287)
-test Keccak512::KB2        ... bench:      40,159 ns/iter (+/- 894)
-test Keccak512::KB4        ... bench:      77,258 ns/iter (+/- 890)
-test Keccak512::KB512      ... bench:  10,305,905 ns/iter (+/- 337,107)
-test Keccak512::KB64       ... bench:   1,211,243 ns/iter (+/- 60,970)
-test Keccak512::MB1        ... bench:  20,401,819 ns/iter (+/- 700,108)
-test Md2::B0               ... bench:       2,709 ns/iter (+/- 136)
-test Md2::B512             ... bench:      46,734 ns/iter (+/- 1,063)
-test Md2::KB1              ... bench:      88,623 ns/iter (+/- 3,887)
-test Md2::KB16             ... bench:   1,378,725 ns/iter (+/- 14,953)
-test Md2::KB2              ... bench:     178,772 ns/iter (+/- 9,566)
-test Md2::KB4              ... bench:     354,483 ns/iter (+/- 10,960)
-test Md2::KB512            ... bench:  44,137,013 ns/iter (+/- 632,476)
-test Md2::KB64             ... bench:   5,632,065 ns/iter (+/- 107,661)
-test Md2::MB1              ... bench:  89,263,921 ns/iter (+/- 1,988,960)
-test Md4::B0               ... bench:         175 ns/iter (+/- 5)
-test Md4::B512             ... bench:         730 ns/iter (+/- 43)
-test Md4::KB1              ... bench:       1,355 ns/iter (+/- 75)
-test Md4::KB16             ... bench:      18,197 ns/iter (+/- 190)
-test Md4::KB2              ... bench:       2,476 ns/iter (+/- 20)
-test Md4::KB4              ... bench:       4,723 ns/iter (+/- 36)
-test Md4::KB512            ... bench:     567,372 ns/iter (+/- 34,761)
-test Md4::KB64             ... bench:      71,985 ns/iter (+/- 880)
-test Md4::MB1              ... bench:   1,147,830 ns/iter (+/- 61,285)
-test Md5::B0               ... bench:         201 ns/iter (+/- 1)
-test Md5::B512             ... bench:         989 ns/iter (+/- 7)
-test Md5::KB1              ... bench:       1,811 ns/iter (+/- 11)
-test Md5::KB16             ... bench:      24,551 ns/iter (+/- 1,595)
-test Md5::KB2              ... bench:       3,362 ns/iter (+/- 49)
-test Md5::KB4              ... bench:       6,468 ns/iter (+/- 67)
-test Md5::KB512            ... bench:     792,276 ns/iter (+/- 3,554)
-test Md5::KB64             ... bench:      99,297 ns/iter (+/- 616)
-test Md5::MB1              ... bench:   1,583,359 ns/iter (+/- 39,310)
-test Ripemd128::B0         ... bench:         351 ns/iter (+/- 2)
-test Ripemd128::B512       ... bench:       2,363 ns/iter (+/- 18)
-test Ripemd128::KB1        ... bench:       4,327 ns/iter (+/- 44)
-test Ripemd128::KB16       ... bench:      62,747 ns/iter (+/- 868)
-test Ripemd128::KB2        ... bench:       8,223 ns/iter (+/- 91)
-test Ripemd128::KB4        ... bench:      16,032 ns/iter (+/- 169)
-test Ripemd128::KB512      ... bench:   1,990,330 ns/iter (+/- 34,633)
-test Ripemd128::KB64       ... bench:     249,423 ns/iter (+/- 1,136)
-test Ripemd128::MB1        ... bench:   3,986,947 ns/iter (+/- 14,963)
-test Ripemd160::B0         ... bench:         539 ns/iter (+/- 13)
-test Ripemd160::B512       ... bench:       3,660 ns/iter (+/- 98)
-test Ripemd160::KB1        ... bench:       6,781 ns/iter (+/- 115)
-test Ripemd160::KB16       ... bench:      98,592 ns/iter (+/- 2,490)
-test Ripemd160::KB2        ... bench:      12,925 ns/iter (+/- 252)
-test Ripemd160::KB4        ... bench:      25,080 ns/iter (+/- 486)
-test Ripemd160::KB512      ... bench:   3,130,350 ns/iter (+/- 53,143)
-test Ripemd160::KB64       ... bench:     393,579 ns/iter (+/- 5,871)
-test Ripemd160::MB1        ... bench:   6,257,718 ns/iter (+/- 65,018)
-test Ripemd256::B0         ... bench:         529 ns/iter (+/- 3)
-test Ripemd256::B512       ... bench:       2,966 ns/iter (+/- 52)
-test Ripemd256::KB1        ... bench:       5,325 ns/iter (+/- 87)
-test Ripemd256::KB16       ... bench:      76,439 ns/iter (+/- 1,601)
-test Ripemd256::KB2        ... bench:      10,069 ns/iter (+/- 108)
-test Ripemd256::KB4        ... bench:      19,497 ns/iter (+/- 222)
-test Ripemd256::KB512      ... bench:   2,424,279 ns/iter (+/- 8,938)
-test Ripemd256::KB64       ... bench:     303,650 ns/iter (+/- 2,951)
-test Ripemd256::MB1        ... bench:   4,846,330 ns/iter (+/- 9,019)
-test Ripemd320::B0         ... bench:         662 ns/iter (+/- 8)
-test Ripemd320::B512       ... bench:       4,118 ns/iter (+/- 49)
-test Ripemd320::KB1        ... bench:       7,500 ns/iter (+/- 118)
-test Ripemd320::KB16       ... bench:     108,893 ns/iter (+/- 1,473)
-test Ripemd320::KB2        ... bench:      14,264 ns/iter (+/- 144)
-test Ripemd320::KB4        ... bench:      27,772 ns/iter (+/- 334)
-test Ripemd320::KB512      ... bench:   3,467,505 ns/iter (+/- 5,721)
-test Ripemd320::KB64       ... bench:     434,482 ns/iter (+/- 4,279)
-test Ripemd320::MB1        ... bench:   6,932,876 ns/iter (+/- 103,729)
-test Sha0::B0              ... bench:         300 ns/iter (+/- 3)
-test Sha0::B512            ... bench:       1,618 ns/iter (+/- 13)
-test Sha0::KB1             ... bench:       2,906 ns/iter (+/- 38)
-test Sha0::KB16            ... bench:      40,438 ns/iter (+/- 652)
-test Sha0::KB2             ... bench:       5,415 ns/iter (+/- 61)
-test Sha0::KB4             ... bench:      10,426 ns/iter (+/- 101)
-test Sha0::KB512           ... bench:   1,281,279 ns/iter (+/- 1,793)
-test Sha0::KB64            ... bench:     160,695 ns/iter (+/- 1,493)
-test Sha0::MB1             ... bench:   2,562,577 ns/iter (+/- 11,116)
-test Sha1::B0              ... bench:         334 ns/iter (+/- 5)
-test Sha1::B512            ... bench:       1,725 ns/iter (+/- 20)
-test Sha1::KB1             ... bench:       3,048 ns/iter (+/- 94)
-test Sha1::KB16            ... bench:      42,338 ns/iter (+/- 1,194)
-test Sha1::KB2             ... bench:       5,678 ns/iter (+/- 76)
-test Sha1::KB4             ... bench:      10,930 ns/iter (+/- 164)
-test Sha1::KB512           ... bench:   1,342,191 ns/iter (+/- 5,110)
-test Sha1::KB64            ... bench:     168,430 ns/iter (+/- 1,885)
-test Sha1::MB1             ... bench:   2,684,179 ns/iter (+/- 46,046)
-test Sha224::B0            ... bench:         472 ns/iter (+/- 17)
-test Sha224::B512          ... bench:       2,657 ns/iter (+/- 105)
-test Sha224::KB1           ... bench:       4,738 ns/iter (+/- 74)
-test Sha224::KB16          ... bench:      68,179 ns/iter (+/- 959)
-test Sha224::KB2           ... bench:       9,002 ns/iter (+/- 84)
-test Sha224::KB4           ... bench:      17,469 ns/iter (+/- 185)
-test Sha224::KB512         ... bench:   2,169,378 ns/iter (+/- 99,903)
-test Sha224::KB64          ... bench:     271,814 ns/iter (+/- 1,881)
-test Sha224::MB1           ... bench:   4,340,991 ns/iter (+/- 26,075)
-test Sha256::B0            ... bench:         488 ns/iter (+/- 10)
-test Sha256::B512          ... bench:       2,677 ns/iter (+/- 41)
-test Sha256::KB1           ... bench:       4,798 ns/iter (+/- 59)
-test Sha256::KB16          ... bench:      68,507 ns/iter (+/- 1,612)
-test Sha256::KB2           ... bench:       9,047 ns/iter (+/- 219)
-test Sha256::KB4           ... bench:      17,516 ns/iter (+/- 546)
-test Sha256::KB512         ... bench:   2,179,117 ns/iter (+/- 10,956)
-test Sha256::KB64          ... bench:     272,465 ns/iter (+/- 2,743)
-test Sha256::MB1           ... bench:   4,345,683 ns/iter (+/- 13,644)
-test Sha384::B0            ... bench:         539 ns/iter (+/- 13)
-test Sha384::B512          ... bench:       1,997 ns/iter (+/- 39)
-test Sha384::KB1           ... bench:       3,311 ns/iter (+/- 41)
-test Sha384::KB16          ... bench:      44,637 ns/iter (+/- 731)
-test Sha384::KB2           ... bench:       6,118 ns/iter (+/- 67)
-test Sha384::KB4           ... bench:      11,598 ns/iter (+/- 154)
-test Sha384::KB512         ... bench:   1,410,544 ns/iter (+/- 41,877)
-test Sha384::KB64          ... bench:     176,803 ns/iter (+/- 1,262)
-test Sha384::MB1           ... bench:   2,817,406 ns/iter (+/- 130,783)
-test Sha3_224::B0          ... bench:       2,729 ns/iter (+/- 51)
-test Sha3_224::B512        ... bench:      10,022 ns/iter (+/- 300)
-test Sha3_224::KB1         ... bench:      18,592 ns/iter (+/- 1,609)
-test Sha3_224::KB16        ... bench:     201,024 ns/iter (+/- 6,060)
-test Sha3_224::KB2         ... bench:      27,859 ns/iter (+/- 680)
-test Sha3_224::KB4         ... bench:      52,659 ns/iter (+/- 1,269)
-test Sha3_224::KB512       ... bench:   6,360,057 ns/iter (+/- 178,500)
-test Sha3_224::KB64        ... bench:     794,154 ns/iter (+/- 35,537)
-test Sha3_224::MB1         ... bench:  12,622,601 ns/iter (+/- 362,523)
-test Sha3_256::B0          ... bench:       2,700 ns/iter (+/- 165)
-test Sha3_256::B512        ... bench:       9,731 ns/iter (+/- 330)
-test Sha3_256::KB1         ... bench:      17,937 ns/iter (+/- 1,227)
-test Sha3_256::KB16        ... bench:     207,184 ns/iter (+/- 2,519)
-test Sha3_256::KB2         ... bench:      28,898 ns/iter (+/- 732)
-test Sha3_256::KB4         ... bench:      54,531 ns/iter (+/- 842)
-test Sha3_256::KB512       ... bench:   6,537,760 ns/iter (+/- 196,037)
-test Sha3_256::KB64        ... bench:     816,804 ns/iter (+/- 45,761)
-test Sha3_256::MB1         ... bench:  12,973,437 ns/iter (+/- 367,025)
-test Sha3_384::B0          ... bench:       2,383 ns/iter (+/- 234)
-test Sha3_384::B512        ... bench:      10,534 ns/iter (+/- 206)
-test Sha3_384::KB1         ... bench:      19,414 ns/iter (+/- 1,146)
-test Sha3_384::KB16        ... bench:     240,465 ns/iter (+/- 12,571)
-test Sha3_384::KB2         ... bench:      32,004 ns/iter (+/- 631)
-test Sha3_384::KB4         ... bench:      62,642 ns/iter (+/- 1,202)
-test Sha3_384::KB512       ... bench:   7,491,656 ns/iter (+/- 433,794)
-test Sha3_384::KB64        ... bench:     956,509 ns/iter (+/- 5,486)
-test Sha3_384::MB1         ... bench:  15,231,663 ns/iter (+/- 438,612)
-test Sha3_512::B0          ... bench:       2,236 ns/iter (+/- 85)
-test Sha3_512::B512        ... bench:      12,071 ns/iter (+/- 520)
-test Sha3_512::KB1         ... bench:      24,490 ns/iter (+/- 164)
-test Sha3_512::KB16        ... bench:     305,313 ns/iter (+/- 3,422)
-test Sha3_512::KB2         ... bench:      40,339 ns/iter (+/- 2,072)
-test Sha3_512::KB4         ... bench:      78,241 ns/iter (+/- 1,252)
-test Sha3_512::KB512       ... bench:   9,557,121 ns/iter (+/- 282,151)
-test Sha3_512::KB64        ... bench:   1,216,225 ns/iter (+/- 39,793)
-test Sha3_512::MB1         ... bench:  20,779,469 ns/iter (+/- 840,856)
-test Sha512::B0            ... bench:         604 ns/iter (+/- 18)
-test Sha512::B512          ... bench:       2,013 ns/iter (+/- 34)
-test Sha512::KB1           ... bench:       3,385 ns/iter (+/- 92)
-test Sha512::KB16          ... bench:      44,804 ns/iter (+/- 1,035)
-test Sha512::KB2           ... bench:       6,124 ns/iter (+/- 61)
-test Sha512::KB4           ... bench:      11,645 ns/iter (+/- 154)
-test Sha512::KB512         ... bench:   1,410,565 ns/iter (+/- 26,045)
-test Sha512::KB64          ... bench:     177,085 ns/iter (+/- 1,662)
-test Sha512::MB1           ... bench:   2,763,312 ns/iter (+/- 67,359)
-test Sha512Trunc224::B0    ... bench:         472 ns/iter (+/- 36)
-test Sha512Trunc224::B512  ... bench:       1,912 ns/iter (+/- 60)
-test Sha512Trunc224::KB1   ... bench:       3,305 ns/iter (+/- 63)
-test Sha512Trunc224::KB16  ... bench:      44,700 ns/iter (+/- 835)
-test Sha512Trunc224::KB2   ... bench:       6,055 ns/iter (+/- 105)
-test Sha512Trunc224::KB4   ... bench:      11,530 ns/iter (+/- 153)
-test Sha512Trunc224::KB512 ... bench:   1,412,592 ns/iter (+/- 7,219)
-test Sha512Trunc224::KB64  ... bench:     177,151 ns/iter (+/- 2,279)
-test Sha512Trunc224::MB1   ... bench:   2,822,938 ns/iter (+/- 86,350)
-test Sha512Trunc256::B0    ... bench:         515 ns/iter (+/- 15)
-test Sha512Trunc256::B512  ... bench:       1,913 ns/iter (+/- 176)
-test Sha512Trunc256::KB1   ... bench:       3,283 ns/iter (+/- 172)
-test Sha512Trunc256::KB16  ... bench:      44,511 ns/iter (+/- 1,681)
-test Sha512Trunc256::KB2   ... bench:       6,032 ns/iter (+/- 67)
-test Sha512Trunc256::KB4   ... bench:      11,507 ns/iter (+/- 604)
-test Sha512Trunc256::KB512 ... bench:   1,410,208 ns/iter (+/- 44,022)
-test Sha512Trunc256::KB64  ... bench:     175,705 ns/iter (+/- 9,551)
-test Sha512Trunc256::MB1   ... bench:   2,820,064 ns/iter (+/- 51,658)
+running 297 tests
+test Blake224::B0          ... bench:       1,022 ns/iter (+/- 39)
+test Blake224::B512        ... bench:       6,411 ns/iter (+/- 240) = 79 MB/s
+test Blake224::KB1         ... bench:      11,924 ns/iter (+/- 196) = 85 MB/s
+test Blake224::KB16        ... bench:     171,098 ns/iter (+/- 5,191) = 95 MB/s
+test Blake224::KB2         ... bench:      22,078 ns/iter (+/- 1,120) = 92 MB/s
+test Blake224::KB4         ... bench:      43,733 ns/iter (+/- 2,488) = 93 MB/s
+test Blake224::KB512       ... bench:   5,690,507 ns/iter (+/- 313,260) = 92 MB/s
+test Blake224::KB64        ... bench:     681,603 ns/iter (+/- 8,272) = 96 MB/s
+test Blake224::MB1         ... bench:  11,285,541 ns/iter (+/- 535,306) = 92 MB/s
+test Blake256::B0          ... bench:         996 ns/iter (+/- 18)
+test Blake256::B512        ... bench:       6,585 ns/iter (+/- 128) = 77 MB/s
+test Blake256::KB1         ... bench:      11,916 ns/iter (+/- 175) = 85 MB/s
+test Blake256::KB16        ... bench:     171,341 ns/iter (+/- 2,462) = 95 MB/s
+test Blake256::KB2         ... bench:      22,568 ns/iter (+/- 1,343) = 90 MB/s
+test Blake256::KB4         ... bench:      43,842 ns/iter (+/- 2,047) = 93 MB/s
+test Blake256::KB512       ... bench:   5,442,663 ns/iter (+/- 279,060) = 96 MB/s
+test Blake256::KB64        ... bench:     682,067 ns/iter (+/- 4,733) = 96 MB/s
+test Blake256::MB1         ... bench:  11,478,581 ns/iter (+/- 242,118) = 91 MB/s
+test Blake28::B0           ... bench:         802 ns/iter (+/- 61)
+test Blake28::B512         ... bench:       5,041 ns/iter (+/- 70) = 101 MB/s
+test Blake28::KB1          ... bench:       9,000 ns/iter (+/- 137) = 113 MB/s
+test Blake28::KB16         ... bench:     126,949 ns/iter (+/- 2,362) = 129 MB/s
+test Blake28::KB2          ... bench:      16,832 ns/iter (+/- 289) = 121 MB/s
+test Blake28::KB4          ... bench:      32,419 ns/iter (+/- 564) = 126 MB/s
+test Blake28::KB512        ... bench:   4,037,039 ns/iter (+/- 118,983) = 129 MB/s
+test Blake28::KB64         ... bench:     507,247 ns/iter (+/- 14,418) = 129 MB/s
+test Blake28::MB1          ... bench:   8,549,335 ns/iter (+/- 336,408) = 122 MB/s
+test Blake2b::B0           ... bench:         754 ns/iter (+/- 54)
+test Blake2b::B512         ... bench:       1,969 ns/iter (+/- 30) = 260 MB/s
+test Blake2b::KB1          ... bench:       3,505 ns/iter (+/- 71) = 292 MB/s
+test Blake2b::KB16         ... bench:      49,520 ns/iter (+/- 999) = 330 MB/s
+test Blake2b::KB2          ... bench:       6,735 ns/iter (+/- 370) = 304 MB/s
+test Blake2b::KB4          ... bench:      12,865 ns/iter (+/- 300) = 318 MB/s
+test Blake2b::KB512        ... bench:   1,570,758 ns/iter (+/- 259,943) = 333 MB/s
+test Blake2b::KB64         ... bench:     195,248 ns/iter (+/- 4,216) = 335 MB/s
+test Blake2b::MB1          ... bench:   3,132,302 ns/iter (+/- 139,937) = 334 MB/s
+test Blake2s::B0           ... bench:         673 ns/iter (+/- 9)
+test Blake2s::B512         ... bench:       3,530 ns/iter (+/- 167) = 145 MB/s
+test Blake2s::KB1          ... bench:       7,009 ns/iter (+/- 394) = 146 MB/s
+test Blake2s::KB16         ... bench:     102,175 ns/iter (+/- 4,554) = 160 MB/s
+test Blake2s::KB2          ... bench:      13,165 ns/iter (+/- 694) = 155 MB/s
+test Blake2s::KB4          ... bench:      26,162 ns/iter (+/- 1,612) = 156 MB/s
+test Blake2s::KB512        ... bench:   3,244,932 ns/iter (+/- 118,734) = 161 MB/s
+test Blake2s::KB64         ... bench:     407,624 ns/iter (+/- 11,315) = 160 MB/s
+test Blake2s::MB1          ... bench:   6,458,500 ns/iter (+/- 266,989) = 162 MB/s
+test Blake32::B0           ... bench:         796 ns/iter (+/- 6)
+test Blake32::B512         ... bench:       5,087 ns/iter (+/- 347) = 100 MB/s
+test Blake32::KB1          ... bench:       9,289 ns/iter (+/- 337) = 110 MB/s
+test Blake32::KB16         ... bench:     126,610 ns/iter (+/- 2,711) = 129 MB/s
+test Blake32::KB2          ... bench:      17,049 ns/iter (+/- 997) = 120 MB/s
+test Blake32::KB4          ... bench:      32,008 ns/iter (+/- 1,842) = 127 MB/s
+test Blake32::KB512        ... bench:   3,944,140 ns/iter (+/- 127,971) = 132 MB/s
+test Blake32::KB64         ... bench:     505,968 ns/iter (+/- 6,931) = 129 MB/s
+test Blake32::MB1          ... bench:   8,477,418 ns/iter (+/- 344,344) = 123 MB/s
+test Blake384::B0          ... bench:       1,253 ns/iter (+/- 125)
+test Blake384::B512        ... bench:       4,814 ns/iter (+/- 93) = 106 MB/s
+test Blake384::KB1         ... bench:       7,999 ns/iter (+/- 211) = 128 MB/s
+test Blake384::KB16        ... bench:     102,487 ns/iter (+/- 4,375) = 159 MB/s
+test Blake384::KB2         ... bench:      14,346 ns/iter (+/- 539) = 142 MB/s
+test Blake384::KB4         ... bench:      26,955 ns/iter (+/- 1,345) = 151 MB/s
+test Blake384::KB512       ... bench:   3,217,779 ns/iter (+/- 105,921) = 162 MB/s
+test Blake384::KB64        ... bench:     407,163 ns/iter (+/- 3,361) = 160 MB/s
+test Blake384::MB1         ... bench:   6,908,742 ns/iter (+/- 350,825) = 151 MB/s
+test Blake48::B0           ... bench:       1,301 ns/iter (+/- 39)
+test Blake48::B512         ... bench:       4,388 ns/iter (+/- 120) = 116 MB/s
+test Blake48::KB1          ... bench:       7,209 ns/iter (+/- 210) = 142 MB/s
+test Blake48::KB16         ... bench:      91,267 ns/iter (+/- 1,557) = 179 MB/s
+test Blake48::KB2          ... bench:      12,863 ns/iter (+/- 274) = 159 MB/s
+test Blake48::KB4          ... bench:      24,014 ns/iter (+/- 1,145) = 170 MB/s
+test Blake48::KB512        ... bench:   2,825,326 ns/iter (+/- 100,019) = 185 MB/s
+test Blake48::KB64         ... bench:     362,895 ns/iter (+/- 4,570) = 180 MB/s
+test Blake48::MB1          ... bench:   6,171,920 ns/iter (+/- 209,948) = 169 MB/s
+test Blake512::B0          ... bench:       1,469 ns/iter (+/- 115)
+test Blake512::B512        ... bench:       4,893 ns/iter (+/- 98) = 104 MB/s
+test Blake512::KB1         ... bench:       8,057 ns/iter (+/- 506) = 127 MB/s
+test Blake512::KB16        ... bench:     102,467 ns/iter (+/- 7,749) = 159 MB/s
+test Blake512::KB2         ... bench:      14,365 ns/iter (+/- 566) = 142 MB/s
+test Blake512::KB4         ... bench:      26,988 ns/iter (+/- 979) = 151 MB/s
+test Blake512::KB512       ... bench:   3,161,791 ns/iter (+/- 73,215) = 165 MB/s
+test Blake512::KB64        ... bench:     399,732 ns/iter (+/- 13,802) = 163 MB/s
+test Blake512::MB1         ... bench:   6,857,866 ns/iter (+/- 225,662) = 152 MB/s
+test Blake64::B0           ... bench:       1,373 ns/iter (+/- 23)
+test Blake64::B512         ... bench:       4,448 ns/iter (+/- 267) = 115 MB/s
+test Blake64::KB1          ... bench:       7,256 ns/iter (+/- 324) = 141 MB/s
+test Blake64::KB16         ... bench:      91,068 ns/iter (+/- 3,777) = 179 MB/s
+test Blake64::KB2          ... bench:      12,862 ns/iter (+/- 360) = 159 MB/s
+test Blake64::KB4          ... bench:      23,639 ns/iter (+/- 915) = 173 MB/s
+test Blake64::KB512        ... bench:   2,800,842 ns/iter (+/- 93,032) = 187 MB/s
+test Blake64::KB64         ... bench:     353,413 ns/iter (+/- 29,198) = 185 MB/s
+test Blake64::MB1          ... bench:   6,129,852 ns/iter (+/- 242,925) = 171 MB/s
+test Keccak224::B0         ... bench:       2,843 ns/iter (+/- 216)
+test Keccak224::B512       ... bench:       8,431 ns/iter (+/- 460) = 60 MB/s
+test Keccak224::KB1        ... bench:      16,042 ns/iter (+/- 1,079) = 63 MB/s
+test Keccak224::KB16       ... bench:     210,000 ns/iter (+/- 10,794) = 78 MB/s
+test Keccak224::KB2        ... bench:      28,249 ns/iter (+/- 2,265) = 72 MB/s
+test Keccak224::KB4        ... bench:      54,271 ns/iter (+/- 3,382) = 75 MB/s
+test Keccak224::KB512      ... bench:   6,579,001 ns/iter (+/- 227,779) = 79 MB/s
+test Keccak224::KB64       ... bench:     839,199 ns/iter (+/- 45,869) = 78 MB/s
+test Keccak224::MB1        ... bench:  14,164,984 ns/iter (+/- 601,836) = 74 MB/s
+test Keccak256::B0         ... bench:       2,848 ns/iter (+/- 116)
+test Keccak256::B512       ... bench:       8,629 ns/iter (+/- 216) = 59 MB/s
+test Keccak256::KB1        ... bench:      15,696 ns/iter (+/- 328) = 65 MB/s
+test Keccak256::KB16       ... bench:     217,622 ns/iter (+/- 12,568) = 75 MB/s
+test Keccak256::KB2        ... bench:      29,661 ns/iter (+/- 1,916) = 69 MB/s
+test Keccak256::KB4        ... bench:      56,841 ns/iter (+/- 2,693) = 72 MB/s
+test Keccak256::KB512      ... bench:   6,753,553 ns/iter (+/- 170,027) = 77 MB/s
+test Keccak256::KB64       ... bench:     876,301 ns/iter (+/- 40,947) = 74 MB/s
+test Keccak256::MB1        ... bench:  14,661,703 ns/iter (+/- 630,428) = 71 MB/s
+test Keccak384::B0         ... bench:       2,606 ns/iter (+/- 121)
+test Keccak384::B512       ... bench:       9,359 ns/iter (+/- 247) = 54 MB/s
+test Keccak384::KB1        ... bench:      17,537 ns/iter (+/- 1,028) = 58 MB/s
+test Keccak384::KB16       ... bench:     256,834 ns/iter (+/- 2,127) = 63 MB/s
+test Keccak384::KB2        ... bench:      33,712 ns/iter (+/- 594) = 60 MB/s
+test Keccak384::KB4        ... bench:      65,920 ns/iter (+/- 6,223) = 62 MB/s
+test Keccak384::KB512      ... bench:   7,958,443 ns/iter (+/- 221,209) = 65 MB/s
+test Keccak384::KB64       ... bench:   1,024,953 ns/iter (+/- 38,830) = 63 MB/s
+test Keccak384::MB1        ... bench:  17,537,449 ns/iter (+/- 769,345) = 59 MB/s
+test Keccak512::B0         ... bench:       2,504 ns/iter (+/- 154)
+test Keccak512::B512       ... bench:      12,870 ns/iter (+/- 234) = 39 MB/s
+test Keccak512::KB1        ... bench:      23,038 ns/iter (+/- 1,033) = 44 MB/s
+test Keccak512::KB16       ... bench:     330,472 ns/iter (+/- 20,833) = 49 MB/s
+test Keccak512::KB2        ... bench:      43,255 ns/iter (+/- 1,853) = 47 MB/s
+test Keccak512::KB4        ... bench:      81,956 ns/iter (+/- 7,585) = 49 MB/s
+test Keccak512::KB512      ... bench:  10,900,750 ns/iter (+/- 374,434) = 48 MB/s
+test Keccak512::KB64       ... bench:   1,323,474 ns/iter (+/- 49,729) = 49 MB/s
+test Keccak512::MB1        ... bench:  22,524,561 ns/iter (+/- 875,755) = 46 MB/s
+test Md2::B0               ... bench:       2,717 ns/iter (+/- 39)
+test Md2::B512             ... bench:      46,770 ns/iter (+/- 297) = 10 MB/s
+test Md2::KB1              ... bench:      90,907 ns/iter (+/- 1,174) = 11 MB/s
+test Md2::KB16             ... bench:   1,411,744 ns/iter (+/- 10,987) = 11 MB/s
+test Md2::KB2              ... bench:     178,900 ns/iter (+/- 1,433) = 11 MB/s
+test Md2::KB4              ... bench:     354,931 ns/iter (+/- 2,443) = 11 MB/s
+test Md2::KB512            ... bench:  44,441,514 ns/iter (+/- 889,328) = 11 MB/s
+test Md2::KB64             ... bench:   5,641,410 ns/iter (+/- 30,977) = 11 MB/s
+test Md2::MB1              ... bench:  90,029,639 ns/iter (+/- 2,030,807) = 11 MB/s
+test Md4::B0               ... bench:         163 ns/iter (+/- 5)
+test Md4::B512             ... bench:         639 ns/iter (+/- 10) = 801 MB/s
+test Md4::KB1              ... bench:       1,105 ns/iter (+/- 39) = 926 MB/s
+test Md4::KB16             ... bench:      15,150 ns/iter (+/- 392) = 1081 MB/s
+test Md4::KB2              ... bench:       2,081 ns/iter (+/- 75) = 984 MB/s
+test Md4::KB4              ... bench:       3,945 ns/iter (+/- 196) = 1038 MB/s
+test Md4::KB512            ... bench:     475,000 ns/iter (+/- 2,976) = 1103 MB/s
+test Md4::KB64             ... bench:      59,599 ns/iter (+/- 2,139) = 1099 MB/s
+test Md4::MB1              ... bench:     949,887 ns/iter (+/- 121,512) = 1103 MB/s
+test Md5::B0               ... bench:         198 ns/iter (+/- 7)
+test Md5::B512             ... bench:         984 ns/iter (+/- 23) = 520 MB/s
+test Md5::KB1              ... bench:       1,807 ns/iter (+/- 29) = 566 MB/s
+test Md5::KB16             ... bench:      24,947 ns/iter (+/- 1,695) = 656 MB/s
+test Md5::KB2              ... bench:       3,358 ns/iter (+/- 52) = 609 MB/s
+test Md5::KB4              ... bench:       6,451 ns/iter (+/- 493) = 634 MB/s
+test Md5::KB512            ... bench:     788,821 ns/iter (+/- 17,398) = 664 MB/s
+test Md5::KB64             ... bench:      98,915 ns/iter (+/- 2,978) = 662 MB/s
+test Md5::MB1              ... bench:   1,579,881 ns/iter (+/- 50,750) = 663 MB/s
+test Ripemd128::B0         ... bench:         219 ns/iter (+/- 5)
+test Ripemd128::B512       ... bench:       1,155 ns/iter (+/- 16) = 443 MB/s
+test Ripemd128::KB1        ... bench:       2,132 ns/iter (+/- 26) = 480 MB/s
+test Ripemd128::KB16       ... bench:      29,986 ns/iter (+/- 576) = 546 MB/s
+test Ripemd128::KB2        ... bench:       3,983 ns/iter (+/- 50) = 514 MB/s
+test Ripemd128::KB4        ... bench:       7,533 ns/iter (+/- 381) = 543 MB/s
+test Ripemd128::KB512      ... bench:     946,242 ns/iter (+/- 20,685) = 554 MB/s
+test Ripemd128::KB64       ... bench:     118,692 ns/iter (+/- 1,449) = 552 MB/s
+test Ripemd128::MB1        ... bench:   1,892,595 ns/iter (+/- 59,570) = 554 MB/s
+test Ripemd160::B0         ... bench:         296 ns/iter (+/- 3)
+test Ripemd160::B512       ... bench:       1,578 ns/iter (+/- 22) = 324 MB/s
+test Ripemd160::KB1        ... bench:       2,793 ns/iter (+/- 111) = 366 MB/s
+test Ripemd160::KB16       ... bench:      39,279 ns/iter (+/- 818) = 417 MB/s
+test Ripemd160::KB2        ... bench:       5,277 ns/iter (+/- 111) = 388 MB/s
+test Ripemd160::KB4        ... bench:      10,176 ns/iter (+/- 180) = 402 MB/s
+test Ripemd160::KB512      ... bench:   1,245,526 ns/iter (+/- 26,974) = 420 MB/s
+test Ripemd160::KB64       ... bench:     155,901 ns/iter (+/- 5,100) = 420 MB/s
+test Ripemd160::MB1        ... bench:   2,474,271 ns/iter (+/- 73,783) = 423 MB/s
+test Ripemd256::B0         ... bench:         340 ns/iter (+/- 15)
+test Ripemd256::B512       ... bench:       1,367 ns/iter (+/- 75) = 374 MB/s
+test Ripemd256::KB1        ... bench:       2,339 ns/iter (+/- 31) = 437 MB/s
+test Ripemd256::KB16       ... bench:      31,193 ns/iter (+/- 598) = 525 MB/s
+test Ripemd256::KB2        ... bench:       4,276 ns/iter (+/- 102) = 478 MB/s
+test Ripemd256::KB4        ... bench:       8,119 ns/iter (+/- 208) = 504 MB/s
+test Ripemd256::KB512      ... bench:     984,918 ns/iter (+/- 56,765) = 532 MB/s
+test Ripemd256::KB64       ... bench:     123,557 ns/iter (+/- 3,504) = 530 MB/s
+test Ripemd256::MB1        ... bench:   1,969,916 ns/iter (+/- 26,861) = 532 MB/s
+test Ripemd320::B0         ... bench:         412 ns/iter (+/- 20)
+test Ripemd320::B512       ... bench:       1,864 ns/iter (+/- 24) = 274 MB/s
+test Ripemd320::KB1        ... bench:       3,261 ns/iter (+/- 51) = 314 MB/s
+test Ripemd320::KB16       ... bench:      44,988 ns/iter (+/- 1,692) = 364 MB/s
+test Ripemd320::KB2        ... bench:       6,028 ns/iter (+/- 263) = 339 MB/s
+test Ripemd320::KB4        ... bench:      11,619 ns/iter (+/- 701) = 352 MB/s
+test Ripemd320::KB512      ... bench:   1,423,088 ns/iter (+/- 38,159) = 368 MB/s
+test Ripemd320::KB64       ... bench:     178,809 ns/iter (+/- 2,341) = 366 MB/s
+test Ripemd320::MB1        ... bench:   2,839,675 ns/iter (+/- 99,809) = 369 MB/s
+test Sha0::B0              ... bench:         261 ns/iter (+/- 4)
+test Sha0::B512            ... bench:       1,178 ns/iter (+/- 87) = 434 MB/s
+test Sha0::KB1             ... bench:       2,099 ns/iter (+/- 28) = 487 MB/s
+test Sha0::KB16            ... bench:      26,991 ns/iter (+/- 447) = 607 MB/s
+test Sha0::KB2             ... bench:       3,814 ns/iter (+/- 73) = 536 MB/s
+test Sha0::KB4             ... bench:       7,134 ns/iter (+/- 109) = 574 MB/s
+test Sha0::KB512           ... bench:     850,363 ns/iter (+/- 43,308) = 616 MB/s
+test Sha0::KB64            ... bench:     107,130 ns/iter (+/- 1,551) = 611 MB/s
+test Sha0::MB1             ... bench:   1,699,930 ns/iter (+/- 75,881) = 616 MB/s
+test Sha1::B0              ... bench:         255 ns/iter (+/- 12)
+test Sha1::B512            ... bench:       1,305 ns/iter (+/- 20) = 392 MB/s
+test Sha1::KB1             ... bench:       2,222 ns/iter (+/- 143) = 460 MB/s
+test Sha1::KB16            ... bench:      29,718 ns/iter (+/- 1,392) = 551 MB/s
+test Sha1::KB2             ... bench:       4,081 ns/iter (+/- 124) = 501 MB/s
+test Sha1::KB4             ... bench:       7,665 ns/iter (+/- 109) = 534 MB/s
+test Sha1::KB512           ... bench:     932,474 ns/iter (+/- 13,247) = 562 MB/s
+test Sha1::KB64            ... bench:     116,991 ns/iter (+/- 1,491) = 560 MB/s
+test Sha1::MB1             ... bench:   1,865,057 ns/iter (+/- 57,743) = 562 MB/s
+test Sha224::B0            ... bench:         378 ns/iter (+/- 10)
+test Sha224::B512          ... bench:       2,669 ns/iter (+/- 57) = 191 MB/s
+test Sha224::KB1           ... bench:       4,793 ns/iter (+/- 118) = 213 MB/s
+test Sha224::KB16          ... bench:      67,610 ns/iter (+/- 4,347) = 242 MB/s
+test Sha224::KB2           ... bench:       9,018 ns/iter (+/- 363) = 227 MB/s
+test Sha224::KB4           ... bench:      17,323 ns/iter (+/- 823) = 236 MB/s
+test Sha224::KB512         ... bench:   2,132,918 ns/iter (+/- 72,631) = 245 MB/s
+test Sha224::KB64          ... bench:     267,421 ns/iter (+/- 9,890) = 245 MB/s
+test Sha224::MB1           ... bench:   4,235,319 ns/iter (+/- 122,706) = 247 MB/s
+test Sha256::B0            ... bench:         381 ns/iter (+/- 10)
+test Sha256::B512          ... bench:       2,628 ns/iter (+/- 229) = 194 MB/s
+test Sha256::KB1           ... bench:       4,795 ns/iter (+/- 361) = 213 MB/s
+test Sha256::KB16          ... bench:      66,420 ns/iter (+/- 5,421) = 246 MB/s
+test Sha256::KB2           ... bench:       9,006 ns/iter (+/- 607) = 227 MB/s
+test Sha256::KB4           ... bench:      17,326 ns/iter (+/- 1,019) = 236 MB/s
+test Sha256::KB512         ... bench:   2,127,013 ns/iter (+/- 113,677) = 246 MB/s
+test Sha256::KB64          ... bench:     267,041 ns/iter (+/- 13,895) = 245 MB/s
+test Sha256::MB1           ... bench:   4,225,333 ns/iter (+/- 114,148) = 248 MB/s
+test Sha384::B0            ... bench:         540 ns/iter (+/- 20)
+test Sha384::B512          ... bench:       1,828 ns/iter (+/- 55) = 280 MB/s
+test Sha384::KB1           ... bench:       3,057 ns/iter (+/- 370) = 334 MB/s
+test Sha384::KB16          ... bench:      39,778 ns/iter (+/- 1,142) = 411 MB/s
+test Sha384::KB2           ... bench:       5,551 ns/iter (+/- 168) = 368 MB/s
+test Sha384::KB4           ... bench:      10,367 ns/iter (+/- 767) = 395 MB/s
+test Sha384::KB512         ... bench:   1,248,836 ns/iter (+/- 60,808) = 419 MB/s
+test Sha384::KB64          ... bench:     156,695 ns/iter (+/- 5,919) = 418 MB/s
+test Sha384::MB1           ... bench:   2,447,129 ns/iter (+/- 89,345) = 428 MB/s
+test Sha3_224::B0          ... bench:       2,817 ns/iter (+/- 183)
+test Sha3_224::B512        ... bench:      10,534 ns/iter (+/- 354) = 48 MB/s
+test Sha3_224::KB1         ... bench:      19,446 ns/iter (+/- 489) = 52 MB/s
+test Sha3_224::KB16        ... bench:     211,651 ns/iter (+/- 18,014) = 77 MB/s
+test Sha3_224::KB2         ... bench:      30,008 ns/iter (+/- 1,843) = 68 MB/s
+test Sha3_224::KB4         ... bench:      55,083 ns/iter (+/- 785) = 74 MB/s
+test Sha3_224::KB512       ... bench:   6,621,050 ns/iter (+/- 225,801) = 79 MB/s
+test Sha3_224::KB64        ... bench:     857,191 ns/iter (+/- 50,114) = 76 MB/s
+test Sha3_224::MB1         ... bench:  13,070,657 ns/iter (+/- 428,202) = 80 MB/s
+test Sha3_256::B0          ... bench:       2,766 ns/iter (+/- 253)
+test Sha3_256::B512        ... bench:       8,524 ns/iter (+/- 209) = 60 MB/s
+test Sha3_256::KB1         ... bench:      18,872 ns/iter (+/- 1,017) = 54 MB/s
+test Sha3_256::KB16        ... bench:     218,949 ns/iter (+/- 15,608) = 74 MB/s
+test Sha3_256::KB2         ... bench:      29,631 ns/iter (+/- 1,028) = 69 MB/s
+test Sha3_256::KB4         ... bench:      58,025 ns/iter (+/- 3,503) = 70 MB/s
+test Sha3_256::KB512       ... bench:   6,741,374 ns/iter (+/- 168,804) = 77 MB/s
+test Sha3_256::KB64        ... bench:     883,086 ns/iter (+/- 71,012) = 74 MB/s
+test Sha3_256::MB1         ... bench:  13,452,841 ns/iter (+/- 279,221) = 77 MB/s
+test Sha3_384::B0          ... bench:       2,473 ns/iter (+/- 160)
+test Sha3_384::B512        ... bench:       9,427 ns/iter (+/- 791) = 54 MB/s
+test Sha3_384::KB1         ... bench:      20,643 ns/iter (+/- 805) = 49 MB/s
+test Sha3_384::KB16        ... bench:     252,566 ns/iter (+/- 10,055) = 64 MB/s
+test Sha3_384::KB2         ... bench:      34,614 ns/iter (+/- 1,769) = 59 MB/s
+test Sha3_384::KB4         ... bench:      66,769 ns/iter (+/- 759) = 61 MB/s
+test Sha3_384::KB512       ... bench:   8,298,498 ns/iter (+/- 352,215) = 63 MB/s
+test Sha3_384::KB64        ... bench:   1,019,942 ns/iter (+/- 16,197) = 64 MB/s
+test Sha3_384::MB1         ... bench:  15,914,482 ns/iter (+/- 640,904) = 65 MB/s
+test Sha3_512::B0          ... bench:       2,346 ns/iter (+/- 120)
+test Sha3_512::B512        ... bench:      14,762 ns/iter (+/- 256) = 34 MB/s
+test Sha3_512::KB1         ... bench:      26,328 ns/iter (+/- 736) = 38 MB/s
+test Sha3_512::KB16        ... bench:     332,676 ns/iter (+/- 4,439) = 49 MB/s
+test Sha3_512::KB2         ... bench:      44,233 ns/iter (+/- 711) = 46 MB/s
+test Sha3_512::KB4         ... bench:      82,299 ns/iter (+/- 2,182) = 49 MB/s
+test Sha3_512::KB512       ... bench:  10,269,248 ns/iter (+/- 295,361) = 51 MB/s
+test Sha3_512::KB64        ... bench:   1,314,542 ns/iter (+/- 62,993) = 49 MB/s
+test Sha3_512::MB1         ... bench:  22,129,173 ns/iter (+/- 882,638) = 47 MB/s
+test Sha512::B0            ... bench:         581 ns/iter (+/- 29)
+test Sha512::B512          ... bench:       1,852 ns/iter (+/- 138) = 276 MB/s
+test Sha512::KB1           ... bench:       3,115 ns/iter (+/- 141) = 328 MB/s
+test Sha512::KB16          ... bench:      39,751 ns/iter (+/- 1,321) = 412 MB/s
+test Sha512::KB2           ... bench:       5,588 ns/iter (+/- 129) = 366 MB/s
+test Sha512::KB4           ... bench:      10,248 ns/iter (+/- 334) = 399 MB/s
+test Sha512::KB512         ... bench:   1,248,727 ns/iter (+/- 49,633) = 419 MB/s
+test Sha512::KB64          ... bench:     153,677 ns/iter (+/- 10,482) = 426 MB/s
+test Sha512::MB1           ... bench:   2,484,966 ns/iter (+/- 98,997) = 421 MB/s
+test Sha512Trunc224::B0    ... bench:         448 ns/iter (+/- 18)
+test Sha512Trunc224::B512  ... bench:       1,733 ns/iter (+/- 65) = 295 MB/s
+test Sha512Trunc224::KB1   ... bench:       3,004 ns/iter (+/- 270) = 340 MB/s
+test Sha512Trunc224::KB16  ... bench:      39,774 ns/iter (+/- 1,070) = 411 MB/s
+test Sha512Trunc224::KB2   ... bench:       5,543 ns/iter (+/- 284) = 369 MB/s
+test Sha512Trunc224::KB4   ... bench:      10,403 ns/iter (+/- 395) = 393 MB/s
+test Sha512Trunc224::KB512 ... bench:   1,252,100 ns/iter (+/- 7,330) = 418 MB/s
+test Sha512Trunc224::KB64  ... bench:     157,969 ns/iter (+/- 9,313) = 414 MB/s
+test Sha512Trunc224::MB1   ... bench:   2,471,526 ns/iter (+/- 81,134) = 424 MB/s
+test Sha512Trunc256::B0    ... bench:         496 ns/iter (+/- 43)
+test Sha512Trunc256::B512  ... bench:       1,802 ns/iter (+/- 44) = 284 MB/s
+test Sha512Trunc256::KB1   ... bench:       3,005 ns/iter (+/- 119) = 340 MB/s
+test Sha512Trunc256::KB16  ... bench:      39,617 ns/iter (+/- 884) = 413 MB/s
+test Sha512Trunc256::KB2   ... bench:       5,473 ns/iter (+/- 129) = 374 MB/s
+test Sha512Trunc256::KB4   ... bench:      10,362 ns/iter (+/- 220) = 395 MB/s
+test Sha512Trunc256::KB512 ... bench:   1,221,489 ns/iter (+/- 20,577) = 429 MB/s
+test Sha512Trunc256::KB64  ... bench:     156,592 ns/iter (+/- 8,399) = 418 MB/s
+test Sha512Trunc256::MB1   ... bench:   2,443,338 ns/iter (+/- 83,129) = 429 MB/s
 
-test result: ok. 0 passed; 0 failed; 0 ignored; 243 measured; 0 filtered out
+test result: ok. 0 passed; 0 failed; 0 ignored; 297 measured; 0 filtered out
 
