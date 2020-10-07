@@ -14,6 +14,63 @@ pub use sha512::Sha512;
 pub use sha512trunc224::Sha512Trunc224;
 pub use sha512trunc256::Sha512Trunc256;
 
+// cargo fmtが何故か効かなくなるのでroundのように同じマクロにするのではなく、別のマクロとして定義している。
+macro_rules! init_w32 {
+    ($w:expr, $( $t:expr ),* ) => {
+        $(
+            $w[$t] = small_sigma32_1($w[$t - 2])
+                .wrapping_add($w[$t - 7])
+                .wrapping_add(small_sigma32_0($w[$t - 15]))
+                .wrapping_add($w[$t - 16]);
+        )*
+    };
+}
+macro_rules! init_w64 {
+    ($w:expr, $( $t:expr ),*) => {
+        $(
+            $w[$t] = small_sigma64_1($w[$t - 2])
+                .wrapping_add($w[$t - 7])
+                .wrapping_add(small_sigma64_0($w[$t - 15]))
+                .wrapping_add($w[$t - 16]);
+        )*
+    };
+}
+
+macro_rules! round {
+    (u32 => $t:expr, $temp_1:expr, $temp_2:expr, $a:expr, $b:expr, $c:expr, $d:expr, $e:expr, $f:expr, $g:expr, $h:expr, $w:expr) => {
+        $temp_1 = $h
+            .wrapping_add(big_sigma32_1($e))
+            .wrapping_add(ch32($e, $f, $g))
+            .wrapping_add(K32[$t])
+            .wrapping_add($w[$t]);
+        $temp_2 = big_sigma32_0($a).wrapping_add(maj32($a, $b, $c));
+        $h = $g;
+        $g = $f;
+        $f = $e;
+        $e = $d.wrapping_add($temp_1);
+        $d = $c;
+        $c = $b;
+        $b = $a;
+        $a = $temp_1.wrapping_add($temp_2);
+    };
+    (u64 => $t:expr, $temp_1:expr, $temp_2:expr, $a:expr, $b:expr, $c:expr, $d:expr, $e:expr, $f:expr, $g:expr, $h:expr, $w:expr) => {
+        $temp_1 = $h
+            .wrapping_add(big_sigma64_1($e))
+            .wrapping_add(ch64($e, $f, $g))
+            .wrapping_add(K64[$t])
+            .wrapping_add($w[$t]);
+        $temp_2 = big_sigma64_0($a).wrapping_add(maj64($a, $b, $c));
+        $h = $g;
+        $g = $f;
+        $f = $e;
+        $e = $d.wrapping_add($temp_1);
+        $d = $c;
+        $c = $b;
+        $b = $a;
+        $a = $temp_1.wrapping_add($temp_2);
+    };
+}
+
 // SHA-224 and SHA-256 Constant
 #[rustfmt::skip]
 const K32: [u32; 64] = [
@@ -101,42 +158,85 @@ impl Sha2<u32> {
     fn new(iv: [u32; 8]) -> Self {
         Self { status: iv }
     }
+    #[inline(always)]
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self, m: &[u32; 16]) {
-        let (mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h);
+        let [mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h] = self.status;
         let (mut temp_1, mut temp_2);
+
         let mut w = [0; 64];
         w[..16].copy_from_slice(m);
-        for t in 16..64 {
-            w[t] = small_sigma32_1(w[t - 2])
-                .wrapping_add(w[t - 7])
-                .wrapping_add(small_sigma32_0(w[t - 15]))
-                .wrapping_add(w[t - 16]);
-        }
-        a = self.status[0];
-        b = self.status[1];
-        c = self.status[2];
-        d = self.status[3];
-        e = self.status[4];
-        f = self.status[5];
-        g = self.status[6];
-        h = self.status[7];
-        for t in 0..64 {
-            temp_1 = h
-                .wrapping_add(big_sigma32_1(e))
-                .wrapping_add(ch32(e, f, g))
-                .wrapping_add(K32[t])
-                .wrapping_add(w[t]);
-            temp_2 = big_sigma32_0(a).wrapping_add(maj32(a, b, c));
-            h = g;
-            g = f;
-            f = e;
-            e = d.wrapping_add(temp_1);
-            d = c;
-            c = b;
-            b = a;
-            a = temp_1.wrapping_add(temp_2);
-        }
+        init_w32!(
+            w, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
+            37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
+            59, 60, 61, 62, 63
+        );
+
+        round!(u32 => 0, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 1, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 2, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 3, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 4, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 5, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 6, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 7, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 8, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 9, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 10, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 11, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 12, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 13, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 14, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 15, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 16, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 17, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 18, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 19, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 20, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 21, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 22, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 23, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 24, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 25, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 26, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 27, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 28, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 29, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 30, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 31, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 32, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 33, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 34, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 35, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 36, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 37, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 38, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 39, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 40, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 41, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 42, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 43, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 44, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 45, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 46, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 47, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 48, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 49, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 50, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 51, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 52, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 53, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 54, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 55, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 56, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 57, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 58, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 59, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 60, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 61, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 62, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u32 => 63, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+
         self.status[0] = self.status[0].wrapping_add(a);
         self.status[1] = self.status[1].wrapping_add(b);
         self.status[2] = self.status[2].wrapping_add(c);
@@ -154,40 +254,98 @@ impl Sha2<u64> {
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self, m: &[u64; 16]) {
-        let (mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h);
+        let [mut a, mut b, mut c, mut d, mut e, mut f, mut g, mut h] = self.status;
         let (mut temp_1, mut temp_2);
+
         let mut w = [0; 80];
         w[..16].copy_from_slice(m);
-        for t in 16..80 {
-            w[t] = small_sigma64_1(w[t - 2])
-                .wrapping_add(w[t - 7])
-                .wrapping_add(small_sigma64_0(w[t - 15]))
-                .wrapping_add(w[t - 16]);
-        }
-        a = self.status[0];
-        b = self.status[1];
-        c = self.status[2];
-        d = self.status[3];
-        e = self.status[4];
-        f = self.status[5];
-        g = self.status[6];
-        h = self.status[7];
-        for t in 0..80 {
-            temp_1 = h
-                .wrapping_add(big_sigma64_1(e))
-                .wrapping_add(ch64(e, f, g))
-                .wrapping_add(K64[t])
-                .wrapping_add(w[t]);
-            temp_2 = big_sigma64_0(a).wrapping_add(maj64(a, b, c));
-            h = g;
-            g = f;
-            f = e;
-            e = d.wrapping_add(temp_1);
-            d = c;
-            c = b;
-            b = a;
-            a = temp_1.wrapping_add(temp_2);
-        }
+        init_w64!(
+            w, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
+            37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
+            59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 77, 78, 79
+        );
+
+        round!(u64 => 0, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 1, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 2, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 3, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 4, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 5, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 6, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 7, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 8, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 9, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 10, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 11, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 12, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 13, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 14, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 15, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 16, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 17, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 18, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 19, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 20, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 21, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 22, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 23, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 24, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 25, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 26, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 27, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 28, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 29, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 30, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 31, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 32, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 33, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 34, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 35, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 36, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 37, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 38, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 39, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 40, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 41, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 42, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 43, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 44, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 45, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 46, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 47, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 48, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 49, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 50, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 51, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 52, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 53, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 54, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 55, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 56, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 57, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 58, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 59, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 60, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 61, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 62, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 63, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 64, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 65, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 66, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 67, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 68, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 69, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 70, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 71, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 72, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 73, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 74, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 75, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 76, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 77, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 78, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+        round!(u64 => 79, temp_1, temp_2, a, b, c, d, e, f, g, h, w);
+
         self.status[0] = self.status[0].wrapping_add(a);
         self.status[1] = self.status[1].wrapping_add(b);
         self.status[2] = self.status[2].wrapping_add(c);
