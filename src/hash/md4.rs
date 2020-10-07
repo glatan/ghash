@@ -1,5 +1,5 @@
 use super::Hash;
-use crate::impl_md_flow;
+use crate::{impl_md_flow, uint_from_bytes};
 use std::cmp::Ordering;
 
 #[allow(clippy::many_single_char_names)]
