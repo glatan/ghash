@@ -72,22 +72,18 @@ const S_RIGHT: [u32; 80] = [
     8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11, // 64 <= j <= 64
 ];
 
-fn f(j: usize, x: u32, y: u32, z: u32) -> u32 {
-    if j < 16 {
-        return x ^ y ^ z;
-    }
-    if j >= 16 && j < 32 {
-        return (x & y) | (!x & z);
-    }
-    if j >= 32 && j < 48 {
-        return (x | !y) ^ z;
-    }
-    if j >= 48 && j < 64 {
-        return (x & z) | (y & !z);
-    }
-    if j >= 64 && j < 80 {
-        x ^ (y | !z)
-    } else {
-        panic!("j={}: j is must be between 0 and 79!", j);
-    }
+const fn f1(x: u32, y: u32, z: u32) -> u32 {
+    x ^ y ^ z
+}
+const fn f2(x: u32, y: u32, z: u32) -> u32 {
+    (x & y) | (!x & z)
+}
+const fn f3(x: u32, y: u32, z: u32) -> u32 {
+    (x | !y) ^ z
+}
+const fn f4(x: u32, y: u32, z: u32) -> u32 {
+    (x & z) | (y & !z)
+}
+const fn f5(x: u32, y: u32, z: u32) -> u32 {
+    x ^ (y | !z)
 }
