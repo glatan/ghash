@@ -80,12 +80,8 @@ impl Md5 {
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self, x: &[u32; 16]) {
-        let (mut a, mut b, mut c, mut d);
-        a = self.status[0];
-        b = self.status[1];
-        c = self.status[2];
-        d = self.status[3];
-        // Round 1
+        let [mut a, mut b, mut c, mut d] = self.status;
+
         a = round1(a, b, c, d, x[0], 7, T[0]);
         d = round1(d, a, b, c, x[1], 12, T[1]);
         c = round1(c, d, a, b, x[2], 17, T[2]);
@@ -102,7 +98,7 @@ impl Md5 {
         d = round1(d, a, b, c, x[13], 12, T[13]);
         c = round1(c, d, a, b, x[14], 17, T[14]);
         b = round1(b, c, d, a, x[15], 22, T[15]);
-        // Round 2
+
         a = round2(a, b, c, d, x[1], 5, T[16]);
         d = round2(d, a, b, c, x[6], 9, T[17]);
         c = round2(c, d, a, b, x[11], 14, T[18]);
@@ -119,7 +115,7 @@ impl Md5 {
         d = round2(d, a, b, c, x[2], 9, T[29]);
         c = round2(c, d, a, b, x[7], 14, T[30]);
         b = round2(b, c, d, a, x[12], 20, T[31]);
-        // Round 3
+
         a = round3(a, b, c, d, x[5], 4, T[32]);
         d = round3(d, a, b, c, x[8], 11, T[33]);
         c = round3(c, d, a, b, x[11], 16, T[34]);
@@ -136,7 +132,7 @@ impl Md5 {
         d = round3(d, a, b, c, x[12], 11, T[45]);
         c = round3(c, d, a, b, x[15], 16, T[46]);
         b = round3(b, c, d, a, x[2], 23, T[47]);
-        // Round 4
+
         a = round4(a, b, c, d, x[0], 6, T[48]);
         d = round4(d, a, b, c, x[7], 10, T[49]);
         c = round4(c, d, a, b, x[14], 15, T[50]);
@@ -153,12 +149,11 @@ impl Md5 {
         d = round4(d, a, b, c, x[11], 10, T[61]);
         c = round4(c, d, a, b, x[2], 15, T[62]);
         b = round4(b, c, d, a, x[9], 21, T[63]);
-        self.status = [
-            self.status[0].wrapping_add(a),
-            self.status[1].wrapping_add(b),
-            self.status[2].wrapping_add(c),
-            self.status[3].wrapping_add(d),
-        ];
+
+        self.status[0] = self.status[0].wrapping_add(a);
+        self.status[1] = self.status[1].wrapping_add(b);
+        self.status[2] = self.status[2].wrapping_add(c);
+        self.status[3] = self.status[3].wrapping_add(d);
     }
 }
 

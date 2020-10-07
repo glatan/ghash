@@ -42,35 +42,63 @@ impl Md4 {
     }
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self, x: &[u32; 16]) {
-        let (mut a, mut b, mut c, mut d);
-        a = self.status[0];
-        b = self.status[1];
-        c = self.status[2];
-        d = self.status[3];
-        for &k in &[0, 4, 8, 12] {
-            a = round1(a, b, c, d, x[k], 3);
-            d = round1(d, a, b, c, x[k + 1], 7);
-            c = round1(c, d, a, b, x[k + 2], 11);
-            b = round1(b, c, d, a, x[k + 3], 19);
-        }
-        for k in 0..4 {
-            a = round2(a, b, c, d, x[k], 3);
-            d = round2(d, a, b, c, x[k + 4], 5);
-            c = round2(c, d, a, b, x[k + 8], 9);
-            b = round2(b, c, d, a, x[k + 12], 13);
-        }
-        for &k in &[0, 2, 1, 3] {
-            a = round3(a, b, c, d, x[k], 3);
-            d = round3(d, a, b, c, x[k + 8], 9);
-            c = round3(c, d, a, b, x[k + 4], 11);
-            b = round3(b, c, d, a, x[k + 12], 15);
-        }
-        self.status = [
-            self.status[0].wrapping_add(a),
-            self.status[1].wrapping_add(b),
-            self.status[2].wrapping_add(c),
-            self.status[3].wrapping_add(d),
-        ];
+        let [mut a, mut b, mut c, mut d] = self.status;
+
+        a = round1(a, b, c, d, x[0], 3);
+        d = round1(d, a, b, c, x[1], 7);
+        c = round1(c, d, a, b, x[2], 11);
+        b = round1(b, c, d, a, x[3], 19);
+        a = round1(a, b, c, d, x[4], 3);
+        d = round1(d, a, b, c, x[5], 7);
+        c = round1(c, d, a, b, x[6], 11);
+        b = round1(b, c, d, a, x[7], 19);
+        a = round1(a, b, c, d, x[8], 3);
+        d = round1(d, a, b, c, x[9], 7);
+        c = round1(c, d, a, b, x[10], 11);
+        b = round1(b, c, d, a, x[11], 19);
+        a = round1(a, b, c, d, x[12], 3);
+        d = round1(d, a, b, c, x[13], 7);
+        c = round1(c, d, a, b, x[14], 11);
+        b = round1(b, c, d, a, x[15], 19);
+
+        a = round2(a, b, c, d, x[0], 3);
+        d = round2(d, a, b, c, x[4], 5);
+        c = round2(c, d, a, b, x[8], 9);
+        b = round2(b, c, d, a, x[12], 13);
+        a = round2(a, b, c, d, x[1], 3);
+        d = round2(d, a, b, c, x[5], 5);
+        c = round2(c, d, a, b, x[9], 9);
+        b = round2(b, c, d, a, x[13], 13);
+        a = round2(a, b, c, d, x[2], 3);
+        d = round2(d, a, b, c, x[6], 5);
+        c = round2(c, d, a, b, x[10], 9);
+        b = round2(b, c, d, a, x[14], 13);
+        a = round2(a, b, c, d, x[3], 3);
+        d = round2(d, a, b, c, x[7], 5);
+        c = round2(c, d, a, b, x[11], 9);
+        b = round2(b, c, d, a, x[15], 13);
+
+        a = round3(a, b, c, d, x[0], 3);
+        d = round3(d, a, b, c, x[8], 9);
+        c = round3(c, d, a, b, x[4], 11);
+        b = round3(b, c, d, a, x[12], 15);
+        a = round3(a, b, c, d, x[2], 3);
+        d = round3(d, a, b, c, x[10], 9);
+        c = round3(c, d, a, b, x[6], 11);
+        b = round3(b, c, d, a, x[14], 15);
+        a = round3(a, b, c, d, x[1], 3);
+        d = round3(d, a, b, c, x[9], 9);
+        c = round3(c, d, a, b, x[5], 11);
+        b = round3(b, c, d, a, x[13], 15);
+        a = round3(a, b, c, d, x[3], 3);
+        d = round3(d, a, b, c, x[11], 9);
+        c = round3(c, d, a, b, x[7], 11);
+        b = round3(b, c, d, a, x[15], 15);
+
+        self.status[0] = self.status[0].wrapping_add(a);
+        self.status[1] = self.status[1].wrapping_add(b);
+        self.status[2] = self.status[2].wrapping_add(c);
+        self.status[3] = self.status[3].wrapping_add(d);
     }
 }
 
