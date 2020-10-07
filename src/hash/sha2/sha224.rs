@@ -1,5 +1,5 @@
 use super::{Hash, Sha2};
-use crate::impl_md_flow;
+use crate::{impl_md_flow, uint_from_bytes};
 use std::cmp::Ordering;
 
 pub struct Sha224(Sha2<u32>);

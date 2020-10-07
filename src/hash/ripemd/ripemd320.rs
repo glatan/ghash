@@ -1,7 +1,7 @@
 use super::Hash;
 use super::{f1, f2, f3, f4, f5};
 use super::{K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use crate::impl_md_flow;
+use crate::{impl_md_flow, uint_from_bytes};
 
 use std::cmp::Ordering;
 use std::mem;
