@@ -65,10 +65,16 @@ macro_rules! impl_benchmark {
     };
 }
 
+impl_benchmark!(Blake28);
+impl_benchmark!(Blake32);
+impl_benchmark!(Blake48);
+impl_benchmark!(Blake64);
 impl_benchmark!(Blake224);
 impl_benchmark!(Blake256);
 impl_benchmark!(Blake384);
 impl_benchmark!(Blake512);
+impl_benchmark!(Blake2s);
+impl_benchmark!(Blake2b);
 impl_benchmark!(Keccak224);
 impl_benchmark!(Keccak256);
 impl_benchmark!(Keccak384);
