@@ -221,3 +221,83 @@ impl Keccak {
         z[0..self.n / 8].to_vec()
     }
 }
+
+macro_rules! create_block {
+    ($x:expr, $y:expr, $lane:expr, $block:expr, $bytes:expr) => {
+        $bytes.iter().enumerater().for_each(|i, byte| lane[]);
+        $block[$i] = u64::from_le_bytes([
+            $bytes[$i * 8],
+            $bytes[$i * 8 + 1],
+            $bytes[$i * 8 + 2],
+            $bytes[$i * 8 + 3],
+            $bytes[$i * 8 + 4],
+            $bytes[$i * 8 + 5],
+            $bytes[$i * 8 + 6],
+            $bytes[$i * 8 + 7],
+        ]);
+    };
+}
+
+macro_rules! impl_keccak {
+    ($self:expr, $message:expr, $r:expr, $c:expr, $n:expr, $d:expr) => {
+        let mut m = message.to_vec();
+        let l = message.len();
+        let lane_size = self.w / 8; // byte length of lane
+        let mut block = [[0u64; 5]; 5];
+        let mut lane = [0u8; 8];
+        if l >= rate_length {
+            $message.chunks_exact(r / 8).for_each(|bytes| {
+
+            })
+        }
+        m.push(d);
+        match (l % rate_length).cmp(&(rate_length - 1)) {
+            Ordering::Greater => {
+                m.append(&mut vec![0; 2 * rate_length - 1 - (l % rate_length)]);
+            }
+            Ordering::Less => {
+                m.append(&mut vec![0; rate_length - 1 - (l % rate_length)]);
+            }
+            Ordering::Equal => (),
+        }
+        // padded message length must be a multiple of (self.r / 8)[byte]
+        debug_assert_eq!((m.len() % (self.r / 8)), 0);
+        let n = m.len();
+        m[n - 1] |= 0x80;
+        let lane_size = self.w / 8; // byte length of lane
+        let rate_length = self.r / 8; // byte length of rate
+        let padded_lanes = m // パディングして、64バイト(u8 x 8)になったレーン
+            .chunks_exact(lane_size)
+            .flat_map(|chunk| {
+                let mut lane = chunk.to_vec();
+                lane.reverse(); // little endianに変換
+                lane.append(&mut vec![0u8; 8 - lane_size]); // pi[x][y]はu64なので0パディングを行う。
+                lane
+            })
+            .collect::<Vec<u8>>();
+        self.lane_block = {
+            let mut blocks = Vec::with_capacity(m.len() / lane_size);
+            // n: block index
+            for n in 0..(padded_lanes.len() / rate_length) {
+                // m: lane index
+                for m in 0..((padded_lanes.len() / 8) / (padded_lanes.len() / rate_length)) {
+                    // lane_blockはすでにlittle_endianになっているのでエンディアン変換は行わない。
+                    blocks.push(u64::from_be_bytes([
+                        padded_lanes[n * rate_length + m * 8],
+                        padded_lanes[n * rate_length + m * 8 + 1],
+                        padded_lanes[n * rate_length + m * 8 + 2],
+                        padded_lanes[n * rate_length + m * 8 + 3],
+                        padded_lanes[n * rate_length + m * 8 + 4],
+                        padded_lanes[n * rate_length + m * 8 + 5],
+                        padded_lanes[n * rate_length + m * 8 + 6],
+                        padded_lanes[n * rate_length + m * 8 + 7],
+                    ]));
+                }
+                while blocks.len() % 25 != 0 {
+                    blocks.push(0);
+                }
+            }
+            blocks
+        };
+    };
+}
