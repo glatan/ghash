@@ -1,4 +1,4 @@
-use super::Hash;
+use crate::{Hash, uint_from_bytes};
 use std::cmp::Ordering;
 
 // Round1/2 submission version
@@ -50,6 +50,40 @@ const C64: [u64; 16] = [
     0x9216_D5D9_8979_FB1B, 0xD131_0BA6_98DF_B5AC, 0x2FFD_72DB_D01A_DFB7, 0xB8E1_AFED_6A26_7E96,
     0xBA7C_9045_F12C_7F99, 0x24A1_9947_B391_6CF7, 0x0801_F2E2_858E_FC16, 0x6369_20D8_7157_4E69
 ];
+
+macro_rules! g {
+    // a,b,c,d: index of self.v
+    // i: number of function G
+    // r: round count
+    (u32 => $self:expr, $block:expr, $i:expr, $r:expr, $a:expr, $b:expr, $c:expr, $d:expr) => {
+        $self.v[$a] = $self.v[$a].wrapping_add($self.v[$b]).wrapping_add(
+            $block[SIGMA[$r % 10][2 * $i]] ^ C64[SIGMA[$r % 10][2 * $i + 1]],
+        );
+        $self.v[$d] = ($self.v[$d] ^ $self.v[$a]).rotate_right(16);
+        $self.v[$c] = $self.v[$c].wrapping_add($self.v[$d]);
+        $self.v[$b] = ($self.v[$b] ^ $self.v[$c]).rotate_right(12);
+        $self.v[$a] = $self.v[$a].wrapping_add($self.v[$b]).wrapping_add(
+            $block[SIGMA[$r % 10][2 * $i + 1]] ^ C64[SIGMA[$r % 10][2 * $i]],
+        );
+        $self.v[$d] = ($self.v[$d] ^ $self.v[$a]).rotate_right(8);
+        $self.v[$c] = $self.v[$c].wrapping_add($self.v[$d]);
+        $self.v[$b] = ($self.v[$b] ^ $self.v[$c]).rotate_right(7);
+    };
+    (u64 => $self:expr, $block:expr, $i:expr, $r:expr, $a:expr, $b:expr, $c:expr, $d:expr) => {
+        $self.v[$a] = $self.v[$a].wrapping_add($self.v[$b]).wrapping_add(
+            $block[SIGMA[$r % 10][2 * $i]] ^ C64[SIGMA[$r % 10][2 * $i + 1]],
+        );
+        $self.v[$d] = ($self.v[$d] ^ $self.v[$a]).rotate_right(32);
+        $self.v[$c] = $self.v[$c].wrapping_add($self.v[$d]);
+        $self.v[$b] = ($self.v[$b] ^ $self.v[$c]).rotate_right(25);
+        $self.v[$a] = $self.v[$a].wrapping_add($self.v[$b]).wrapping_add(
+            $block[SIGMA[$r % 10][2 * $i + 1]] ^ C64[SIGMA[$r % 10][2 * $i]],
+        );
+        $self.v[$d] = ($self.v[$d] ^ $self.v[$a]).rotate_right(16);
+        $self.v[$c] = $self.v[$c].wrapping_add($self.v[$d]);
+        $self.v[$b] = ($self.v[$b] ^ $self.v[$c]).rotate_right(11);
+    }
+}
 
 // Blake<u32>: BLAKE-224(BLAKE-28) and BLAKE-256(BLAKE-32)
 // Blake<u64>: BLAKE-384(BLAKE-48) and BLAKE-512(BLAKE-64)
@@ -171,9 +205,14 @@ impl Blake<u32> {
                 self.g(n, 7, r, 3, 4, 9, 14);
             }
             // finalize
-            for i in 0..8 {
-                self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
-            }
+            self.h[0] ^= self.salt[0] ^ self.v[0] ^ self.v[8];
+            self.h[1] ^= self.salt[1] ^ self.v[1] ^ self.v[9];
+            self.h[2] ^= self.salt[2] ^ self.v[2] ^ self.v[10];
+            self.h[3] ^= self.salt[3] ^ self.v[3] ^ self.v[11];
+            self.h[4] ^= self.salt[0] ^ self.v[4] ^ self.v[12];
+            self.h[5] ^= self.salt[1] ^ self.v[5] ^ self.v[13];
+            self.h[6] ^= self.salt[2] ^ self.v[6] ^ self.v[14];
+            self.h[7] ^= self.salt[3] ^ self.v[7] ^ self.v[15];
             // if next l == 0
             if self.l == 0 && n < (self.word_block.len() / 16) {
                 self.ignore_counter = true;
@@ -299,13 +338,230 @@ impl Blake<u64> {
                 self.g(n, 7, r, 3, 4, 9, 14);
             }
             // finalize
-            for i in 0..8 {
-                self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
-            }
+            self.h[0] ^= self.salt[0] ^ self.v[0] ^ self.v[8];
+            self.h[1] ^= self.salt[1] ^ self.v[1] ^ self.v[9];
+            self.h[2] ^= self.salt[2] ^ self.v[2] ^ self.v[10];
+            self.h[3] ^= self.salt[3] ^ self.v[3] ^ self.v[11];
+            self.h[4] ^= self.salt[0] ^ self.v[4] ^ self.v[12];
+            self.h[5] ^= self.salt[1] ^ self.v[5] ^ self.v[13];
+            self.h[6] ^= self.salt[2] ^ self.v[6] ^ self.v[14];
+            self.h[7] ^= self.salt[3] ^ self.v[7] ^ self.v[15];
             // if next l == 0
             if self.l == 0 && n < (self.word_block.len() / 16) {
                 self.ignore_counter = true;
             }
         }
     }
+}
+
+macro_rules! impl_blake {
+    // $self: T, $message: input bytes
+    // u32
+    // 64 - 1(0x80) - 8(l) = 55
+    // u64
+    // 128 - 1(0x80) - 16(l) = 111
+    (u32 => $self:expr, $message:ident, $last_byte:expr) => {
+        let l = $message.len();
+        let mut block = [0u32; 16];
+        if l >= 64 {
+            $message.chunks_exact(64).for_each(|bytes| {
+                uint_from_bytes!(u32 => 0, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 1, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 2, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 3, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 4, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 5, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 6, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 7, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 8, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 9, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 10, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 11, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 12, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 13, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 14, block, bytes, from_be_bytes);
+                uint_from_bytes!(u32 => 15, block, bytes, from_be_bytes);
+                $self.compress(&block);
+            });
+        } else if l == 0 {
+            $self.compress(&[
+                u32::from_be_bytes([0x80, 0, 0, 0]),
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0 |= $last_byte,
+            ])
+        }
+        if l != 0 {
+            let offset = (l / 64) * 64;
+            let remainder = l % 64;
+            match (l % 64).cmp(&55) {
+                Ordering::Greater => {
+                    // two blocks
+                    let mut byte_block = [0u8; 128];
+                    byte_block[..remainder].copy_from_slice(&$message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[119] |= $last_byte;
+                    byte_block[120..].copy_from_slice(&(8 * l as u64).to_be_bytes());
+                    byte_block.chunks_exact(64).for_each(|bytes| {
+                        uint_from_bytes!(u32 => 0, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 1, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 2, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 3, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 4, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 5, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 6, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 7, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 8, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 9, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 10, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 11, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 12, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 13, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 14, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u32 => 15, block, bytes, from_be_bytes);
+                        $self.compress(&block);
+                    });
+                }
+                Ordering::Less | Ordering::Equal => {
+                    // one block
+                    let mut byte_block = [0u8; 64];
+                    byte_block[..remainder].copy_from_slice(&$message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[55] |= $last_byte;
+                    byte_block[56..].copy_from_slice(&(8 * l as u64).to_be_bytes());
+                    uint_from_bytes!(u32 => 0, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 1, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 2, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 3, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 4, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 5, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 6, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 7, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 8, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 9, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 10, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 11, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 12, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 13, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 14, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u32 => 15, block, byte_block, from_be_bytes);
+                    $self.compress(&block);
+                }
+            }
+        }
+    };
+    (u64 => $self:expr, $message:ident, $last_byte:expr) => {
+        let l = $message.len();
+        let mut block = [0u64; 16];
+        if l >= 128 {
+            $message.chunks_exact(128).for_each(|bytes| {
+                uint_from_bytes!(u64 => 0, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 1, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 2, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 3, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 4, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 5, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 6, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 7, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 8, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 9, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 10, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 11, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 12, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 13, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 14, block, bytes, from_be_bytes);
+                uint_from_bytes!(u64 => 15, block, bytes, from_be_bytes);
+                $self.compress(&block);
+            });
+        } else if l == 0 {
+            $self.compress(&[
+                u64::from_be_bytes([0x80, 0, 0, 0, 0, 0, 0, 0]),
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0 |= $last_byte,
+            ])
+        }
+        if l != 0 {
+            let offset = (l / 128) * 128;
+            let remainder = l % 128;
+            match (l % 128).cmp(&111) {
+                Ordering::Greater => {
+                    // two blocks
+                    let mut byte_block = [0u8; 256];
+                    byte_block[..remainder].copy_from_slice(&$message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[239] |= $last_byte;
+                    byte_block[240..].copy_from_slice(&(8 * l as u128).to_be_bytes());
+                    byte_block.chunks_exact(128).for_each(|bytes| {
+                        uint_from_bytes!(u64 => 0, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 1, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 2, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 3, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 4, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 5, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 6, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 7, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 8, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 9, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 10, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 11, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 12, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 13, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 14, block, bytes, from_be_bytes);
+                        uint_from_bytes!(u64 => 15, block, bytes, from_be_bytes);
+                        $self.compress(&block);
+                    });
+                }
+                Ordering::Less | Ordering::Equal => {
+                    // one block
+                    let mut byte_block = [0u8; 128];
+                    byte_block[..remainder].copy_from_slice(&$message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[111] |= $last_byte;
+                    byte_block[112..].copy_from_slice(&(8 * l as u128).to_be_bytes());
+                    uint_from_bytes!(u64 => 0, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 1, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 2, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 3, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 4, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 5, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 6, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 7, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 8, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 9, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 10, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 11, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 12, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 13, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 14, block, byte_block, from_be_bytes);
+                    uint_from_bytes!(u64 => 15, block, byte_block, from_be_bytes);
+                    $self.compress(&block);
+                }
+            }
+        }
+    };
 }
