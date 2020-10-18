@@ -1280,4 +1280,4 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	),
 ];
 
-impl_short_msg_kat!(Md4, md4_kat, SHORT_MSG_KAT, Md4::default());
+impl_short_msg_kat!(Md4, md4, SHORT_MSG_KAT, Md4::default());
