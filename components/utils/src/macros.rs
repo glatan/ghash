@@ -257,8 +257,8 @@ macro_rules! impl_test {
 
 #[macro_export]
 macro_rules! impl_short_msg_kat {
-    ($self:ident, $test_cases:ident, $hasher:expr) => {
-        mod KAT {
+    ($self:ident, $module_name:ident, $test_cases:ident, $hasher:expr) => {
+        mod $module_name {
             use super::$self;
             use super::$test_cases;
             use utils::Hash;
