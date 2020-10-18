@@ -11,6 +11,36 @@ homepage = "https://gitlab.com/glatan/ghash/"
 # [dev-dependencies]
 # criterion = "0.3"
 
+[dependencies]
+blake = { path = "components/hashes/blake"}
+blake2 = { path = "components/hashes/blake2"}
+keccak = { path = "components/hashes/keccak"}
+md2 = { path = "components/hashes/md2"}
+md4 = { path = "components/hashes/md4"}
+md5 = { path = "components/hashes/md5"}
+ripemd = { path = "components/hashes/ripemd"}
+sha0 = { path = "components/hashes/sha0"}
+sha1 = { path = "components/hashes/sha1"}
+sha2 = { path = "components/hashes/sha2"}
+sha3 = { path = "components/hashes/sha3"}
+utils = { path = "components/utils"}
+
+[workspace]
+members = [
+    "components/hashes/blake",
+    "components/hashes/blake2",
+    "components/hashes/keccak",
+    "components/hashes/md2",
+    "components/hashes/md4",
+    "components/hashes/md5",
+    "components/hashes/ripemd",
+    "components/hashes/sha0",
+    "components/hashes/sha1",
+    "components/hashes/sha2",
+    "components/hashes/sha3",
+    "components/utils",
+]
+
 [[bench]]
 name = "criterion"
 harness = false
