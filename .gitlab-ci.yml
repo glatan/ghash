@@ -3,7 +3,7 @@ stages:
 
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
-  WASMTIME_VERSION: 0.19.0
+  WASMTIME_VERSION: 0.20.0
 
 before_script:
   - rustc --version
