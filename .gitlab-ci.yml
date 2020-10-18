@@ -23,7 +23,7 @@ cache:
     - tar -xvf wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
     - mv wasmtime-v${WASMTIME_VERSION}-x86_64-linux/wasmtime /usr/bin/
   script:
-    - cargo test --lib --wokspace --verbose --target wasm32-wasi
+    - cargo test --lib --workspace --verbose --target wasm32-wasi
 
 stable-i686-unknown-linux-gnu:
   stage: test
@@ -31,13 +31,13 @@ stable-i686-unknown-linux-gnu:
   before_script:
     - linux32 rustc --version
   script:
-    - linux32 cargo test --lib --wokspace --verbose --target i686-unknown-linux-gnu
+    - linux32 cargo test --lib --workspace --verbose --target i686-unknown-linux-gnu
 
 stable-x86_64-unknown-linux-gnu:
   stage: test
   image: amd64/rust:slim-buster
   script:
-    - cargo test --lib --wokspace --verbose --target x86_64-unknown-linux-gnu
+    - cargo test --lib --workspace --verbose --target x86_64-unknown-linux-gnu
 
 stable-wasm32-wasi:
   stage: test
@@ -48,7 +48,7 @@ nightly-x86_64-unknown-linux-gnu:
   stage: test
   image: rustlang/rust:nightly-buster-slim
   script:
-    - cargo test --lib --wokspace --verbose --target x86_64-unknown-linux-gnu
+    - cargo test --lib --workspace --verbose --target x86_64-unknown-linux-gnu
 
 nightly-wasm32-wasi:
   stage: test
