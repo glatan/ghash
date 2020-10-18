@@ -1280,4 +1280,4 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	),
 ];
 
-impl_shot_msg_kat!(Md2, SHORT_MSG_KAT, Md2::default());
+impl_short_msg_kat!(Md2, SHORT_MSG_KAT, Md2::default());
