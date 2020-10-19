@@ -21,4 +21,3 @@ impl Hash for Keccak256 {
         self.0.keccak()
     }
 }
-
