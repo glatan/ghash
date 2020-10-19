@@ -1280,9 +1280,4 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	),
 ];
 
-impl_short_msg_kat!(
-    Sha512Trunc256,
-    sha512trunc256,
-    SHORT_MSG_KAT,
-    Sha512Trunc256::default()
-);
+impl_short_msg_kat!(SHORT_MSG_KAT, Sha512Trunc256::default());

@@ -1280,4 +1280,4 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	),
 ];
 
-impl_short_msg_kat!(Keccak512, keccak512, SHORT_MSG_KAT, Keccak512::default());
+impl_short_msg_kat!(SHORT_MSG_KAT, Keccak512::default());

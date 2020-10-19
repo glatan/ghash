@@ -1280,4 +1280,4 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	),
 ];
 
-impl_short_msg_kat!(Sha0, sha0, SHORT_MSG_KAT, Sha0::default());
+impl_short_msg_kat!(SHORT_MSG_KAT, Sha0::default());

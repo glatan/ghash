@@ -1280,4 +1280,4 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	),
 ];
 
-impl_short_msg_kat!(Ripemd160, ripemd160, SHORT_MSG_KAT, Ripemd160::default());
+impl_short_msg_kat!(SHORT_MSG_KAT, Ripemd160::default());
