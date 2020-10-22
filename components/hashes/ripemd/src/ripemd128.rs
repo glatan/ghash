@@ -205,7 +205,7 @@ impl Hash for Ripemd128 {
 #[cfg(test)]
 mod tests {
     use super::Ripemd128;
-    use utils::impl_test;
+    use dev_utils::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 9] = [
         // https://homes.esat.kuleuven.be/~bosselae/ripemd160/pdf/AB-9601/AB-9601.pdf

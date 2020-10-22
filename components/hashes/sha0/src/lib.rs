@@ -176,7 +176,7 @@ impl Hash for Sha0 {
 #[cfg(test)]
 mod tests {
     use super::Sha0;
-    use utils::impl_test;
+    use dev_utils::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 2] = [
         // https://web.archive.org/web/20180905102133/https://www-ljk.imag.fr/membres/Pierre.Karpman/fips180.pdf

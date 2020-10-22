@@ -34,7 +34,7 @@ impl Hash for Sha512 {
 #[cfg(test)]
 mod tests {
     use super::Sha512;
-    use utils::impl_test;
+    use dev_utils::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 11] = [
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512.pdf
