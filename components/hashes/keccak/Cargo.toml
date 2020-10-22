@@ -5,4 +5,7 @@ authors = ["glatan <glatan@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
-utils = { path = "../../utils"}
+utils = { path = "../../utils" }
+
+[dev-dependencies]
+dev-utils = { path = "../../dev-utils" }
