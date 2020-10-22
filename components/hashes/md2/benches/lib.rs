@@ -1,3 +1,5 @@
 #![feature(test)]
 
-dev_utils::impl_benchmark!(md2, Md2);
+use dev_utils::impl_benchmark;
+
+impl_benchmark!(md2, Md2);

@@ -1,6 +1,8 @@
 #![feature(test)]
 
-dev_utils::impl_benchmark!(ripemd, Ripemd128);
-dev_utils::impl_benchmark!(ripemd, Ripemd160);
-dev_utils::impl_benchmark!(ripemd, Ripemd256);
-dev_utils::impl_benchmark!(ripemd, Ripemd320);
+use dev_utils::impl_benchmark;
+
+impl_benchmark!(ripemd, Ripemd128);
+impl_benchmark!(ripemd, Ripemd160);
+impl_benchmark!(ripemd, Ripemd256);
+impl_benchmark!(ripemd, Ripemd320);

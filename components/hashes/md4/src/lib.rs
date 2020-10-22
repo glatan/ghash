@@ -123,7 +123,7 @@ impl Hash for Md4 {
 #[cfg(test)]
 mod tests {
     use super::Md4;
-    use utils::impl_test;
+    use dev_utils::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 7] = [
         // https://tools.ietf.org/html/rfc1320

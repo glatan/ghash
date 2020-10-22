@@ -1,5 +1,5 @@
 use sha3::Sha3_512;
-use utils::impl_short_msg_kat;
+use dev_utils::impl_short_msg_kat;
 
 #[rustfmt::skip]
 const SHORT_MSG_KAT: [(&str, &str); 255] = [

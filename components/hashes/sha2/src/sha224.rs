@@ -33,7 +33,7 @@ impl Hash for Sha224 {
 #[cfg(test)]
 mod tests {
     use super::Sha224;
-    use utils::impl_test;
+    use dev_utils::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 9] = [
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA224.pdf

@@ -1,10 +1,12 @@
 #![feature(test)]
 
-dev_utils::impl_benchmark!(blake, Blake28);
-dev_utils::impl_benchmark!(blake, Blake32);
-dev_utils::impl_benchmark!(blake, Blake48);
-dev_utils::impl_benchmark!(blake, Blake64);
-dev_utils::impl_benchmark!(blake, Blake224);
-dev_utils::impl_benchmark!(blake, Blake256);
-dev_utils::impl_benchmark!(blake, Blake384);
-dev_utils::impl_benchmark!(blake, Blake512);
+use dev_utils::impl_benchmark;
+
+impl_benchmark!(blake, Blake28);
+impl_benchmark!(blake, Blake32);
+impl_benchmark!(blake, Blake48);
+impl_benchmark!(blake, Blake64);
+impl_benchmark!(blake, Blake224);
+impl_benchmark!(blake, Blake256);
+impl_benchmark!(blake, Blake384);
+impl_benchmark!(blake, Blake512);

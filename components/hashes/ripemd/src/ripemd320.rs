@@ -269,7 +269,7 @@ impl Hash for Ripemd320 {
 #[cfg(test)]
 mod tests {
     use super::Ripemd320;
-    use utils::impl_test;
+    use dev_utils::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 9] = [
         // https://homes.esat.kuleuven.be/~bosselae/ripemd160.html

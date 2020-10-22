@@ -178,7 +178,7 @@ impl Hash for Md5 {
 #[cfg(test)]
 mod tests {
     use super::Md5;
-    use utils::impl_test;
+    use dev_utils::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 7] = [
         // https://tools.ietf.org/html/rfc1321
