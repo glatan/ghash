@@ -1,4 +1,3 @@
-use sha2::Sha512Trunc224;
 use dev_utils::impl_short_msg_kat;
 
 #[rustfmt::skip]
@@ -1280,4 +1279,9 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	),
 ];
 
-impl_short_msg_kat!(SHORT_MSG_KAT, Sha512Trunc224::default());
+impl_short_msg_kat!(
+    sha2,
+    Sha512Trunc224,
+    SHORT_MSG_KAT,
+    Sha512Trunc224::default()
+);
