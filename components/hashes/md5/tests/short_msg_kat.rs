@@ -1,4 +1,3 @@
-use md5::Md5;
 use dev_utils::impl_short_msg_kat;
 
 #[rustfmt::skip]
@@ -1280,4 +1279,4 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	),
 ];
 
-impl_short_msg_kat!(SHORT_MSG_KAT, Md5::default());
+impl_short_msg_kat!(md5, Md5, SHORT_MSG_KAT, Md5::default());
