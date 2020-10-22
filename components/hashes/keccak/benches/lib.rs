@@ -1,6 +1,8 @@
 #![feature(test)]
 
-dev_utils::impl_benchmark!(keccak, Keccak224);
-dev_utils::impl_benchmark!(keccak, Keccak256);
-dev_utils::impl_benchmark!(keccak, Keccak384);
-dev_utils::impl_benchmark!(keccak, Keccak512);
+use dev_utils::impl_benchmark;
+
+impl_benchmark!(keccak, Keccak224);
+impl_benchmark!(keccak, Keccak256);
+impl_benchmark!(keccak, Keccak384);
+impl_benchmark!(keccak, Keccak512);

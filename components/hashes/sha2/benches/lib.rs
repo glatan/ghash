@@ -1,8 +1,10 @@
 #![feature(test)]
 
-dev_utils::impl_benchmark!(sha2, Sha224);
-dev_utils::impl_benchmark!(sha2, Sha256);
-dev_utils::impl_benchmark!(sha2, Sha384);
-dev_utils::impl_benchmark!(sha2, Sha512);
-dev_utils::impl_benchmark!(sha2, Sha512Trunc224);
-dev_utils::impl_benchmark!(sha2, Sha512Trunc256);
+use dev_utils::impl_benchmark;
+
+impl_benchmark!(sha2, Sha224);
+impl_benchmark!(sha2, Sha256);
+impl_benchmark!(sha2, Sha384);
+impl_benchmark!(sha2, Sha512);
+impl_benchmark!(sha2, Sha512Trunc224);
+impl_benchmark!(sha2, Sha512Trunc256);

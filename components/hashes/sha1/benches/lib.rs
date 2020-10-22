@@ -1,3 +1,5 @@
 #![feature(test)]
 
-dev_utils::impl_benchmark!(sha1, Sha1);
+use dev_utils::impl_benchmark;
+
+impl_benchmark!(sha1, Sha1);
