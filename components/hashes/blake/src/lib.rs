@@ -53,257 +53,349 @@ const C64: [u64; 16] = [
 // Blake<u32>: BLAKE-224(BLAKE-28) and BLAKE-256(BLAKE-32)
 // Blake<u64>: BLAKE-384(BLAKE-48) and BLAKE-512(BLAKE-64)
 struct Blake<T> {
-    word_block: Vec<T>,
     salt: [T; 4],
     l: usize, // 未処理のビット数
     h: [T; 8],
     t: [T; 2],  // counter: 処理したビット数(と次に処理をするブロックのビット数?)
     v: [T; 16], // state
     ignore_counter: bool,
+    round_limit: usize,
 }
 
 impl Blake<u32> {
-    fn new(h: [u32; 8], salt: [u32; 4]) -> Self {
+    fn new(h: [u32; 8], salt: [u32; 4], round_limit: usize) -> Self {
         Self {
-            word_block: Vec::with_capacity(16),
             salt,
             l: 0,
             h,
             t: [0; 2],
             v: [0; 16],
             ignore_counter: false,
-        }
-    }
-    fn padding(&mut self, message: &[u8], last_byte: u8) {
-        let mut m = message.to_vec();
-        let l = message.len();
-        self.l = message.len() * 8;
-        // 64 - 1(0x80) - 8(l) = 55
-        match (l % 64).cmp(&55) {
-            Ordering::Greater => {
-                m.push(0x80);
-                m.append(&mut vec![0; 64 + 54 - (l % 64)]);
-                m.push(last_byte);
-            }
-            Ordering::Less => {
-                m.push(0x80);
-                m.append(&mut vec![0; 54 - (l % 64)]);
-                m.push(last_byte);
-            }
-            Ordering::Equal => {
-                m.push(0x80 | last_byte);
-            }
-        }
-        // append message length
-        m.append(&mut (8 * l as u64).to_be_bytes().to_vec());
-        // create 32 bit-words from input bytes(and appending bytes)
-        for i in (0..m.len()).filter(|i| i % 4 == 0) {
-            self.word_block
-                .push(u32::from_be_bytes([m[i], m[i + 1], m[i + 2], m[i + 3]]));
+            round_limit,
         }
     }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
-    fn g(&mut self, n: usize, i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
-        // a,b,c,d: index of self.v
-        // n: block index
-        // i: number of function G
-        // r: round count
-        self.v[a] = self.v[a].wrapping_add(self.v[b]).wrapping_add(
-            self.word_block[SIGMA[r % 10][2 * i] + 16 * n] ^ C32[SIGMA[r % 10][2 * i + 1]],
-        );
+    fn g(&mut self, block: &[u32; 16], i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
+        self.v[a] = self.v[a]
+            .wrapping_add(self.v[b])
+            .wrapping_add(block[SIGMA[r % 10][2 * i]] ^ C32[SIGMA[r % 10][2 * i + 1]]);
         self.v[d] = (self.v[d] ^ self.v[a]).rotate_right(16);
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(12);
-        self.v[a] = self.v[a].wrapping_add(self.v[b]).wrapping_add(
-            self.word_block[SIGMA[r % 10][2 * i + 1] + 16 * n] ^ C32[SIGMA[r % 10][2 * i]],
-        );
+        self.v[a] = self.v[a]
+            .wrapping_add(self.v[b])
+            .wrapping_add(block[SIGMA[r % 10][2 * i + 1]] ^ C32[SIGMA[r % 10][2 * i]]);
         self.v[d] = (self.v[d] ^ self.v[a]).rotate_right(8);
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(7);
     }
-    fn compress(&mut self, round_limit: usize) {
-        // Compress blocks(1 block == 16 words, 1 word == 32 bit)
-        // Compress 1 block in 1 loop
-        for n in 0..(self.word_block.len() / 16) {
-            // update counter
-            if self.l > 512 {
-                self.t[0] += 512;
-                self.l -= 512;
-            } else {
-                self.t[0] += self.l as u32;
-                self.l = 0;
-            }
-            // initialize state
-            self.v[0] = self.h[0];
-            self.v[1] = self.h[1];
-            self.v[2] = self.h[2];
-            self.v[3] = self.h[3];
-            self.v[4] = self.h[4];
-            self.v[5] = self.h[5];
-            self.v[6] = self.h[6];
-            self.v[7] = self.h[7];
-            self.v[8] = self.salt[0] ^ C32[0];
-            self.v[9] = self.salt[1] ^ C32[1];
-            self.v[10] = self.salt[2] ^ C32[2];
-            self.v[11] = self.salt[3] ^ C32[3];
-            // ブロック数が2以上かつ最後のブロックの処理時にカウンター(l)が0のときはこうするらしい(仕様書内に対応する記述を見つけられていない)。
-            if self.ignore_counter {
-                self.v[12] = C32[4];
-                self.v[13] = C32[5];
-                self.v[14] = C32[6];
-                self.v[15] = C32[7];
-            } else {
-                self.v[12] = self.t[0] ^ C32[4];
-                self.v[13] = self.t[0] ^ C32[5];
-                self.v[14] = self.t[1] ^ C32[6];
-                self.v[15] = self.t[1] ^ C32[7];
-            }
-            // round
-            for r in 0..round_limit {
-                self.g(n, 0, r, 0, 4, 8, 12);
-                self.g(n, 1, r, 1, 5, 9, 13);
-                self.g(n, 2, r, 2, 6, 10, 14);
-                self.g(n, 3, r, 3, 7, 11, 15);
-                self.g(n, 4, r, 0, 5, 10, 15);
-                self.g(n, 5, r, 1, 6, 11, 12);
-                self.g(n, 6, r, 2, 7, 8, 13);
-                self.g(n, 7, r, 3, 4, 9, 14);
-            }
-            // finalize
-            for i in 0..8 {
-                self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
-            }
-            // if next l == 0
-            if self.l == 0 && n < (self.word_block.len() / 16) {
-                self.ignore_counter = true;
+    fn compress(&mut self, block: &[u32; 16]) {
+        // update counter
+        if self.l > 512 {
+            self.t[0] += 512;
+            self.l -= 512;
+        } else {
+            self.t[0] += self.l as u32;
+            self.l = 0;
+        }
+        // initialize state
+        self.v[0] = self.h[0];
+        self.v[1] = self.h[1];
+        self.v[2] = self.h[2];
+        self.v[3] = self.h[3];
+        self.v[4] = self.h[4];
+        self.v[5] = self.h[5];
+        self.v[6] = self.h[6];
+        self.v[7] = self.h[7];
+        self.v[8] = self.salt[0] ^ C32[0];
+        self.v[9] = self.salt[1] ^ C32[1];
+        self.v[10] = self.salt[2] ^ C32[2];
+        self.v[11] = self.salt[3] ^ C32[3];
+        // ブロック数が2以上かつ最後のブロックの処理時にカウンター(l)が0のときはこうするらしい(仕様書内に対応する記述を見つけられていない)。
+        if self.ignore_counter {
+            self.v[12] = C32[4];
+            self.v[13] = C32[5];
+            self.v[14] = C32[6];
+            self.v[15] = C32[7];
+        } else {
+            self.v[12] = self.t[0] ^ C32[4];
+            self.v[13] = self.t[0] ^ C32[5];
+            self.v[14] = self.t[1] ^ C32[6];
+            self.v[15] = self.t[1] ^ C32[7];
+        }
+        // round
+        for r in 0..self.round_limit {
+            self.g(block, 0, r, 0, 4, 8, 12);
+            self.g(block, 1, r, 1, 5, 9, 13);
+            self.g(block, 2, r, 2, 6, 10, 14);
+            self.g(block, 3, r, 3, 7, 11, 15);
+            self.g(block, 4, r, 0, 5, 10, 15);
+            self.g(block, 5, r, 1, 6, 11, 12);
+            self.g(block, 6, r, 2, 7, 8, 13);
+            self.g(block, 7, r, 3, 4, 9, 14);
+        }
+        // finalize
+        for i in 0..8 {
+            self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
+        }
+    }
+    fn blake(&mut self, message: &[u8], last_byte: u8) {
+        self.l = message.len() * 8;
+        let l = message.len();
+        let mut block = [0u32; 16];
+        if l >= 64 {
+            message.chunks_exact(64).for_each(|bytes| {
+                (0..16).for_each(|i| {
+                    block[i] = u32::from_be_bytes([
+                        bytes[i * 4 + 0],
+                        bytes[i * 4 + 1],
+                        bytes[i * 4 + 2],
+                        bytes[i * 4 + 3],
+                    ]);
+                });
+                self.compress(&block);
+            });
+        } else if l == 0 {
+            self.compress(&[
+                u32::from_be_bytes([0x80, 0, 0, 0]),
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0 | last_byte as u32,
+                0,
+                0,
+            ])
+        }
+        if l != 0 {
+            let offset = (l / 64) * 64;
+            let remainder = l % 64;
+            match (l % 64).cmp(&55) {
+                Ordering::Greater => {
+                    // two blocks
+                    let mut byte_block = [0u8; 128];
+                    byte_block[..remainder].copy_from_slice(&message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[119] |= last_byte;
+                    byte_block[120..].copy_from_slice(&(8 * l as u64).to_be_bytes());
+                    byte_block.chunks_exact(64).for_each(|bytes| {
+                        (0..16).for_each(|i| {
+                            block[i] = u32::from_be_bytes([
+                                bytes[i * 4 + 0],
+                                bytes[i * 4 + 1],
+                                bytes[i * 4 + 2],
+                                bytes[i * 4 + 3],
+                            ]);
+                        });
+                        self.compress(&block);
+                        self.ignore_counter = true;
+                    });
+                }
+                Ordering::Less | Ordering::Equal => {
+                    // one block
+                    let mut byte_block = [0u8; 64];
+                    byte_block[..remainder].copy_from_slice(&message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[55] |= last_byte;
+                    byte_block[56..].copy_from_slice(&(8 * l as u64).to_be_bytes());
+                    (0..16).for_each(|i| {
+                        block[i] = u32::from_be_bytes([
+                            byte_block[i * 4 + 0],
+                            byte_block[i * 4 + 1],
+                            byte_block[i * 4 + 2],
+                            byte_block[i * 4 + 3],
+                        ]);
+                    });
+                    if self.l == 0 {
+                        self.ignore_counter = true;
+                    }
+                    self.compress(&block);
+                }
             }
         }
     }
 }
 
 impl Blake<u64> {
-    fn new(h: [u64; 8], salt: [u64; 4]) -> Self {
+    fn new(h: [u64; 8], salt: [u64; 4], round_limit: usize) -> Self {
         Self {
-            word_block: Vec::with_capacity(16),
             salt,
             l: 0,
             h,
             t: [0; 2],
             v: [0; 16],
             ignore_counter: false,
-        }
-    }
-    fn padding(&mut self, message: &[u8], last_byte: u8) {
-        let mut m = message.to_vec();
-        let l = message.len();
-        self.l = message.len() * 8;
-        // append 0b1000_0000
-        // 128 - 1(0x80) - 16(l) = 111
-        match (l % 128).cmp(&111) {
-            Ordering::Greater => {
-                m.push(0x80);
-                m.append(&mut vec![0; 128 + 110 - (l % 128)]);
-                m.push(last_byte);
-            }
-            Ordering::Less => {
-                m.push(0x80);
-                m.append(&mut vec![0; 110 - (l % 128)]);
-                m.push(last_byte);
-            }
-            Ordering::Equal => {
-                m.push(0x80 | last_byte);
-            }
-        }
-        // append message length
-        m.append(&mut (8 * l as u128).to_be_bytes().to_vec());
-        // create 64 bit-words from input bytes(and appending bytes)
-        for i in (0..m.len()).filter(|i| i % 8 == 0) {
-            self.word_block.push(u64::from_be_bytes([
-                m[i],
-                m[i + 1],
-                m[i + 2],
-                m[i + 3],
-                m[i + 4],
-                m[i + 5],
-                m[i + 6],
-                m[i + 7],
-            ]));
+            round_limit,
         }
     }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
-    fn g(&mut self, n: usize, i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
+    fn g(&mut self, block: &[u64; 16], i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
         // a,b,c,d: index of self.v
-        // n: block index
         // i: number of function G
         // r: round count
-        self.v[a] = self.v[a].wrapping_add(self.v[b]).wrapping_add(
-            self.word_block[SIGMA[r % 10][2 * i] + 16 * n] ^ C64[SIGMA[r % 10][2 * i + 1]],
-        );
+        self.v[a] = self.v[a]
+            .wrapping_add(self.v[b])
+            .wrapping_add(block[SIGMA[r % 10][2 * i]] ^ C64[SIGMA[r % 10][2 * i + 1]]);
         self.v[d] = (self.v[d] ^ self.v[a]).rotate_right(32);
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(25);
-        self.v[a] = self.v[a].wrapping_add(self.v[b]).wrapping_add(
-            self.word_block[SIGMA[r % 10][2 * i + 1] + 16 * n] ^ C64[SIGMA[r % 10][2 * i]],
-        );
+        self.v[a] = self.v[a]
+            .wrapping_add(self.v[b])
+            .wrapping_add(block[SIGMA[r % 10][2 * i + 1]] ^ C64[SIGMA[r % 10][2 * i]]);
         self.v[d] = (self.v[d] ^ self.v[a]).rotate_right(16);
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(11);
     }
-    fn compress(&mut self, round_limit: usize) {
-        // Compress blocks(1 block == 16 words, 1 word == 64 bit)
-        // Compress 1 block in 1 loop
-        for n in 0..(self.word_block.len() / 16) {
-            // update counter
-            if self.l > 1024 {
-                self.t[0] += 1024;
-                self.l -= 1024;
-            } else {
-                self.t[0] += self.l as u64;
-                self.l = 0;
-            }
-            // initialize state
-            self.v[0] = self.h[0];
-            self.v[1] = self.h[1];
-            self.v[2] = self.h[2];
-            self.v[3] = self.h[3];
-            self.v[4] = self.h[4];
-            self.v[5] = self.h[5];
-            self.v[6] = self.h[6];
-            self.v[7] = self.h[7];
-            self.v[8] = self.salt[0] ^ C64[0];
-            self.v[9] = self.salt[1] ^ C64[1];
-            self.v[10] = self.salt[2] ^ C64[2];
-            self.v[11] = self.salt[3] ^ C64[3];
-            // ブロック数が2以上かつ最後のブロックの処理時にカウンター(l)が0のときはこうするらしい(仕様書内に対応する記述を見つけられていない)。
-            if self.ignore_counter {
-                self.v[12] = C64[4];
-                self.v[13] = C64[5];
-                self.v[14] = C64[6];
-                self.v[15] = C64[7];
-            } else {
-                self.v[12] = self.t[0] ^ C64[4];
-                self.v[13] = self.t[0] ^ C64[5];
-                self.v[14] = self.t[1] ^ C64[6];
-                self.v[15] = self.t[1] ^ C64[7];
-            }
-            // round
-            for r in 0..round_limit {
-                self.g(n, 0, r, 0, 4, 8, 12);
-                self.g(n, 1, r, 1, 5, 9, 13);
-                self.g(n, 2, r, 2, 6, 10, 14);
-                self.g(n, 3, r, 3, 7, 11, 15);
-                self.g(n, 4, r, 0, 5, 10, 15);
-                self.g(n, 5, r, 1, 6, 11, 12);
-                self.g(n, 6, r, 2, 7, 8, 13);
-                self.g(n, 7, r, 3, 4, 9, 14);
-            }
-            // finalize
-            for i in 0..8 {
-                self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
-            }
-            // if next l == 0
-            if self.l == 0 && n < (self.word_block.len() / 16) {
-                self.ignore_counter = true;
+    fn compress(&mut self, block: &[u64; 16]) {
+        // update counter
+        if self.l > 1024 {
+            self.t[0] += 1024;
+            self.l -= 1024;
+        } else {
+            self.t[0] += self.l as u64;
+            self.l = 0;
+        }
+        // initialize state
+        self.v[0] = self.h[0];
+        self.v[1] = self.h[1];
+        self.v[2] = self.h[2];
+        self.v[3] = self.h[3];
+        self.v[4] = self.h[4];
+        self.v[5] = self.h[5];
+        self.v[6] = self.h[6];
+        self.v[7] = self.h[7];
+        self.v[8] = self.salt[0] ^ C64[0];
+        self.v[9] = self.salt[1] ^ C64[1];
+        self.v[10] = self.salt[2] ^ C64[2];
+        self.v[11] = self.salt[3] ^ C64[3];
+        // ブロック数が2以上かつ最後のブロックの処理時にカウンター(l)が0のときはこうするらしい(仕様書内に対応する記述を見つけられていない)。
+        if self.ignore_counter {
+            self.v[12] = C64[4];
+            self.v[13] = C64[5];
+            self.v[14] = C64[6];
+            self.v[15] = C64[7];
+        } else {
+            self.v[12] = self.t[0] ^ C64[4];
+            self.v[13] = self.t[0] ^ C64[5];
+            self.v[14] = self.t[1] ^ C64[6];
+            self.v[15] = self.t[1] ^ C64[7];
+        }
+        // round
+        for r in 0..self.round_limit {
+            self.g(block, 0, r, 0, 4, 8, 12);
+            self.g(block, 1, r, 1, 5, 9, 13);
+            self.g(block, 2, r, 2, 6, 10, 14);
+            self.g(block, 3, r, 3, 7, 11, 15);
+            self.g(block, 4, r, 0, 5, 10, 15);
+            self.g(block, 5, r, 1, 6, 11, 12);
+            self.g(block, 6, r, 2, 7, 8, 13);
+            self.g(block, 7, r, 3, 4, 9, 14);
+        }
+        // finalize
+        for i in 0..8 {
+            self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
+        }
+    }
+    fn blake(&mut self, message: &[u8], last_byte: u8) {
+        self.l = message.len() * 8;
+        let l = message.len();
+        let mut block = [0u64; 16];
+        if l >= 128 {
+            message.chunks_exact(128).for_each(|bytes| {
+                (0..16).for_each(|i| {
+                    block[i] = u64::from_be_bytes([
+                        bytes[i * 8 + 0],
+                        bytes[i * 8 + 1],
+                        bytes[i * 8 + 2],
+                        bytes[i * 8 + 3],
+                        bytes[i * 8 + 4],
+                        bytes[i * 8 + 5],
+                        bytes[i * 8 + 6],
+                        bytes[i * 8 + 7],
+                    ]);
+                });
+                self.compress(&block);
+            });
+        } else if l == 0 {
+            self.compress(&[
+                u64::from_be_bytes([0x80, 0, 0, 0, 0, 0, 0, 0]),
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0 | last_byte as u64,
+                0,
+                0,
+            ])
+        }
+        if l != 0 {
+            let offset = (l / 128) * 128;
+            let remainder = l % 128;
+            match (l % 128).cmp(&111) {
+                Ordering::Greater => {
+                    // two blocks
+                    let mut byte_block = [0u8; 256];
+                    byte_block[..remainder].copy_from_slice(&message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[239] |= last_byte;
+                    byte_block[240..].copy_from_slice(&(8 * l as u128).to_be_bytes());
+                    byte_block.chunks_exact(128).for_each(|bytes| {
+                        (0..16).for_each(|i| {
+                            block[i] = u64::from_be_bytes([
+                                bytes[i * 8 + 0],
+                                bytes[i * 8 + 1],
+                                bytes[i * 8 + 2],
+                                bytes[i * 8 + 3],
+                                bytes[i * 8 + 4],
+                                bytes[i * 8 + 5],
+                                bytes[i * 8 + 6],
+                                bytes[i * 8 + 7],
+                            ]);
+                        });
+                        self.compress(&block);
+                        self.ignore_counter = true;
+                    });
+                }
+                Ordering::Less | Ordering::Equal => {
+                    // one block
+                    let mut byte_block = [0u8; 128];
+                    byte_block[..remainder].copy_from_slice(&message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[111] |= last_byte;
+                    byte_block[112..].copy_from_slice(&(8 * l as u128).to_be_bytes());
+                    (0..16).for_each(|i| {
+                        block[i] = u64::from_be_bytes([
+                            byte_block[i * 8 + 0],
+                            byte_block[i * 8 + 1],
+                            byte_block[i * 8 + 2],
+                            byte_block[i * 8 + 3],
+                            byte_block[i * 8 + 4],
+                            byte_block[i * 8 + 5],
+                            byte_block[i * 8 + 6],
+                            byte_block[i * 8 + 7],
+                        ]);
+                    });
+                    if self.l == 0 {
+                        self.ignore_counter = true;
+                    }
+                    self.compress(&block);
+                }
             }
         }
     }

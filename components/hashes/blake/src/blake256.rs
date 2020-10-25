@@ -9,7 +9,7 @@ impl Blake256 {
         Self(Blake::<u32>::new([
             0x6A09_E667, 0xBB67_AE85, 0x3C6E_F372, 0xA54F_F53A,
             0x510E_527F, 0x9B05_688C, 0x1F83_D9AB, 0x5BE0_CD19
-        ], salt))
+        ], salt, 14))
     }
 }
 
@@ -19,14 +19,13 @@ impl Default for Blake256 {
         Self(Blake::<u32>::new([
             0x6A09_E667, 0xBB67_AE85, 0x3C6E_F372, 0xA54F_F53A,
             0x510E_527F, 0x9B05_688C, 0x1F83_D9AB, 0x5BE0_CD19
-        ], [0; 4]))
+        ], [0; 4], 14))
     }
 }
 
 impl Hash for Blake256 {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
-        self.0.padding(message, 0x01);
-        self.0.compress(14);
+        self.0.blake(message, 0x01);
         self.0
             .h
             .iter()
