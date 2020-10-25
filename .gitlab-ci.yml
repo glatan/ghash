@@ -7,6 +7,8 @@ variables:
 
 before_script:
   - rustc --version
+  - apt update -y
+  - apt install -y make
 
 cache:
   paths:
@@ -18,26 +20,28 @@ cache:
     - rustc --version
     - rustup target add wasm32-wasi
     - apt update -y
-    - apt install -y curl xz-utils
+    - apt install -y curl make xz-utils
     - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" > wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
     - tar -xvf wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
     - mv wasmtime-v${WASMTIME_VERSION}-x86_64-linux/wasmtime /usr/bin/
   script:
-    - cargo test --workspace --verbose --target wasm32-wasi
+    - make test.wasm32-wasi
 
 stable-i686-unknown-linux-gnu:
   stage: test
   image: i386/rust:slim-buster
   before_script:
+    - apt update -y
+    - apt install -y make
     - linux32 rustc --version
   script:
-    - linux32 cargo test --workspace --verbose --target i686-unknown-linux-gnu
+    - linux32 make test.i686-unknown-linux-gnu
 
 stable-x86_64-unknown-linux-gnu:
   stage: test
   image: amd64/rust:slim-buster
   script:
-    - cargo test --workspace --verbose --target x86_64-unknown-linux-gnu
+    - make test.x86_64-unknown-linux-gnu
 
 stable-wasm32-wasi:
   stage: test
@@ -48,7 +52,7 @@ nightly-x86_64-unknown-linux-gnu:
   stage: test
   image: rustlang/rust:nightly-buster-slim
   script:
-    - cargo test --workspace --verbose --target x86_64-unknown-linux-gnu
+    - make test.x86_64-unknown-linux-gnu
 
 nightly-wasm32-wasi:
   stage: test
