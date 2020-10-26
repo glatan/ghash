@@ -246,7 +246,7 @@ macro_rules! impl_md_flow_minimal {
         let mut block = [0u32; 16];
         if l >= 64 {
             $message.chunks_exact(64).for_each(|bytes| {
-                (0..16).for_each(|i|{
+                (0..16).for_each(|i| {
                     block[i] = u32::$from_bytes([
                         bytes[i * 4],
                         bytes[i * 4 + 1],
@@ -287,7 +287,7 @@ macro_rules! impl_md_flow_minimal {
                     byte_block[remainder] = 0x80;
                     byte_block[120..].copy_from_slice(&(8 * l as u64).$to_bytes());
                     byte_block.chunks_exact(64).for_each(|bytes| {
-                        (0..16).for_each(|i|{
+                        (0..16).for_each(|i| {
                             block[i] = u32::$from_bytes([
                                 bytes[i * 4],
                                 bytes[i * 4 + 1],
@@ -304,7 +304,7 @@ macro_rules! impl_md_flow_minimal {
                     byte_block[..remainder].copy_from_slice(&$message[offset..]);
                     byte_block[remainder] = 0x80;
                     byte_block[56..].copy_from_slice(&(8 * l as u64).$to_bytes());
-                    (0..16).for_each(|i|{
+                    (0..16).for_each(|i| {
                         block[i] = u32::$from_bytes([
                             byte_block[i * 4],
                             byte_block[i * 4 + 1],
