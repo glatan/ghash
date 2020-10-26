@@ -45,7 +45,7 @@ impl Md4 {
     pub fn new() -> Self {
         Self::default()
     }
-    #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
+    #[allow(clippy::many_single_char_names)]
     fn compress(&mut self, x: &[u32; 16]) {
         let [mut a, mut b, mut c, mut d] = self.status;
 

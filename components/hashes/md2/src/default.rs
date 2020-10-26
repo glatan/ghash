@@ -69,7 +69,6 @@ impl Md2 {
                 15
             );
         }
-        #[allow(clippy::unused_assignments)]
         checksnum_i!(
             self,
             padded_block,
