@@ -20,7 +20,7 @@ impl Sha0 {
     pub fn new() -> Self {
         Self::default()
     }
-    // #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
+    #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self, m: &[u32; 16]) {
         let [mut a, mut b, mut c, mut d, mut e] = self.status;
         let mut temp;
@@ -72,7 +72,7 @@ impl Sha0 {
             a = temp;
         }
         // Round 4
-        for i in 60..80 {
+        for t in 60..80 {
             temp = a
                 .rotate_left(5)
                 .wrapping_add(parity(b, c, d))
