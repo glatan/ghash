@@ -1,5 +1,7 @@
 mod consts;
 
+pub use utils::Hash;
+
 #[cfg(feature = "minimal")]
 mod minimal;
 #[cfg(feature = "minimal")]
