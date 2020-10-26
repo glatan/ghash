@@ -6,7 +6,7 @@ edition = "2018"
 
 [features]
 # 出力バイナリサイズが小さい(主にwasmターゲットでの使用を推奨)
-minimal = [] 
+minimal = []
 
 [dependencies]
 utils = { path = "../../utils" }
