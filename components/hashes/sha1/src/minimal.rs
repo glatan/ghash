@@ -12,22 +12,22 @@ const fn maj(b: u32, c: u32, d: u32) -> u32 {
     (b & c) | (b & d) | (c & d)
 }
 
-pub struct Sha0 {
+pub struct Sha1 {
     status: [u32; 5],
 }
 
-impl Sha0 {
+impl Sha1 {
     pub fn new() -> Self {
         Self::default()
     }
-    // #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
+    #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self, m: &[u32; 16]) {
         let [mut a, mut b, mut c, mut d, mut e] = self.status;
         let mut temp;
 
         let mut w = [0; 80];
         w[..16].copy_from_slice(m);
-        (16..80).for_each(|t| w[t] = w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16]);
+        (16..80).for_each(|t| w[t] = (w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16]).rotate_left(1));
 
         // Round 1
         for t in 0..20 {
@@ -72,7 +72,7 @@ impl Sha0 {
             a = temp;
         }
         // Round 4
-        for i in 60..80 {
+        for t in 60..80 {
             temp = a
                 .rotate_left(5)
                 .wrapping_add(parity(b, c, d))
@@ -94,7 +94,7 @@ impl Sha0 {
     }
 }
 
-impl Default for Sha0 {
+impl Default for Sha1 {
     #[rustfmt::skip]
     fn default() -> Self {
         Self {
@@ -103,7 +103,7 @@ impl Default for Sha0 {
     }
 }
 
-impl Hash for Sha0 {
+impl Hash for Sha1 {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
         impl_md_flow_minimal!(u32=> self, message, from_be_bytes, to_be_bytes);
         self.status
