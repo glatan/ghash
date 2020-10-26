@@ -20,6 +20,8 @@ mod keccak256;
 mod keccak384;
 mod keccak512;
 
+pub use utils::Hash;
+
 pub use keccak224::Keccak224;
 pub use keccak256::Keccak256;
 pub use keccak384::Keccak384;

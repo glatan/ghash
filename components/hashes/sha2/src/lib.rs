@@ -5,6 +5,8 @@ mod sha512;
 mod sha512trunc224;
 mod sha512trunc256;
 
+pub use utils::Hash;
+
 pub use sha224::Sha224;
 pub use sha256::Sha256;
 pub use sha384::Sha384;

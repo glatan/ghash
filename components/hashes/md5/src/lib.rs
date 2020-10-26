@@ -1,5 +1,5 @@
 use std::cmp::Ordering;
-use utils::Hash;
+pub use utils::Hash;
 use utils::{impl_md_flow, uint_from_bytes};
 
 #[rustfmt::skip]
