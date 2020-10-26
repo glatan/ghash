@@ -1,5 +1,5 @@
-use super::{f1, f2, f3, f4};
-use super::{K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
+use crate::consts::{f1, f2, f3, f4};
+use crate::consts::{H256, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
 use utils::{impl_md_flow, uint_from_bytes, Hash};
 
 use std::cmp::Ordering;
@@ -206,10 +206,7 @@ impl Default for Ripemd256 {
     #[rustfmt::skip]
     fn default() -> Self {
         Self {
-            status: [
-                0x6745_2301, 0xEFCD_AB89, 0x98BA_DCFE, 0x1032_5476,
-                0x7654_3210, 0xFEDC_BA98, 0x89AB_CDEF, 0x0123_4567
-            ],
+            status: H256,
         }
     }
 }

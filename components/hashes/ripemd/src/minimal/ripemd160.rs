@@ -1,5 +1,5 @@
-use super::{f1, f2, f3, f4, f5};
-use super::{K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
+use crate::consts::{f1, f2, f3, f4, f5};
+use crate::consts::{H160, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
 use utils::{impl_md_flow, uint_from_bytes, Hash};
 
 use std::cmp::Ordering;
@@ -224,15 +224,7 @@ impl Ripemd160 {
 
 impl Default for Ripemd160 {
     fn default() -> Self {
-        Self {
-            status: [
-                0x6745_2301,
-                0xEFCD_AB89,
-                0x98BA_DCFE,
-                0x1032_5476,
-                0xC3D2_E1F0,
-            ],
-        }
+        Self { status: H160 }
     }
 }
 
