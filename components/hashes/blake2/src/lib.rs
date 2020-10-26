@@ -1,6 +1,8 @@
 mod blake2b;
 mod blake2s;
 
+pub use utils::Hash;
+
 pub use blake2b::Blake2b;
 pub use blake2s::Blake2s;
 
