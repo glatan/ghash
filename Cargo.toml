@@ -25,6 +25,7 @@ sha0 = { path = "components/hashes/sha0", optional = true }
 sha1 = { path = "components/hashes/sha1", optional = true }
 sha2 = { path = "components/hashes/sha2", optional = true }
 sha3 = { path = "components/hashes/sha3", optional = true }
+utils = { path = "components/utils" }
 
 [workspace]
 members = [
@@ -41,4 +42,6 @@ members = [
     "components/hashes/sha3",
     "components/dev-utils",
     "components/utils",
+
+    "examples/hashsum",
 ]
