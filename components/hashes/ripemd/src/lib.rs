@@ -1,4 +1,5 @@
 mod consts;
+mod macros;
 
 pub use utils::Hash;
 
