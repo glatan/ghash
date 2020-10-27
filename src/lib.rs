@@ -9,4 +9,3 @@ pub use sha0::Sha0;
 pub use sha1::Sha1;
 pub use sha2::*;
 pub use sha3::*;
-pub use utils::Hash;

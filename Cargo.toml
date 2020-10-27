@@ -8,19 +8,23 @@ readme = "README.md"
 repository = "https://gitlab.com/glatan/ghash/"
 homepage = "https://gitlab.com/glatan/ghash/"
 
+[features]
+default = ["blake", "blake2", "keccak", "md2", "md4", "md5", "ripemd", "sha0", "sha1", "sha2", "sha3"]
+# 出力バイナリサイズが小さい(主にwasmターゲットでの使用を推奨)
+minimal = ["blake/minimal", "blake2", "keccak", "md2/minimal", "md4/minimal", "md5/minimal", "ripemd/minimal", "sha0/minimal", "sha1/minimal", "sha2/minimal", "sha3"]
+
 [dependencies]
-blake = { path = "components/hashes/blake"}
-blake2 = { path = "components/hashes/blake2"}
-keccak = { path = "components/hashes/keccak"}
-md2 = { path = "components/hashes/md2"}
-md4 = { path = "components/hashes/md4"}
-md5 = { path = "components/hashes/md5"}
-ripemd = { path = "components/hashes/ripemd"}
-sha0 = { path = "components/hashes/sha0"}
-sha1 = { path = "components/hashes/sha1"}
-sha2 = { path = "components/hashes/sha2"}
-sha3 = { path = "components/hashes/sha3"}
-utils = { path = "components/utils"}
+blake = { path = "components/hashes/blake", optional = true }
+blake2 = { path = "components/hashes/blake2", optional = true }
+keccak = { path = "components/hashes/keccak", optional = true }
+md2 = { path = "components/hashes/md2", optional = true }
+md4 = { path = "components/hashes/md4", optional = true }
+md5 = { path = "components/hashes/md5", optional = true }
+ripemd = { path = "components/hashes/ripemd", optional = true }
+sha0 = { path = "components/hashes/sha0", optional = true }
+sha1 = { path = "components/hashes/sha1", optional = true }
+sha2 = { path = "components/hashes/sha2", optional = true }
+sha3 = { path = "components/hashes/sha3", optional = true }
 
 [workspace]
 members = [
