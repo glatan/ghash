@@ -1,5 +1,10 @@
 use std::cmp::Ordering;
+
 pub use utils::Hash;
+
+#[cfg(feature = "minimal")]
+use utils::impl_md_flow_minimal;
+#[cfg(not(feature = "minimal"))]
 use utils::{impl_md_flow, uint_from_bytes};
 
 #[rustfmt::skip]
@@ -78,7 +83,7 @@ impl Md5 {
     pub fn new() -> Self {
         Self::default()
     }
-    #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
+    #[allow(clippy::many_single_char_names)]
     fn compress(&mut self, x: &[u32; 16]) {
         let [mut a, mut b, mut c, mut d] = self.status;
 
@@ -167,6 +172,9 @@ impl Default for Md5 {
 
 impl Hash for Md5 {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+        #[cfg(feature = "minimal")]
+        impl_md_flow_minimal!(u32=> self, message, from_le_bytes, to_le_bytes);
+        #[cfg(not(feature = "minimal"))]
         impl_md_flow!(u32=> self, message, from_le_bytes, to_le_bytes);
         self.status[0..4]
             .iter()

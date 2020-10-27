@@ -120,7 +120,7 @@ impl Blake<u32> {
             message.chunks_exact(64).for_each(|bytes| {
                 (0..16).for_each(|i| {
                     block[i] = u32::from_be_bytes([
-                        bytes[i * 4 + 0],
+                        bytes[i * 4],
                         bytes[i * 4 + 1],
                         bytes[i * 4 + 2],
                         bytes[i * 4 + 3],
@@ -143,7 +143,7 @@ impl Blake<u32> {
                 0,
                 0,
                 0,
-                0 | last_byte as u32,
+                last_byte as u32,
                 0,
                 0,
             ])
@@ -162,7 +162,7 @@ impl Blake<u32> {
                     byte_block.chunks_exact(64).for_each(|bytes| {
                         (0..16).for_each(|i| {
                             block[i] = u32::from_be_bytes([
-                                bytes[i * 4 + 0],
+                                bytes[i * 4],
                                 bytes[i * 4 + 1],
                                 bytes[i * 4 + 2],
                                 bytes[i * 4 + 3],
@@ -181,7 +181,7 @@ impl Blake<u32> {
                     byte_block[56..].copy_from_slice(&(8 * l as u64).to_be_bytes());
                     (0..16).for_each(|i| {
                         block[i] = u32::from_be_bytes([
-                            byte_block[i * 4 + 0],
+                            byte_block[i * 4],
                             byte_block[i * 4 + 1],
                             byte_block[i * 4 + 2],
                             byte_block[i * 4 + 3],
@@ -285,7 +285,7 @@ impl Blake<u64> {
             message.chunks_exact(128).for_each(|bytes| {
                 (0..16).for_each(|i| {
                     block[i] = u64::from_be_bytes([
-                        bytes[i * 8 + 0],
+                        bytes[i * 8],
                         bytes[i * 8 + 1],
                         bytes[i * 8 + 2],
                         bytes[i * 8 + 3],
@@ -312,7 +312,7 @@ impl Blake<u64> {
                 0,
                 0,
                 0,
-                0 | last_byte as u64,
+                last_byte as u64,
                 0,
                 0,
             ])
@@ -331,7 +331,7 @@ impl Blake<u64> {
                     byte_block.chunks_exact(128).for_each(|bytes| {
                         (0..16).for_each(|i| {
                             block[i] = u64::from_be_bytes([
-                                bytes[i * 8 + 0],
+                                bytes[i * 8],
                                 bytes[i * 8 + 1],
                                 bytes[i * 8 + 2],
                                 bytes[i * 8 + 3],
@@ -354,7 +354,7 @@ impl Blake<u64> {
                     byte_block[112..].copy_from_slice(&(8 * l as u128).to_be_bytes());
                     (0..16).for_each(|i| {
                         block[i] = u64::from_be_bytes([
-                            byte_block[i * 8 + 0],
+                            byte_block[i * 8],
                             byte_block[i * 8 + 1],
                             byte_block[i * 8 + 2],
                             byte_block[i * 8 + 3],
