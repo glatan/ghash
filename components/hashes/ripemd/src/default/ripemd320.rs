@@ -1,44 +1,10 @@
 use crate::consts::{f1, f2, f3, f4, f5};
 use crate::consts::{H320, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
+use crate::{round_left_160, round_right_160};
 use utils::{impl_md_flow, uint_from_bytes, Hash};
 
 use std::cmp::Ordering;
 use std::mem;
-
-macro_rules! round_left {
-    ($t:expr, $a:expr, $b:expr, $c:expr, $d:expr, $e:expr, $f:ident, $x:expr, $( $j:expr ),+) => {
-        $(
-            $t = $a
-                .wrapping_add($f($b, $c, $d))
-                .wrapping_add($x[R_LEFT[$j]])
-                .wrapping_add(K160_LEFT[($j / 16)])
-                .rotate_left(S_LEFT[$j])
-                .wrapping_add($e);
-            $a = $e;
-            $e = $d;
-            $d = $c.rotate_left(10);
-            $c = $b;
-            $b = $t;
-        )*
-    };
-}
-macro_rules! round_right {
-    ($t:expr, $a:expr, $b:expr, $c:expr, $d:expr, $e:expr, $f:ident, $x:expr, $( $j:expr ),+) => {
-        $(
-            $t = $a
-                .wrapping_add($f($b, $c, $d))
-                .wrapping_add($x[R_RIGHT[$j]])
-                .wrapping_add(K160_RIGHT[($j / 16)])
-                .rotate_left(S_RIGHT[$j])
-                .wrapping_add($e);
-            $a = $e;
-            $e = $d;
-            $d = $c.rotate_left(10);
-            $c = $b;
-            $b = $t;
-        )*
-    };
-}
 
 pub struct Ripemd320 {
     status: [u32; 10],
@@ -65,51 +31,51 @@ impl Ripemd320 {
             self.status[9],
         );
         // Round 1
-        round_left!(
+        round_left_160!(
             t, a_left, b_left, c_left, d_left, e_left, f1, x, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
             12, 13, 14, 15
         );
-        round_right!(
+        round_right_160!(
             t, a_right, b_right, c_right, d_right, e_right, f5, x, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
             10, 11, 12, 13, 14, 15
         );
         mem::swap(&mut b_left, &mut b_right);
         // Round 2
-        round_left!(
+        round_left_160!(
             t, a_left, b_left, c_left, d_left, e_left, f2, x, 16, 17, 18, 19, 20, 21, 22, 23, 24,
             25, 26, 27, 28, 29, 30, 31
         );
-        round_right!(
+        round_right_160!(
             t, a_right, b_right, c_right, d_right, e_right, f4, x, 16, 17, 18, 19, 20, 21, 22, 23,
             24, 25, 26, 27, 28, 29, 30, 31
         );
         mem::swap(&mut d_left, &mut d_right);
         // Round 3
-        round_left!(
+        round_left_160!(
             t, a_left, b_left, c_left, d_left, e_left, f3, x, 32, 33, 34, 35, 36, 37, 38, 39, 40,
             41, 42, 43, 44, 45, 46, 47
         );
-        round_right!(
+        round_right_160!(
             t, a_right, b_right, c_right, d_right, e_right, f3, x, 32, 33, 34, 35, 36, 37, 38, 39,
             40, 41, 42, 43, 44, 45, 46, 47
         );
         mem::swap(&mut a_left, &mut a_right);
         // Round 4
-        round_left!(
+        round_left_160!(
             t, a_left, b_left, c_left, d_left, e_left, f4, x, 48, 49, 50, 51, 52, 53, 54, 55, 56,
             57, 58, 59, 60, 61, 62, 63
         );
-        round_right!(
+        round_right_160!(
             t, a_right, b_right, c_right, d_right, e_right, f2, x, 48, 49, 50, 51, 52, 53, 54, 55,
             56, 57, 58, 59, 60, 61, 62, 63
         );
         mem::swap(&mut c_left, &mut c_right);
         // Round 5
-        round_left!(
+        round_left_160!(
             t, a_left, b_left, c_left, d_left, e_left, f5, x, 64, 65, 66, 67, 68, 69, 70, 71, 72,
             73, 74, 75, 76, 77, 78, 79
         );
-        round_right!(
+        round_right_160!(
             t, a_right, b_right, c_right, d_right, e_right, f1, x, 64, 65, 66, 67, 68, 69, 70, 71,
             72, 73, 74, 75, 76, 77, 78, 79
         );

@@ -1,39 +1,9 @@
 use crate::consts::{f1, f2, f3, f4};
 use crate::consts::{H128, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
+use crate::{round_left_128, round_right_128};
 use utils::{impl_md_flow, uint_from_bytes, Hash};
 
 use std::cmp::Ordering;
-
-macro_rules! round_left {
-    ($t:expr, $a:expr, $b:expr, $c:expr, $d:expr, $f:ident, $x:expr, $( $j:expr ),+) => {
-        $(
-            $t = $a
-                .wrapping_add($f($b, $c, $d))
-                .wrapping_add($x[R_LEFT[$j]])
-                .wrapping_add(K128_LEFT[($j / 16)])
-                .rotate_left(S_LEFT[$j]);
-            $a = $d;
-            $d = $c;
-            $c = $b;
-            $b = $t;
-        )*
-    };
-}
-macro_rules! round_right {
-    ($t:expr, $a:expr, $b:expr, $c:expr, $d:expr, $f:ident, $x:expr, $( $j:expr ),+) => {
-        $(
-            $t = $a
-                .wrapping_add($f($b, $c, $d))
-                .wrapping_add($x[R_RIGHT[$j]])
-                .wrapping_add(K128_RIGHT[($j / 16)])
-                .rotate_left(S_RIGHT[$j]);
-            $a = $d;
-            $d = $c;
-            $c = $b;
-            $b = $t;
-        )*
-    };
-}
 
 pub struct Ripemd128 {
     status: [u32; 4],
@@ -48,38 +18,38 @@ impl Ripemd128 {
         let [mut a_left, mut b_left, mut c_left, mut d_left] = self.status;
         let [mut a_right, mut b_right, mut c_right, mut d_right] = self.status;
         // Round 1
-        round_left!(
+        round_left_128!(
             t, a_left, b_left, c_left, d_left, f1, x, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
             14, 15
         );
-        round_right!(
+        round_right_128!(
             t, a_right, b_right, c_right, d_right, f4, x, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
             13, 14, 15
         );
         // Round 2
-        round_left!(
+        round_left_128!(
             t, a_left, b_left, c_left, d_left, f2, x, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
             27, 28, 29, 30, 31
         );
-        round_right!(
+        round_right_128!(
             t, a_right, b_right, c_right, d_right, f3, x, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
             26, 27, 28, 29, 30, 31
         );
         // Round 3
-        round_left!(
+        round_left_128!(
             t, a_left, b_left, c_left, d_left, f3, x, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
             43, 44, 45, 46, 47
         );
-        round_right!(
+        round_right_128!(
             t, a_right, b_right, c_right, d_right, f2, x, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
             42, 43, 44, 45, 46, 47
         );
         // Round 4
-        round_left!(
+        round_left_128!(
             t, a_left, b_left, c_left, d_left, f4, x, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58,
             59, 60, 61, 62, 63
         );
-        round_right!(
+        round_right_128!(
             t, a_right, b_right, c_right, d_right, f1, x, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
             58, 59, 60, 61, 62, 63
         );

@@ -1,3 +1,72 @@
+#[macro_export]
+macro_rules! round_left_128 {
+    ($t:expr, $a:expr, $b:expr, $c:expr, $d:expr, $f:ident, $x:expr, $( $j:expr ),+) => {
+        $(
+            $t = $a
+                .wrapping_add($f($b, $c, $d))
+                .wrapping_add($x[R_LEFT[$j]])
+                .wrapping_add(K128_LEFT[($j / 16)])
+                .rotate_left(S_LEFT[$j]);
+            $a = $d;
+            $d = $c;
+            $c = $b;
+            $b = $t;
+        )*
+    };
+}
+#[macro_export]
+macro_rules! round_right_128 {
+    ($t:expr, $a:expr, $b:expr, $c:expr, $d:expr, $f:ident, $x:expr, $( $j:expr ),+) => {
+        $(
+            $t = $a
+                .wrapping_add($f($b, $c, $d))
+                .wrapping_add($x[R_RIGHT[$j]])
+                .wrapping_add(K128_RIGHT[($j / 16)])
+                .rotate_left(S_RIGHT[$j]);
+            $a = $d;
+            $d = $c;
+            $c = $b;
+            $b = $t;
+        )*
+    };
+}
+#[macro_export]
+macro_rules! round_left_160 {
+    ($t:expr, $a:expr, $b:expr, $c:expr, $d:expr, $e:expr, $f:ident, $x:expr, $( $j:expr ),+) => {
+        $(
+            $t = $a
+                .wrapping_add($f($b, $c, $d))
+                .wrapping_add($x[R_LEFT[$j]])
+                .wrapping_add(K160_LEFT[($j / 16)])
+                .rotate_left(S_LEFT[$j])
+                .wrapping_add($e);
+            $a = $e;
+            $e = $d;
+            $d = $c.rotate_left(10);
+            $c = $b;
+            $b = $t;
+        )*
+    };
+}
+#[macro_export]
+macro_rules! round_right_160 {
+    ($t:expr, $a:expr, $b:expr, $c:expr, $d:expr, $e:expr, $f:ident, $x:expr, $( $j:expr ),+) => {
+        $(
+            $t = $a
+                .wrapping_add($f($b, $c, $d))
+                .wrapping_add($x[R_RIGHT[$j]])
+                .wrapping_add(K160_RIGHT[($j / 16)])
+                .rotate_left(S_RIGHT[$j])
+                .wrapping_add($e);
+            $a = $e;
+            $e = $d;
+            $d = $c.rotate_left(10);
+            $c = $b;
+            $b = $t;
+        )*
+    };
+}
+
 // minimal version
 #[macro_export]
 macro_rules! round_left_128_minimal {
