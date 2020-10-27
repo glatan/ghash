@@ -1,0 +1,133 @@
+name: hashsum
+version: "0.1.0"
+author: glatan <glatan@protonmail.com>
+about: Print or check checksums
+usage: hashsum [SUBCOMMANDS(Algorism)] [File]
+subcommands:
+  - help:
+      about: Prints this message or the help of the given subcommand(s)
+  - blake-224:
+      about: Print or check BLAKE-224 checksums
+      args:
+        - file:
+            required: true
+  - blake-256:
+      about: Print or check BLAKE-256 checksums
+      args:
+        - file:
+            required: true
+  - blake-384:
+      about: Print or check BLAKE-384 checksums
+      args:
+        - file:
+            required: true
+  - blake-512:
+      about: Print or check BLAKE-512 checksums
+      args:
+        - file:
+            required: true
+  - blake2b:
+      about: Print or check BLAKE2b checksums
+      args:
+        - file:
+            required: true
+  - blake2s:
+      about: Print or check BLAKE2s checksums
+      args:
+        - file:
+            required: true
+  - md2:
+      about: Print or check MD2 checksums
+      args:
+        - file:
+            required: true
+  - md4:
+      about: Print or check MD4 checksums
+      args:
+        - file:
+            required: true
+  - md5:
+      about: Print or check MD5 checksums
+      args:
+        - file:
+            required: true
+  - ripemd128:
+      about: Print or check RIPEMD-128 checksums
+      args:
+        - file:
+            required: true
+  - ripemd160:
+      about: Print or check RIPEMD-160 checksums
+      args:
+        - file:
+            required: true
+  - ripemd256:
+      about: Print or check RIPEMD-256 checksums
+      args:
+        - file:
+            required: true
+  - ripemd320:
+      about: Print or check RIPEMD-320 checksums
+      args:
+        - file:
+            required: true
+  - sha-0:
+      about: Print or check SHA-0 checksums
+      args:
+        - file:
+            required: true
+  - sha-1:
+      about: Print or check SHA-1 checksums
+      args:
+        - file:
+            required: true
+  - sha-224:
+      about: Print or check SHA-224 checksums
+      args:
+        - file:
+            required: true
+  - sha-256:
+      about: Print or check SHA-256 checksums
+      args:
+        - file:
+            required: true
+  - sha-384:
+      about: Print or check SHA-384 checksums
+      args:
+        - file:
+            required: true
+  - sha-512:
+      about: Print or check SHA-512 checksums
+      args:
+        - file:
+            required: true
+  - sha-512/224:
+      about: Print or check SHA-512/224 checksums
+      args:
+        - file:
+            required: true
+  - sha-512/256:
+      about: Print or check SHA-512/256 checksums
+      args:
+        - file:
+            required: true
+  - sha3-224:
+      about: Print or check SHA3-224 checksums
+      args:
+        - file:
+            required: true
+  - sha3-256:
+      about: Print or check SHA3-256 checksums
+      args:
+        - file:
+            required: true
+  - sha3-384:
+      about: Print or check SHA3-384 checksums
+      args:
+        - file:
+            required: true
+  - sha3-512:
+      about: Print or check SHA3-512 checksums
+      args:
+        - file:
+            required: true
