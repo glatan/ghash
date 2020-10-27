@@ -1,0 +1,9 @@
+[package]
+name = "hashsum"
+version = "0.1.0"
+authors = ["glatan <glatan@protonmail.com>"]
+edition = "2018"
+
+[dependencies]
+clap = { version = "2", features = ["yaml"] }
+ghash = { path = "../../", features = ["default"] }
