@@ -73,21 +73,21 @@ macro_rules! impl_benchmark {
             use $module::$T;
             #[bench]
             #[allow(non_snake_case)]
-            fn B000(b: &mut Bencher) {
-                b.iter(|| $T::default().hash_to_bytes(&[]));
-                b.bytes = 0;
+            fn B064(b: &mut Bencher) {
+                b.iter(|| $T::default().hash_to_bytes(&[0; 64]));
+                b.bytes = 64;
             }
             #[bench]
             #[allow(non_snake_case)]
-            fn KB001(b: &mut Bencher) {
-                b.iter(|| $T::default().hash_to_bytes(&[0; 1024]));
-                b.bytes = 1024;
+            fn KB256(b: &mut Bencher) {
+                b.iter(|| $T::default().hash_to_bytes(&[0; 1024 * 256]));
+                b.bytes = 1024 * 256;
             }
             #[bench]
             #[allow(non_snake_case)]
-            fn MB001(b: &mut Bencher) {
-                b.iter(|| $T::default().hash_to_bytes(&[0; 1024 * 1024]));
-                b.bytes = 1024 * 1024;
+            fn MB004(b: &mut Bencher) {
+                b.iter(|| $T::default().hash_to_bytes(&[0; 1024 * 1024 * 4]));
+                b.bytes = 1024 * 1024 * 4;
             }
         }
     };
