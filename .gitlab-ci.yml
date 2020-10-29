@@ -40,15 +40,95 @@ stable-aarch64-unknown-linux-gnu:
     TARGET: aarch64-unknown-linux-gnu
   <<: *cross_compile_template
 
+stable-arm-unknown-linux-gnueabi:
+  variables:
+    PACKAGES: gcc-linux-gnueabi-gcc
+    TARGET: arm-unknown-linux-gnueabi
+  <<: *cross_compile_template
+
+stable-arm-unknown-linux-gnueabihf:
+  variables:
+    PACKAGES: gcc-linux-gnueabihf-gcc
+    TARGET: arm-unknown-linux-gnueabihf
+  <<: *cross_compile_template
+
+stable-armv5te-unknown-linux-gnueabi:
+  variables:
+    PACKAGES: gcc-linux-gnueabi-gcc
+    TARGET: armv5te-unknown-linux-gnueabi
+  <<: *cross_compile_template
+
+stable-armv7-unknown-linux-gnueabi:
+  variables:
+    PACKAGES: gcc-linux-gnueabi-gcc
+    TARGET: armv7-unknown-linux-gnueabi
+  <<: *cross_compile_template
+
+stable-armv7-unknown-linux-gnueabihf:
+  variables:
+    PACKAGES: gcc-linux-gnueabihf-gcc
+    TARGET: armv7-unknown-linux-gnueabihf
+  <<: *cross_compile_template
+
+stable-i586-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-i686-linux-gnu
+    TARGET: i586-unknown-linux-gnu
+  <<: *cross_compile_template
+
 stable-i686-unknown-linux-gnu:
-  stage: test
-  image: i386/rust:slim-buster
-  before_script:
-    - apt update -y
-    - apt install -y make
-    - linux32 rustc --version
-  script:
-    - linux32 make test.i686-unknown-linux-gnu
+  variables:
+    PACKAGES: gcc-i686-linux-gnu
+    TARGET: i686-unknown-linux-gnu
+  <<: *cross_compile_template
+
+stable-mips-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-mips-linux-gnu
+    TARGET: mips-unknown-linux-gnu
+  <<: *cross_compile_template
+
+stable-mipsel-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-mipsel-linux-gnu
+    TARGET: mipsel-unknown-linux-gnu
+  <<: *cross_compile_template
+
+stable-mips64-unknown-linux-gnuabi64:
+  variables:
+    PACKAGES: gcc-mips64-linux-gnuabi64
+    TARGET: mips64-unknown-linux-gnuabi64
+  <<: *cross_compile_template
+
+stable-mips64el-unknown-linux-gnuabi64:
+  variables:
+    PACKAGES: gcc-mips64el-linux-gnuabi64
+    TARGET: mips64el-unknown-linux-gnuabi64
+  <<: *cross_compile_template
+
+stable-powerpc64le-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-powerpc64le-linux-gnu
+    TARGET: powerpc64le-unknown-linux-gnu
+  <<: *cross_compile_template
+
+stable-riscv64gc-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-riscv64-linux-gnu
+    TARGET: riscv64gc-unknown-linux-gnu
+  <<: *cross_compile_template
+
+stable-s390x-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-s390x-linux-gnu
+    TARGET: s390x-unknown-linux-gnu
+  <<: *cross_compile_template
+
+stable-sparc64-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-sparc64-linux-gnu
+    TARGET: sparc64-unknown-linux-gnu
+  <<: *cross_compile_template
 
 stable-x86_64-unknown-linux-gnu:
   stage: test
