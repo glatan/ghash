@@ -4,13 +4,11 @@ stages:
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
 
-cache:
-  paths:
-    - cargo/
-    - target/
-
 .cross_compile_template: &cross_compile_template
   image: amd64/debian:buster-slim
+  cache:
+    paths:
+      - target/${TARGET}
   before_script:
     - apt update -y
     - apt install -y curl make qemu-user ${PACKAGES}
@@ -23,6 +21,9 @@ cache:
 .wasm32-wasi_template: &wasm32-wasi_template
   variables:
     WASMTIME_VERSION: 0.20.0
+  cache:
+    paths:
+      - target/wasm32-wasi
   before_script:
     - rustc --version
     - rustup target add wasm32-wasi
@@ -42,31 +43,31 @@ stable-aarch64-unknown-linux-gnu:
 
 stable-arm-unknown-linux-gnueabi:
   variables:
-    PACKAGES: gcc-linux-gnueabi
+    PACKAGES: gcc-arm-linux-gnueabi
     TARGET: arm-unknown-linux-gnueabi
   <<: *cross_compile_template
 
 stable-arm-unknown-linux-gnueabihf:
   variables:
-    PACKAGES: gcc-linux-gnueabihf
+    PACKAGES: gcc-arm-linux-gnueabihf
     TARGET: arm-unknown-linux-gnueabihf
   <<: *cross_compile_template
 
 stable-armv5te-unknown-linux-gnueabi:
   variables:
-    PACKAGES: gcc-linux-gnueabi
+    PACKAGES: gcc-arm-linux-gnueabi
     TARGET: armv5te-unknown-linux-gnueabi
   <<: *cross_compile_template
 
 stable-armv7-unknown-linux-gnueabi:
   variables:
-    PACKAGES: gcc-linux-gnueabi
+    PACKAGES: gcc-arm-linux-gnueabi
     TARGET: armv7-unknown-linux-gnueabi
   <<: *cross_compile_template
 
 stable-armv7-unknown-linux-gnueabihf:
   variables:
-    PACKAGES: gcc-linux-gnueabihf
+    PACKAGES: gcc-arm-linux-gnueabihf
     TARGET: armv7-unknown-linux-gnueabihf
   <<: *cross_compile_template
 
@@ -133,6 +134,9 @@ stable-sparc64-unknown-linux-gnu:
 stable-x86_64-unknown-linux-gnu:
   stage: test
   image: amd64/rust:slim-buster
+  cache:
+    paths:
+      - target/x86_64-unknown-linux-gnu
   before_script:
     - apt update -y
     - apt install -y make
@@ -148,6 +152,9 @@ stable-wasm32-wasi:
 nightly-x86_64-unknown-linux-gnu:
   stage: test
   image: rustlang/rust:nightly-buster-slim
+  cache:
+    paths:
+      - target/x86_64-unknown-linux-gnu
   before_script:
     - apt update -y
     - apt install -y make
