@@ -15,6 +15,18 @@ cache:
     - cargo/
     - target/
 
+.cross_compile_template: &cross_compile_template
+  image: amd64/debian:buster-slim
+  script:
+    - apt install -y qemu ${PACKAGES}
+    - rustup target add ${TARGET}
+
+stable-aarch64-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-aarch64-linux-gnu libc-dev-arm64-cross
+    TARGET: aarch64-unknown-linux-gnu
+  << : *cross_compile_template
+
 .wasm32-wasi_template: &wasm32-wasi_template
   before_script:
     - rustc --version
