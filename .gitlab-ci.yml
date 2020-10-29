@@ -5,7 +5,7 @@ variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
 
 .cross_compile_template: &cross_compile_template
-  image: amd64/debian:buster-slim
+  image: amd64/ubuntu:groovy
   cache:
     paths:
       - target/${TARGET}
