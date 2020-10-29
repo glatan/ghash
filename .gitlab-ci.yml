@@ -19,7 +19,7 @@ cache:
   script:
     - apt install -y curl qemu ${PACKAGES}
     - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > setup.sh
-    - sh setup.sh -y --default-host ${TARGET} --default-toolchain stable
+    - sh setup.sh -y --default-host ${TARGET} --default-toolchain stable --profile minimal
     - source ${CI_PROJECT_DIR}/cargo/env
     - make test.${TARGET}
 
