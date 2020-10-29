@@ -3,11 +3,6 @@ stages:
 
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
-  WASMTIME_VERSION: 0.20.0
-
-before_script:
-  - apt update -y
-  - apt install -y make
 
 cache:
   paths:
@@ -16,20 +11,18 @@ cache:
 
 .cross_compile_template: &cross_compile_template
   image: amd64/debian:buster-slim
-  script:
-    - apt install -y curl qemu-user ${PACKAGES}
+  before_script:
+    - apt update -y
+    - apt install -y curl make qemu-user ${PACKAGES}
     - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > setup.sh
     - sh setup.sh -y -t ${TARGET} --default-toolchain stable --profile minimal
     - source ${CI_PROJECT_DIR}/cargo/env
+  script:
     - make test.${TARGET}
 
-stable-aarch64-unknown-linux-gnu:
-  variables:
-    PACKAGES: gcc-aarch64-linux-gnu
-    TARGET: aarch64-unknown-linux-gnu
-  << : *cross_compile_template
-
 .wasm32-wasi_template: &wasm32-wasi_template
+  variables:
+    WASMTIME_VERSION: 0.20.0
   before_script:
     - rustc --version
     - rustup target add wasm32-wasi
@@ -40,6 +33,12 @@ stable-aarch64-unknown-linux-gnu:
     - mv wasmtime-v${WASMTIME_VERSION}-x86_64-linux/wasmtime /usr/bin/
   script:
     - make test.wasm32-wasi
+
+stable-aarch64-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-aarch64-linux-gnu
+    TARGET: aarch64-unknown-linux-gnu
+  <<: *cross_compile_template
 
 stable-i686-unknown-linux-gnu:
   stage: test
@@ -54,6 +53,10 @@ stable-i686-unknown-linux-gnu:
 stable-x86_64-unknown-linux-gnu:
   stage: test
   image: amd64/rust:slim-buster
+  before_script:
+    - apt update -y
+    - apt install -y make
+    - rustc --version
   script:
     - make test.x86_64-unknown-linux-gnu
 
@@ -65,6 +68,10 @@ stable-wasm32-wasi:
 nightly-x86_64-unknown-linux-gnu:
   stage: test
   image: rustlang/rust:nightly-buster-slim
+  before_script:
+    - apt update -y
+    - apt install -y make
+    - rustc --version
   script:
     - make test.x86_64-unknown-linux-gnu
 
