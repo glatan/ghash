@@ -20,7 +20,10 @@ cache:
     - apt install -y curl qemu ${PACKAGES}
     - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > setup.sh
     - sh setup.sh -y --default-host ${TARGET} --default-toolchain stable
-    - source $HOME/.cargo/env
+    - pwd
+    - ls
+    - $CI_PROJECT_PATH
+    - source ${CI_PROJECT_PATH}/cargo/env
     - rustc --version
     - make test.${TARGET}
 
