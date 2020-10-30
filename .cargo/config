@@ -1,2 +1,74 @@
+[target.aarch64-unknown-linux-gnu]
+linker = 'aarch64-linux-gnu-gcc'
+runner = 'qemu-aarch64 -L /usr/aarch64-linux-gnu/'
+
+[target.arm-unknown-linux-gnueabi]
+linker = 'arm-linux-gnueabi-gcc'
+runner = 'qemu-arm -L /usr/arm-linux-gnueabi/'
+
+[target.arm-unknown-linux-gnueabihf]
+linker = 'arm-linux-gnueabihf-gcc'
+runner = 'qemu-arm -L /usr/arm-linux-gnueabihf/'
+
+[target.armv5te-unknown-linux-gnueabi]
+linker = 'arm-linux-gnueabi-gcc'
+runner = 'qemu-arm -L /usr/arm-linux-gnueabi/'
+
+[target.armv7-unknown-linux-gnueabihf]
+linker = 'arm-linux-gnueabihf-gcc'
+runner = 'qemu-arm -L /usr/arm-linux-gnueabihf/'
+
+[target.armv7-unknown-linux-gnueabi]
+linker = 'arm-linux-gnueabi-gcc'
+runner = 'qemu-arm -L /usr/arm-linux-gnueabi/'
+
+[target.i586-unknown-linux-gnu]
+linker = 'i686-linux-gnu-gcc'
+runner = 'qemu-i386 -L /usr/i686-linux-gnu/'
+
+[target.i686-unknown-linux-gnu]
+linker = 'i686-linux-gnu-gcc'
+runner = 'qemu-i386 -L /usr/i686-linux-gnu/'
+
+[target.mips-unknown-linux-gnu]
+linker = 'mips-linux-gnu-gcc'
+runner = 'qemu-mips -L /usr/mips-linux-gnu/'
+
+[target.mipsel-unknown-linux-gnu]
+linker = 'mipsel-linux-gnu-gcc'
+runner = 'qemu-mipsel -L /usr/mipsel-linux-gnu/'
+
+[target.mips64-unknown-linux-gnuabi64]
+linker = 'mips64-linux-gnuabi64-gcc'
+runner = 'qemu-mips64 -L /usr/mips64-linux-gnuabi64/'
+
+[target.mips64el-unknown-linux-gnuabi64]
+linker = 'mips64el-linux-gnuabi64-gcc'
+runner = 'qemu-mips64el -L /usr/mips64el-linux-gnuabi64/'
+
+[target.powerpc-unknown-linux-gnu]
+linker = 'powerpc-linux-gnu-gcc'
+runner = 'qemu-ppc -L /usr/powerpc-linux-gnu/'
+
+[target.powerpc64-unknown-linux-gnu]
+linker = 'powerpc64-linux-gnu-gcc'
+runner = 'qemu-ppc64 -L /usr/powerpc64-linux-gnu/'
+
+[target.powerpc64le-unknown-linux-gnu]
+linker = 'powerpc64le-linux-gnu-gcc'
+runner = 'qemu-ppc64le -L /usr/powerpc64le-linux-gnu/'
+
+[target.riscv64gc-unknown-linux-gnu]
+linker = 'riscv64-linux-gnu-gcc'
+runner = 'qemu-riscv64 -L /usr/riscv64-linux-gnu/'
+
+[target.s390x-unknown-linux-gnu]
+linker = 's390x-linux-gnu-gcc'
+runner = 'qemu-s390x -L /usr/s390x-linux-gnu/'
+
+[target.sparc64-unknown-linux-gnu]
+linker = 'sparc64-linux-gnu-gcc'
+runner = 'qemu-sparc64 -L /usr/sparc64-linux-gnu/'
+
 [target.wasm32-wasi]
 runner = 'wasmtime'

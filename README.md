@@ -23,9 +23,43 @@
 * SHA-{224, 256, 384, 512, 512/224, 512/256}
 * SHA3-{224, 256, 384, 512}
 
-### Demo
+## Demo
 
 WebAssemblyターゲットでビルドしたデモが[ここ](https://ghash.glatan.vercel.app/)にあります。
+
+## Targets
+
+以下のターゲットでテストを通しています。(x86_64, wasm32以外はQEMUを使用)
+
+* aarch64-unknown-linux-gnu
+* arm-unknown-linux-gnueabi
+* arm-unknown-linux-gnueabihf
+* armv5te-unknown-linux-gnueabi
+* armv7-unknown-linux-gnueabihf
+* armv7-unknown-linux-gnueabi
+* i586-unknown-linux-gnu
+* i686-unknown-linux-gnu
+* mips-unknown-linux-gnu
+* mipsel-unknown-linux-gnu
+* mips64-unknown-linux-gnuabi64
+* mips64el-unknown-linux-gnuabi64
+* powerpc-unknown-linux-gnu
+* powerpc64-unknown-linux-gnu
+* powerpc64le-unknown-linux-gnu
+* riscv64gc-unknown-linux-gnu
+* s390x-unknown-linux-gnu
+* sparc64-unknown-linux-gnu
+* wasm32-wasi
+
+## Features
+
+### default
+
+デフォルトのターゲット
+
+### minimal
+
+defaultターゲットより出力バイナリのサイズが小さい。WebAssemblyを生成して、ブラウザで動作させるときはこっちの利用を推奨。それと多分こっちのほうが仕様書と比べながら読みやすい。
 
 ## License
 
