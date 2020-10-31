@@ -175,24 +175,7 @@ impl Blake2<u32> {
                 self.compress(&block);
             });
         } else if l == 0 {
-            self.compress(&[
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ])
+            self.compress(&[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         }
         if (l % 64) != 0 {
             let offset = (l / 64) * 64;
@@ -370,24 +353,7 @@ impl Blake2<u64> {
                 self.compress(&block);
             });
         } else if l == 0 {
-            self.compress(&[
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ])
+            self.compress(&[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         }
         if (l % 128) != 0 {
             let offset = (l / 128) * 128;
