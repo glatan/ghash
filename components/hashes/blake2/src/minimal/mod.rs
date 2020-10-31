@@ -1,11 +1,11 @@
-mod blake2s;
 mod blake2b;
+mod blake2s;
 
-pub use blake2s::Blake2s;
 pub use blake2b::Blake2b;
+pub use blake2s::Blake2s;
 
-use std::cmp::Ordering;
 use crate::consts::*;
+use std::cmp::Ordering;
 
 const fn init_params32(n: usize, k: usize, salt: [u32; 2]) -> [u32; 8] {
     return [
@@ -312,90 +312,145 @@ impl Blake2<u64> {
         }
     }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
-    fn g(&mut self, n: usize, i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
+    fn g(&mut self, block: &[u64; 16], i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
         // a,b,c,d: index of self.v
-        // n: block index
         // i: number of function G
         // r: round count
         self.v[a] = self.v[a]
             .wrapping_add(self.v[b])
-            .wrapping_add(self.word_block[SIGMA[r % 10][2 * i] + 16 * n]);
+            .wrapping_add(block[SIGMA[r % 10][2 * i]]);
         self.v[d] = (self.v[d] ^ self.v[a]).rotate_right(32);
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(24);
         self.v[a] = self.v[a]
             .wrapping_add(self.v[b])
-            .wrapping_add(self.word_block[SIGMA[r % 10][2 * i + 1] + 16 * n]);
+            .wrapping_add(block[SIGMA[r % 10][2 * i + 1]]);
         self.v[d] = (self.v[d] ^ self.v[a]).rotate_right(16);
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(63);
     }
-    fn compress(&mut self) {
-        // Compress blocks(1 block == 16 words, 1 word == 64 bit)
-        // Compress 1 block in 1 loop
-        for n in 0..(self.word_block.len() / 16) {
-            // update counter
-            if self.l > 128 {
-                self.t[0] += 128;
-                self.l -= 128;
-            } else {
-                self.t[0] += self.l as u64;
-                self.l = 0;
-                self.f = true;
-            }
-            // initialize state
-            self.v[0] = self.h[0];
-            self.v[1] = self.h[1];
-            self.v[2] = self.h[2];
-            self.v[3] = self.h[3];
-            self.v[4] = self.h[4];
-            self.v[5] = self.h[5];
-            self.v[6] = self.h[6];
-            self.v[7] = self.h[7];
-            self.v[8] = IV64[0];
-            self.v[9] = IV64[1];
-            self.v[10] = IV64[2];
-            self.v[11] = IV64[3];
-            self.v[12] = IV64[4] ^ self.t[0];
-            self.v[13] = IV64[5] ^ self.t[1];
-            if self.f {
-                self.v[14] = IV64[6] ^ u64::MAX;
-                self.v[15] = IV64[7] ^ u64::MIN;
-            } else {
-                self.v[14] = IV64[6];
-                self.v[15] = IV64[7];
-            }
-            // round
-            for r in 0..12 {
-                #[cfg(test)]
-                {
-                    print!("Round[{:}]: ", r);
-                    for i in 0..16 {
-                        print!("{:08x}", self.v[i]);
-                    }
-                    println!();
-                }
-                self.g(n, 0, r, 0, 4, 8, 12);
-                self.g(n, 1, r, 1, 5, 9, 13);
-                self.g(n, 2, r, 2, 6, 10, 14);
-                self.g(n, 3, r, 3, 7, 11, 15);
-                self.g(n, 4, r, 0, 5, 10, 15);
-                self.g(n, 5, r, 1, 6, 11, 12);
-                self.g(n, 6, r, 2, 7, 8, 13);
-                self.g(n, 7, r, 3, 4, 9, 14);
-            }
+    fn compress(&mut self, block: &[u64; 16]) {
+        // update counter
+        if self.l > 128 {
+            self.t[0] += 128;
+            self.l -= 128;
+        } else {
+            self.t[0] += self.l as u64;
+            self.l = 0;
+            self.f = true;
+        }
+        // initialize state
+        self.v[0] = self.h[0];
+        self.v[1] = self.h[1];
+        self.v[2] = self.h[2];
+        self.v[3] = self.h[3];
+        self.v[4] = self.h[4];
+        self.v[5] = self.h[5];
+        self.v[6] = self.h[6];
+        self.v[7] = self.h[7];
+        self.v[8] = IV64[0];
+        self.v[9] = IV64[1];
+        self.v[10] = IV64[2];
+        self.v[11] = IV64[3];
+        self.v[12] = IV64[4] ^ self.t[0];
+        self.v[13] = IV64[5] ^ self.t[1];
+        if self.f {
+            self.v[14] = IV64[6] ^ u64::MAX;
+            self.v[15] = IV64[7] ^ u64::MIN;
+        } else {
+            self.v[14] = IV64[6];
+            self.v[15] = IV64[7];
+        }
+        // round
+        for r in 0..12 {
             #[cfg(test)]
             {
-                print!("Round[{:}]: ", 12);
+                print!("Round[{:}]: ", r);
                 for i in 0..16 {
                     print!("{:08x}", self.v[i]);
                 }
                 println!();
             }
-            // finalize
-            for i in 0..8 {
-                self.h[i] = self.h[i] ^ self.v[i] ^ self.v[i + 8];
+            self.g(block, 0, r, 0, 4, 8, 12);
+            self.g(block, 1, r, 1, 5, 9, 13);
+            self.g(block, 2, r, 2, 6, 10, 14);
+            self.g(block, 3, r, 3, 7, 11, 15);
+            self.g(block, 4, r, 0, 5, 10, 15);
+            self.g(block, 5, r, 1, 6, 11, 12);
+            self.g(block, 6, r, 2, 7, 8, 13);
+            self.g(block, 7, r, 3, 4, 9, 14);
+        }
+        #[cfg(test)]
+        {
+            print!("Round[{:}]: ", 12);
+            for i in 0..16 {
+                print!("{:08x}", self.v[i]);
             }
+            println!();
+        }
+        // finalize
+        for i in 0..8 {
+            self.h[i] = self.h[i] ^ self.v[i] ^ self.v[i + 8];
+        }
+    }
+    pub(crate) fn blake(&mut self, message: &[u8]) {
+        self.l = message.len();
+        let l = message.len();
+        let mut block = [0u64; 16];
+        if l >= 128 {
+            message.chunks_exact(128).for_each(|bytes| {
+                (0..16).for_each(|i| {
+                    block[i] = u64::from_le_bytes([
+                        bytes[i * 8],
+                        bytes[i * 8 + 1],
+                        bytes[i * 8 + 2],
+                        bytes[i * 8 + 3],
+                        bytes[i * 8 + 4],
+                        bytes[i * 8 + 5],
+                        bytes[i * 8 + 6],
+                        bytes[i * 8 + 7],
+                    ]);
+                });
+                self.compress(&block);
+            });
+        } else if l == 0 {
+            self.compress(&[
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ])
+        }
+        if (l % 128) != 0 {
+            let offset = (l / 128) * 128;
+            let remainder = l % 128;
+            let mut bytes = [0u8; 128];
+            bytes[..remainder].copy_from_slice(&message[offset..]);
+            (0..16).for_each(|i| {
+                block[i] = u64::from_le_bytes([
+                    bytes[i * 8],
+                    bytes[i * 8 + 1],
+                    bytes[i * 8 + 2],
+                    bytes[i * 8 + 3],
+                    bytes[i * 8 + 4],
+                    bytes[i * 8 + 5],
+                    bytes[i * 8 + 6],
+                    bytes[i * 8 + 7],
+                ]);
+            });
+            self.compress(&block);
         }
     }
 }
