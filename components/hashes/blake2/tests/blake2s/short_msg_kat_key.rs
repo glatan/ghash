@@ -1,4 +1,4 @@
-use dev_utils::impl_blake2_short_msg_kat_with_key;
+use crate::impl_blake2_short_msg_kat_with_key;
 
 #[rustfmt::skip]
 const SHORT_MSG_KAT: [(&str,(usize, usize, [u32; 2], [u32; 2]), &str); 255] = [
