@@ -38,7 +38,6 @@ const fn init_params64(n: usize, k: usize, salt: [u64; 2]) -> [u64; 8] {
 // Blake<u32>: BLAKE2s
 // Blake<u64>: BLAKE2b
 struct Blake2<T> {
-    word_block: Vec<T>,
     f: bool,  // finalization flag
     l: usize, // 未処理のバイト数
     h: [T; 8],
@@ -64,7 +63,6 @@ impl Blake2<u32> {
             println!();
         }
         Self {
-            word_block: Vec::with_capacity(16),
             f: false,
             l: 0,
             h: [
@@ -80,21 +78,6 @@ impl Blake2<u32> {
             t: [0; 2],
             n,
             v: [0; 16],
-        }
-    }
-    fn padding(&mut self, message: &[u8]) {
-        let mut m = message.to_vec();
-        self.l = message.len();
-        if self.l == 0 {
-            m.append(&mut vec![0; 64]);
-        }
-        if (self.l % 64) != 0 {
-            m.append(&mut vec![0; 64 - self.l % 64]);
-        }
-        // create 32 bit-words from input bytes
-        for i in (0..m.len()).filter(|i| i % 4 == 0) {
-            self.word_block
-                .push(u32::from_le_bytes([m[i], m[i + 1], m[i + 2], m[i + 3]]));
         }
     }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
@@ -233,7 +216,6 @@ impl Blake2<u32> {
 impl Default for Blake2<u32> {
     fn default() -> Self {
         Self {
-            word_block: Vec::with_capacity(16),
             f: false,
             l: 0,
             h: [
@@ -270,7 +252,6 @@ impl Blake2<u64> {
             println!();
         }
         Self {
-            word_block: Vec::with_capacity(16),
             f: false,
             l: 0,
             h: [
@@ -286,29 +267,6 @@ impl Blake2<u64> {
             t: [0; 2],
             n,
             v: [0; 16],
-        }
-    }
-    fn padding(&mut self, message: &[u8]) {
-        let mut m = message.to_vec();
-        self.l = message.len();
-        if self.l == 0 {
-            m.append(&mut vec![0; 128]);
-        }
-        if (self.l % 128) != 0 {
-            m.append(&mut vec![0; 128 - self.l % 128]);
-        }
-        // create 64 bit-words from input bytes(and appending bytes)
-        for i in (0..m.len()).filter(|i| i % 8 == 0) {
-            self.word_block.push(u64::from_le_bytes([
-                m[i],
-                m[i + 1],
-                m[i + 2],
-                m[i + 3],
-                m[i + 4],
-                m[i + 5],
-                m[i + 6],
-                m[i + 7],
-            ]));
         }
     }
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
@@ -458,7 +416,6 @@ impl Blake2<u64> {
 impl Default for Blake2<u64> {
     fn default() -> Self {
         Self {
-            word_block: Vec::with_capacity(16),
             f: false,
             l: 0,
             h: [
