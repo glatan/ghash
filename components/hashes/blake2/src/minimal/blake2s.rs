@@ -8,6 +8,9 @@ impl Blake2s {
     pub fn new(n: usize) -> Self {
         Self(Blake2::<u32>::new(n))
     }
+    pub fn with_key(n: usize, k: usize, salt: [u32; 2], personal: [u32; 2]) -> Self {
+        Self(Blake2::<u32>::with_key(n, k, salt, personal))
+    }
 }
 
 impl Default for Blake2s {

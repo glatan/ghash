@@ -5,43 +5,13 @@ pub use blake2b::Blake2b;
 pub use blake2s::Blake2s;
 
 use crate::consts::*;
-use std::cmp::Ordering;
 
-const fn init_params32(n: usize, k: usize, salt: [u32; 2]) -> [u32; 8] {
-    return [
-        ((1 << 24) | (1 << 16) | (k << 8) | n) as u32,
-        0,               // leaf length
-        0,               // node offset
-        0,               // node offset(count.), node depth, inner length
-        salt[0].to_le(), // salt
-        salt[1].to_le(), // salt
-        0,               // personalization
-        0,               // personalization
-    ];
-}
-
-const fn init_params64(n: usize, k: usize, salt: [u64; 2]) -> [u64; 8] {
-    return [
-        ((1 << 24) | (1 << 16) | (k << 8) | n) as u64 | // digest length, key length, fanout, depth
-        0, // leaf length
-        0, // node offset
-        0 |               // node depth, inner length, RFU
-        0, // RFU
-        0, // RFU
-        salt[0].to_le(), // salt
-        salt[1].to_le(), // salt
-        0, // personalization
-        0, // personalization
-    ];
-}
-
-// Blake<u32>: BLAKE2s
-// Blake<u64>: BLAKE2b
+// Blake2<u32>: BLAKE2s
+// Blake2<u64>: BLAKE2b
 struct Blake2<T> {
     f: bool,  // finalization flag
     l: usize, // 未処理のバイト数
     h: [T; 8],
-    // p: [T; 8], // parameters
     t: [T; 2],  // counter: 処理したバイト数(と次に処理をするブロックのバイト数?)
     n: usize,   // 出力バイト数
     v: [T; 16], // state
@@ -49,18 +19,10 @@ struct Blake2<T> {
 
 // Blake2s
 impl Blake2<u32> {
-    pub fn new(n: usize) -> Self {
+    fn new(n: usize) -> Self {
         if n < 1 || n > 32 {
             panic!("{} is not a valid number. n must be between 1 and 32.", n);
         }
-        // #[cfg(test)]
-        // {
-        //     print!("P: ");
-        //     for i in p.iter() {
-        //         print!("{:08x} ", i);
-        //     }
-        //     println!();
-        // }
         Self {
             f: false,
             l: 0,
@@ -73,6 +35,34 @@ impl Blake2<u32> {
                 IV32[5],
                 IV32[6],
                 IV32[7],
+            ],
+            t: [0; 2],
+            n,
+            v: [0; 16],
+        }
+    }
+    fn with_key(n: usize, k: usize, salt: [u32; 2], personal: [u32; 2]) -> Self {
+        if n < 1 || n > 32 {
+            panic!("{} is not a valid number. n must be between 1 and 32.", n);
+        }
+        if k > 32 {
+            panic!("{} is not a valid number. k must be between 0 and 32.", k)
+        }
+        if k == 0 {
+            return Self::new(n);
+        }
+        Self {
+            f: false,
+            l: 0,
+            h: [
+                IV32[0] ^ (0x0101_0000 | (k << 8) as u32 | n as u32),
+                IV32[1],
+                IV32[2],
+                IV32[3],
+                IV32[4] ^ salt[0].swap_bytes(),
+                IV32[5] ^ salt[1].swap_bytes(),
+                IV32[6] ^ personal[0].swap_bytes(),
+                IV32[7] ^ personal[1].swap_bytes(),
             ],
             t: [0; 2],
             n,
@@ -128,14 +118,6 @@ impl Blake2<u32> {
         }
         // round
         for r in 0..10 {
-            #[cfg(test)]
-            {
-                print!("Round[{:}]: ", r);
-                for i in 0..16 {
-                    print!("{:08x}", self.v[i]);
-                }
-                println!();
-            }
             self.g(block, 0, r, 0, 4, 8, 12);
             self.g(block, 1, r, 1, 5, 9, 13);
             self.g(block, 2, r, 2, 6, 10, 14);
@@ -144,14 +126,6 @@ impl Blake2<u32> {
             self.g(block, 5, r, 1, 6, 11, 12);
             self.g(block, 6, r, 2, 7, 8, 13);
             self.g(block, 7, r, 3, 4, 9, 14);
-        }
-        #[cfg(test)]
-        {
-            print!("Round[{:}]: ", 10);
-            for i in 0..16 {
-                print!("{:08x}", self.v[i]);
-            }
-            println!();
         }
         // finalize
         for i in 0..8 {
@@ -224,14 +198,6 @@ impl Blake2<u64> {
         if n < 1 || n > 64 {
             panic!("{} is not a valid number. n must be between 1 and 32.", n);
         }
-        // #[cfg(test)]
-        // {
-        //     print!("P: ");
-        //     for i in p.iter() {
-        //         print!("{:08x} ", i);
-        //     }
-        //     println!();
-        // }
         Self {
             f: false,
             l: 0,
@@ -244,6 +210,34 @@ impl Blake2<u64> {
                 IV64[5],
                 IV64[6],
                 IV64[7],
+            ],
+            t: [0; 2],
+            n,
+            v: [0; 16],
+        }
+    }
+    fn with_key(n: usize, k: usize, salt: [u64; 2], personal: [u64; 2]) -> Self {
+        if n < 1 || n > 64 {
+            panic!("{} is not a valid number. n must be between 1 and 32.", n);
+        }
+        if k > 64 {
+            panic!("{} is not a valid number. k must be between 0 and 64.", k)
+        }
+        if k == 0 {
+            return Self::new(n);
+        }
+        Self {
+            f: false,
+            l: 0,
+            h: [
+                IV64[0] ^ (0x0101_0000 | (k << 8) as u64 | n as u64),
+                IV64[1],
+                IV64[2],
+                IV64[3],
+                IV64[4] ^ salt[0].swap_bytes(),
+                IV64[5] ^ salt[1].swap_bytes(),
+                IV64[6] ^ personal[0].swap_bytes(),
+                IV64[7] ^ personal[1].swap_bytes(),
             ],
             t: [0; 2],
             n,
@@ -302,14 +296,6 @@ impl Blake2<u64> {
         }
         // round
         for r in 0..12 {
-            #[cfg(test)]
-            {
-                print!("Round[{:}]: ", r);
-                for i in 0..16 {
-                    print!("{:08x}", self.v[i]);
-                }
-                println!();
-            }
             self.g(block, 0, r, 0, 4, 8, 12);
             self.g(block, 1, r, 1, 5, 9, 13);
             self.g(block, 2, r, 2, 6, 10, 14);
@@ -318,14 +304,6 @@ impl Blake2<u64> {
             self.g(block, 5, r, 1, 6, 11, 12);
             self.g(block, 6, r, 2, 7, 8, 13);
             self.g(block, 7, r, 3, 4, 9, 14);
-        }
-        #[cfg(test)]
-        {
-            print!("Round[{:}]: ", 12);
-            for i in 0..16 {
-                print!("{:08x}", self.v[i]);
-            }
-            println!();
         }
         // finalize
         for i in 0..8 {
