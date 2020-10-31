@@ -114,7 +114,6 @@ macro_rules! impl_blake32 {
                 self.h[5] ^= self.salt[5 % 4] ^ self.v[5] ^ self.v[5 + 8];
                 self.h[6] ^= self.salt[6 % 4] ^ self.v[6] ^ self.v[6 + 8];
                 self.h[7] ^= self.salt[7 % 4] ^ self.v[7] ^ self.v[7 + 8];
-
             }
         }
         impl Default for $T {
