@@ -11,7 +11,7 @@ homepage = "https://gitlab.com/glatan/ghash/"
 [features]
 default = ["blake", "blake2", "keccak", "md2", "md4", "md5", "ripemd", "sha0", "sha1", "sha2", "sha3"]
 # 出力バイナリサイズが小さい(主にwasmターゲットでの使用を推奨)
-minimal = ["blake/minimal", "blake2", "keccak", "md2/minimal", "md4/minimal", "md5/minimal", "ripemd/minimal", "sha0/minimal", "sha1/minimal", "sha2/minimal", "sha3"]
+minimal = ["blake/minimal", "blake2/minimal", "keccak", "md2/minimal", "md4/minimal", "md5/minimal", "ripemd/minimal", "sha0/minimal", "sha1/minimal", "sha2/minimal", "sha3"]
 
 [dependencies]
 blake = { path = "components/hashes/blake", optional = true }
