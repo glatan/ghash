@@ -50,6 +50,7 @@ WebAssemblyターゲットでビルドしたデモが[ここ](https://ghash.glat
 * s390x-unknown-linux-gnu
 * sparc64-unknown-linux-gnu
 * wasm32-wasi
+* x86_64-unknown-linux-gnu
 
 ## Features
 
