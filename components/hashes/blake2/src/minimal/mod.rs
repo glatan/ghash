@@ -49,31 +49,30 @@ struct Blake2<T> {
 
 // Blake2s
 impl Blake2<u32> {
-    pub fn new(n: usize, k: usize, salt: [u32; 2]) -> Self {
+    pub fn new(n: usize) -> Self {
         if n < 1 || n > 32 {
             panic!("{} is not a valid number. n must be between 1 and 32.", n);
         }
-        let p = init_params32(n, k, salt);
-        #[cfg(test)]
-        {
-            print!("P: ");
-            for i in p.iter() {
-                print!("{:08x} ", i);
-            }
-            println!();
-        }
+        // #[cfg(test)]
+        // {
+        //     print!("P: ");
+        //     for i in p.iter() {
+        //         print!("{:08x} ", i);
+        //     }
+        //     println!();
+        // }
         Self {
             f: false,
             l: 0,
             h: [
-                IV32[0] ^ p[0],
-                IV32[1] ^ p[1],
-                IV32[2] ^ p[2],
-                IV32[3] ^ p[3],
-                IV32[4] ^ p[4],
-                IV32[5] ^ p[5],
-                IV32[6] ^ p[6],
-                IV32[7] ^ p[7],
+                IV32[0] ^ (0x0101_0000 | n as u32),
+                IV32[1],
+                IV32[2],
+                IV32[3],
+                IV32[4],
+                IV32[5],
+                IV32[6],
+                IV32[7],
             ],
             t: [0; 2],
             n,
@@ -238,31 +237,30 @@ impl Default for Blake2<u32> {
 
 // Blake2b
 impl Blake2<u64> {
-    fn new(n: usize, k: usize, salt: [u64; 2]) -> Self {
+    fn new(n: usize) -> Self {
         if n < 1 || n > 64 {
             panic!("{} is not a valid number. n must be between 1 and 32.", n);
         }
-        let p = init_params64(n, k, salt);
-        #[cfg(test)]
-        {
-            print!("P: ");
-            for i in p.iter() {
-                print!("{:08x} ", i);
-            }
-            println!();
-        }
+        // #[cfg(test)]
+        // {
+        //     print!("P: ");
+        //     for i in p.iter() {
+        //         print!("{:08x} ", i);
+        //     }
+        //     println!();
+        // }
         Self {
             f: false,
             l: 0,
             h: [
-                IV64[0] ^ p[0],
-                IV64[1] ^ p[1],
-                IV64[2] ^ p[2],
-                IV64[3] ^ p[3],
-                IV64[4] ^ p[4],
-                IV64[5] ^ p[5],
-                IV64[6] ^ p[6],
-                IV64[7] ^ p[7],
+                IV64[0] ^ (0x0101_0000 | n as u64),
+                IV64[1],
+                IV64[2],
+                IV64[3],
+                IV64[4],
+                IV64[5],
+                IV64[6],
+                IV64[7],
             ],
             t: [0; 2],
             n,

@@ -5,8 +5,8 @@ pub struct Blake2b(Blake2<u64>);
 
 impl Blake2b {
     #[rustfmt::skip]
-    pub fn new(n: usize, k: usize, salt: [u64; 2]) -> Self {
-        Self(Blake2::<u64>::new(n, k, salt))
+    pub fn new(n: usize) -> Self {
+        Self(Blake2::<u64>::new(n))
     }
 }
 

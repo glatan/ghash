@@ -1279,4 +1279,4 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	),
 ];
 
-impl_short_msg_kat!(blake2, Blake2s, SHORT_MSG_KAT, Blake2s::new(16, 0, [0; 2]));
+impl_short_msg_kat!(blake2, Blake2s, SHORT_MSG_KAT, Blake2s::new(16));
