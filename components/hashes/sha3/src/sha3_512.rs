@@ -17,7 +17,6 @@ impl Default for Sha3_512 {
 
 impl Hash for Sha3_512 {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
-        self.0.padding(message, 0x06);
-        self.0.keccak()
+        self.0.keccak(message, 0x06)
     }
 }
