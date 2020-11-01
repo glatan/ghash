@@ -6,8 +6,6 @@ pub use blake2s::Blake2s;
 
 use crate::consts::*;
 
-// Blake2<u32>: BLAKE2s
-// Blake2<u64>: BLAKE2b
 struct Blake2<T> {
     f: bool,  // finalization flag
     l: usize, // 未処理のバイト数
@@ -17,7 +15,6 @@ struct Blake2<T> {
     v: [T; 16], // state
 }
 
-// Blake2s
 impl Blake2<u32> {
     fn new(n: usize) -> Self {
         if n < 1 || n > 32 {
@@ -132,67 +129,8 @@ impl Blake2<u32> {
             self.h[i] = self.h[i] ^ self.v[i] ^ self.v[i + 8];
         }
     }
-    pub(crate) fn blake(&mut self, message: &[u8]) {
-        self.l = message.len();
-        let l = message.len();
-        let mut block = [0u32; 16];
-        if l >= 64 {
-            message.chunks_exact(64).for_each(|bytes| {
-                (0..16).for_each(|i| {
-                    block[i] = u32::from_le_bytes([
-                        bytes[i * 4],
-                        bytes[i * 4 + 1],
-                        bytes[i * 4 + 2],
-                        bytes[i * 4 + 3],
-                    ]);
-                });
-                self.compress(&block);
-            });
-        } else if l == 0 {
-            self.compress(&[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-        }
-        if (l % 64) != 0 {
-            let offset = (l / 64) * 64;
-            let remainder = l % 64;
-            let mut bytes = [0u8; 64];
-            bytes[..remainder].copy_from_slice(&message[offset..]);
-            (0..16).for_each(|i| {
-                block[i] = u32::from_le_bytes([
-                    bytes[i * 4],
-                    bytes[i * 4 + 1],
-                    bytes[i * 4 + 2],
-                    bytes[i * 4 + 3],
-                ]);
-            });
-            self.compress(&block);
-        }
-    }
 }
 
-impl Default for Blake2<u32> {
-    fn default() -> Self {
-        Self {
-            f: false,
-            l: 0,
-            h: [
-                // Default parameter(0x20 bytes of output length, 0x00 byte of key length, set fanout and depth to 0x01)
-                IV32[0] ^ 0x0101_0020,
-                IV32[1],
-                IV32[2],
-                IV32[3],
-                IV32[4],
-                IV32[5],
-                IV32[6],
-                IV32[7],
-            ],
-            t: [0; 2],
-            n: 32,
-            v: [0; 16],
-        }
-    }
-}
-
-// Blake2b
 impl Blake2<u64> {
     fn new(n: usize) -> Self {
         if n < 1 || n > 64 {
@@ -308,72 +246,6 @@ impl Blake2<u64> {
         // finalize
         for i in 0..8 {
             self.h[i] = self.h[i] ^ self.v[i] ^ self.v[i + 8];
-        }
-    }
-    pub(crate) fn blake(&mut self, message: &[u8]) {
-        self.l = message.len();
-        let l = message.len();
-        let mut block = [0u64; 16];
-        if l >= 128 {
-            message.chunks_exact(128).for_each(|bytes| {
-                (0..16).for_each(|i| {
-                    block[i] = u64::from_le_bytes([
-                        bytes[i * 8],
-                        bytes[i * 8 + 1],
-                        bytes[i * 8 + 2],
-                        bytes[i * 8 + 3],
-                        bytes[i * 8 + 4],
-                        bytes[i * 8 + 5],
-                        bytes[i * 8 + 6],
-                        bytes[i * 8 + 7],
-                    ]);
-                });
-                self.compress(&block);
-            });
-        } else if l == 0 {
-            self.compress(&[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-        }
-        if (l % 128) != 0 {
-            let offset = (l / 128) * 128;
-            let remainder = l % 128;
-            let mut bytes = [0u8; 128];
-            bytes[..remainder].copy_from_slice(&message[offset..]);
-            (0..16).for_each(|i| {
-                block[i] = u64::from_le_bytes([
-                    bytes[i * 8],
-                    bytes[i * 8 + 1],
-                    bytes[i * 8 + 2],
-                    bytes[i * 8 + 3],
-                    bytes[i * 8 + 4],
-                    bytes[i * 8 + 5],
-                    bytes[i * 8 + 6],
-                    bytes[i * 8 + 7],
-                ]);
-            });
-            self.compress(&block);
-        }
-    }
-}
-
-impl Default for Blake2<u64> {
-    fn default() -> Self {
-        Self {
-            f: false,
-            l: 0,
-            h: [
-                // Default parameter(0x40 bytes of output length, 0x00 byte of key length, set fanout and depth to 0x01)
-                IV64[0] ^ 0x0101_0040,
-                IV64[1],
-                IV64[2],
-                IV64[3],
-                IV64[4],
-                IV64[5],
-                IV64[6],
-                IV64[7],
-            ],
-            t: [0; 2],
-            n: 64,
-            v: [0; 16],
         }
     }
 }
