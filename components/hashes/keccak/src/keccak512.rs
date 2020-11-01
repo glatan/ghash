@@ -17,7 +17,6 @@ impl Default for Keccak512 {
 
 impl Hash for Keccak512 {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
-        self.0.padding(message, 0x01);
-        self.0.keccak()
+        self.0.keccak(message, 0x01)
     }
 }

@@ -1,3 +1,2 @@
 test.%:
 	@cargo test --target $*
-
