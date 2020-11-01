@@ -61,46 +61,47 @@ impl Keccak {
             w: (r + c) / 25,
         }
     }
-    fn keccak_f(&mut self) {
-        fn round(mut a: [[u64; 5]; 5], rc: u64) -> [[u64; 5]; 5] {
-            let mut b = [[0; 5]; 5];
-            let mut c = [0; 5];
-            let mut d = [0; 5];
-            // Theta step
-            for x in 0..5 {
-                c[x] = a[x][0] ^ a[x][1] ^ a[x][2] ^ a[x][3] ^ a[x][4];
-            }
-            for x in 0..5 {
-                // https://keccak.team/keccak_specs_summary.html
-                // 疑似コードによるとc[x-1]だが、これだとusizeの範囲外の値が発生する。
-                // 4, 0, 1, 2, 3の順に要素を見ればいいので、(x + 4) % 5。
-                d[x] = c[(x + 4) % 5] ^ c[(x + 1) % 5].rotate_left(1);
-            }
-            for x in 0..5 {
-                for y in 0..5 {
-                    a[x][y] ^= d[x];
-                }
-            }
-            // Rho and Pi step
-            for x in 0..5 {
-                for y in 0..5 {
-                    b[y][(2 * x + 3 * y) % 5] = a[x][y].rotate_left(R[x][y]);
-                }
-            }
-            // Chi step
-            for x in 0..5 {
-                for y in 0..5 {
-                    a[x][y] = b[x][y] ^ ((!b[(x + 1) % 5][y]) & b[(x + 2) % 5][y]);
-                }
-            }
-            // Iota step
-            a[0][0] ^= rc;
-            // Return A
-            a
+    fn round(&mut self, rc: u64) {
+        let mut b = [[0; 5]; 5];
+        let mut c = [0; 5];
+        let mut d = [0; 5];
+        // Theta step
+        for x in 0..5 {
+            c[x] = self.state[x][0]
+                ^ self.state[x][1]
+                ^ self.state[x][2]
+                ^ self.state[x][3]
+                ^ self.state[x][4];
         }
+        for x in 0..5 {
+            // https://keccak.team/keccak_specs_summary.html
+            // 疑似コードによるとc[x-1]だが、これだとusizeの範囲外の値が発生する。
+            // 4, 0, 1, 2, 3の順に要素を見ればいいので、(x + 4) % 5。
+            d[x] = c[(x + 4) % 5] ^ c[(x + 1) % 5].rotate_left(1);
+        }
+        for x in 0..5 {
+            for y in 0..5 {
+                self.state[x][y] ^= d[x];
+            }
+        }
+        // Rho and Pi step
+        for x in 0..5 {
+            for y in 0..5 {
+                b[y][(2 * x + 3 * y) % 5] = self.state[x][y].rotate_left(R[x][y]);
+            }
+        }
+        // Chi step
+        for x in 0..5 {
+            for y in 0..5 {
+                self.state[x][y] = b[x][y] ^ ((!b[(x + 1) % 5][y]) & b[(x + 2) % 5][y]);
+            }
+        }
+        // Iota step
+        self.state[0][0] ^= rc;
+    }
+    fn keccak_f(&mut self) {
         for i in 0..(12 + 2 * self.l) {
-            // A: self.state
-            self.state = round(self.state, RC[i]);
+            self.round(RC[i]);
         }
     }
     fn absorb(&mut self, pi: &[[u64; 5]; 5]) {
