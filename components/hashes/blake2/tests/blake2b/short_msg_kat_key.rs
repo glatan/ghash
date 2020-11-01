@@ -2,6 +2,9 @@ use crate::impl_blake2_short_msg_kat_with_key;
 
 #[rustfmt::skip]
 const SHORT_MSG_KAT: [(&str,(usize, usize, [u64; 2], [u64; 2]), &str); 255] = [
+	/*
+		(message, (outlen, keylen, salt, personalization), digest),+
+	*/
 	(
 		// Len = 0
 		"",
