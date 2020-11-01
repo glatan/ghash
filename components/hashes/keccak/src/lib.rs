@@ -38,7 +38,7 @@ pub struct Keccak {
 }
 
 impl Keccak {
-    pub fn new(r: usize, c: usize, n: usize) -> Self {
+    fn new(r: usize, c: usize, n: usize) -> Self {
         // w = b/25
         // w = 2^l => l = log2(w)
         if r % 8 != 0 {
