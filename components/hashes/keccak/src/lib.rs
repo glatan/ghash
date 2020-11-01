@@ -27,11 +27,9 @@ pub use keccak512::Keccak512;
 
 mod consts;
 
-use std::cmp::Ordering;
 use crate::consts::*;
 
 pub struct Keccak {
-    lane_block: Vec<u64>,
     state: [[u64; 5]; 5], // A, S
     l: usize,
     n: usize,
@@ -57,68 +55,11 @@ impl Keccak {
         }
         Self {
             state: [[0; 5]; 5],
-            lane_block: Vec::with_capacity(25),
             l: (((r + c) / 25) as f32).log2() as usize,
             n,
             r,
             w: (r + c) / 25,
         }
-    }
-    // 1000...0001 Style
-    // (self.r / 8) byteの倍数にパディングする。例: r=1152の場合は144byteの倍数
-    pub fn padding(&mut self, message: &[u8], d: u8) {
-        let mut m = message.to_vec();
-        let l = message.len();
-        let rate_length = self.r / 8;
-        m.push(d);
-        match (l % rate_length).cmp(&(rate_length - 1)) {
-            Ordering::Greater => {
-                m.append(&mut vec![0; 2 * rate_length - 1 - (l % rate_length)]);
-            }
-            Ordering::Less => {
-                m.append(&mut vec![0; rate_length - 1 - (l % rate_length)]);
-            }
-            Ordering::Equal => (),
-        }
-        // padded message length must be a multiple of (self.r / 8)[byte]
-        debug_assert_eq!((m.len() % (self.r / 8)), 0);
-        let n = m.len();
-        m[n - 1] |= 0x80;
-        let lane_size = self.w / 8; // byte length of lane
-        let rate_length = self.r / 8; // byte length of rate
-        let padded_lanes = m // パディングして、64バイト(u8 x 8)になったレーン
-            .chunks_exact(lane_size)
-            .flat_map(|chunk| {
-                let mut lane = chunk.to_vec();
-                lane.reverse(); // little endianに変換
-                lane.append(&mut vec![0u8; 8 - lane_size]); // pi[x][y]はu64なので0パディングを行う。
-                lane
-            })
-            .collect::<Vec<u8>>();
-        self.lane_block = {
-            let mut blocks = Vec::with_capacity(m.len() / lane_size);
-            // n: block index
-            for n in 0..(padded_lanes.len() / rate_length) {
-                // m: lane index
-                for m in 0..((padded_lanes.len() / 8) / (padded_lanes.len() / rate_length)) {
-                    // lane_blockはすでにlittle_endianになっているのでエンディアン変換は行わない。
-                    blocks.push(u64::from_be_bytes([
-                        padded_lanes[n * rate_length + m * 8],
-                        padded_lanes[n * rate_length + m * 8 + 1],
-                        padded_lanes[n * rate_length + m * 8 + 2],
-                        padded_lanes[n * rate_length + m * 8 + 3],
-                        padded_lanes[n * rate_length + m * 8 + 4],
-                        padded_lanes[n * rate_length + m * 8 + 5],
-                        padded_lanes[n * rate_length + m * 8 + 6],
-                        padded_lanes[n * rate_length + m * 8 + 7],
-                    ]));
-                }
-                while blocks.len() % 25 != 0 {
-                    blocks.push(0);
-                }
-            }
-            blocks
-        };
     }
     fn keccak_f(&mut self) {
         fn round(mut a: [[u64; 5]; 5], rc: u64) -> [[u64; 5]; 5] {
@@ -162,22 +103,64 @@ impl Keccak {
             self.state = round(self.state, RC[i]);
         }
     }
-    pub fn keccak(&mut self) -> Vec<u8> {
-        // Initialize (S initialized in Self::new())
-        // Absorbing phase
-        for n in 0..(self.lane_block.len() / 25) {
-            let mut pi = [[0; 5]; 5];
+    fn absorb(&mut self, pi: &[[u64; 5]; 5]) {
+        for x in 0..5 {
             for y in 0..5 {
-                for x in 0..5 {
-                    pi[x][y] = self.lane_block[(x + 5 * y + n * 25)];
-                }
+                self.state[y][x] ^= pi[x][y];
             }
-            for y in 0..5 {
-                for x in 0..5 {
-                    self.state[x][y] ^= pi[x][y] as u64;
-                }
-            }
-            self.keccak_f();
+        }
+        self.keccak_f();
+    }
+    pub fn keccak(&mut self, message: &[u8], d: u8) -> Vec<u8> {
+        let l = message.len();
+        let lane_size = self.w / 8;
+        let rate_size = self.r / 8;
+        let mut padded_lane = [0u8; 8];
+        let mut padded_block = [0u8; 8 * 25];
+        let mut pi = [[0u64; 5]; 5];
+        if l >= rate_size {
+            message.chunks_exact(rate_size).for_each(|lanes| {
+                lanes
+                    .chunks_exact(lane_size)
+                    .enumerate()
+                    .for_each(|(i, lane)| {
+                        padded_lane[8 - lane_size..8].copy_from_slice(lane);
+                        pi[i / 5][i % 5] = u64::from_le_bytes(padded_lane);
+                    });
+                self.absorb(&pi)
+            });
+        } else if l == 0 {
+            padded_block[0] = d;
+            padded_block[rate_size - 1] |= 0x80;
+            (0..25).for_each(|i| {
+                pi[i / 5][i % 5] = u64::from_le_bytes([
+                    padded_block[i * 8],
+                    padded_block[i * 8 + 1],
+                    padded_block[i * 8 + 2],
+                    padded_block[i * 8 + 3],
+                    padded_block[i * 8 + 4],
+                    padded_block[i * 8 + 5],
+                    padded_block[i * 8 + 6],
+                    padded_block[i * 8 + 7],
+                ]);
+            });
+            self.absorb(&pi)
+        }
+        if l != 0 {
+            let offset = (l / rate_size) * rate_size;
+            let remainder = l % rate_size;
+            let mut byte_block = [0u8; 8 * 25];
+            byte_block[..remainder].copy_from_slice(&message[offset..]);
+            byte_block[remainder] = d;
+            byte_block[rate_size - 1] |= 0x80;
+            byte_block
+                .chunks_exact(lane_size)
+                .enumerate()
+                .for_each(|(i, lane)| {
+                    padded_lane[8 - lane_size..8].copy_from_slice(lane);
+                    pi[i / 5][i % 5] = u64::from_le_bytes(padded_lane);
+                });
+            self.absorb(&pi);
         }
         // Squeezing phase
         let mut z = Vec::new();
