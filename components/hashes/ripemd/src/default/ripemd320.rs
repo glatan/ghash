@@ -3,7 +3,7 @@ use crate::consts::{H320, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGH
 use crate::{round_left_160, round_right_160};
 use utils::{impl_md_flow, uint_from_bytes, Hash};
 
-use std::cmp::Ordering;
+use core::cmp::Ordering;
 use std::mem;
 
 pub struct Ripemd320 {

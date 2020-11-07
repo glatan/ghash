@@ -1,5 +1,5 @@
 use crate::consts::*;
-use std::cmp::Ordering;
+use core::cmp::Ordering;
 use utils::{impl_md_flow, uint_from_bytes, Hash};
 
 macro_rules! init_w32 {

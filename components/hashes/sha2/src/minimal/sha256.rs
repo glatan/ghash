@@ -1,5 +1,5 @@
 use super::{Sha2, H256};
-use std::cmp::Ordering;
+use core::cmp::Ordering;
 use utils::{impl_md_flow_minimal, Hash};
 
 pub struct Sha256(Sha2<u32>);

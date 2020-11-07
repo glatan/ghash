@@ -3,7 +3,7 @@ use crate::consts::{H160, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGH
 use crate::{round_left_160_minimal, round_right_160_minimal};
 use utils::{impl_md_flow_minimal, Hash};
 
-use std::cmp::Ordering;
+use core::cmp::Ordering;
 
 pub struct Ripemd160 {
     status: [u32; 5],

@@ -3,7 +3,7 @@ use crate::consts::{H256, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGH
 use crate::{round_left_128_minimal, round_right_128_minimal};
 use utils::{impl_md_flow_minimal, Hash};
 
-use std::cmp::Ordering;
+use core::cmp::Ordering;
 use std::mem;
 
 pub struct Ripemd256 {
