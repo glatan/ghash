@@ -11,7 +11,7 @@ impl Keccak384 {
 
 impl Default for Keccak384 {
     fn default() -> Self {
-        Self(Keccak::new(832, 768, 384))
+        Self(Keccak::new(832, 768, 384 / 8))
     }
 }
 

@@ -47,9 +47,6 @@ impl Keccak {
                 r
             );
         }
-        if n % 8 != 0 {
-            panic!("output length must be a multiple of 8, but got {}", n);
-        }
         if ![25, 50, 100, 200, 400, 800, 1600].contains(&(r + c)) {
             panic!("bitrate must be in [25, 50, 100, 200, 400, 800, 1600], but got {}(rate={}, capacity={})", r + c, r, c);
         }
@@ -111,6 +108,33 @@ impl Keccak {
             }
         }
         self.keccak_f();
+    }
+    fn squeeze(&mut self) -> Vec<u8> {
+        let lane_size = self.w / 8;
+        let rate_size = self.r / 8;
+        let mut z = vec![0; self.n];
+        let mut s = [0; 8 * 5 * 5];
+        let mut output_length = self.n * 8;
+        let mut z_len = 0;
+        while output_length > 0 {
+            for x in 0..5 {
+                for y in 0..5 {
+                    let head = x * 5 * lane_size + y * lane_size;
+                    s[head..head + lane_size]
+                        .copy_from_slice(&self.state[y][x].to_le_bytes()[0..lane_size]);
+                }
+            }
+            if output_length > self.r {
+                z[z_len..z_len + rate_size].copy_from_slice(&s[..rate_size]);
+                z_len += rate_size;
+                self.keccak_f();
+                output_length -= self.r;
+            } else {
+                z[z_len..].copy_from_slice(&s[..output_length / 8]);
+                output_length = 0;
+            }
+        }
+        z[0..self.n].to_vec()
     }
     pub fn keccak(&mut self, message: &[u8], d: u8) -> Vec<u8> {
         let l = message.len();
@@ -179,6 +203,6 @@ impl Keccak {
                 output_length = 0;
             }
         }
-        z[0..self.n / 8].to_vec()
+        self.squeeze()
     }
 }

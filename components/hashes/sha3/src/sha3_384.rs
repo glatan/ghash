@@ -11,7 +11,7 @@ impl Sha3_384 {
 
 impl Default for Sha3_384 {
     fn default() -> Self {
-        Self(Keccak::new(832, 768, 384))
+        Self(Keccak::new(832, 768, 384 / 8))
     }
 }
 
