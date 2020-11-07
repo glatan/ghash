@@ -1,5 +1,5 @@
 use crate::consts::*;
-use std::cmp::Ordering;
+use core::cmp::Ordering;
 use utils::{impl_md_flow_minimal, Hash};
 
 const fn ch(b: u32, c: u32, d: u32) -> u32 {

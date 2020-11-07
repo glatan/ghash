@@ -1,4 +1,4 @@
-use std::cmp::Ordering;
+use core::cmp::Ordering;
 
 pub use utils::Hash;
 

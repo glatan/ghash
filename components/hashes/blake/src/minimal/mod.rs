@@ -21,7 +21,7 @@ pub use blake384::Blake384;
 pub use blake512::Blake512;
 
 use crate::consts::*;
-use std::cmp::Ordering;
+use core::cmp::Ordering;
 
 // Blake<u32>: BLAKE-224(BLAKE-28) and BLAKE-256(BLAKE-32)
 // Blake<u64>: BLAKE-384(BLAKE-48) and BLAKE-512(BLAKE-64)
