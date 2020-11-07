@@ -11,7 +11,7 @@ impl Sha3_256 {
 
 impl Default for Sha3_256 {
     fn default() -> Self {
-        Self(Keccak::new(1088, 512, 256))
+        Self(Keccak::new(1088, 512, 256 / 8))
     }
 }
 
