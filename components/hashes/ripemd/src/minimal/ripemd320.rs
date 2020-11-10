@@ -1,10 +1,11 @@
+use alloc::vec::Vec;
+use core::cmp::Ordering;
+use core::mem;
+
 use crate::consts::{f1, f2, f3, f4, f5};
 use crate::consts::{H320, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
 use crate::{round_left_160_minimal, round_right_160_minimal};
 use utils::{impl_md_flow_minimal, Hash};
-
-use core::cmp::Ordering;
-use core::mem;
 
 pub struct Ripemd320 {
     status: [u32; 10],

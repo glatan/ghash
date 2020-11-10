@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use super::{Blake, IV224};
 use utils::Hash;
 

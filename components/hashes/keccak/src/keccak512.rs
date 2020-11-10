@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use super::Keccak;
 use utils::Hash;
 

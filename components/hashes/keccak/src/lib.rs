@@ -13,6 +13,12 @@
 // Keccak-384: [r=832, c=768]
 // Keccak-512: [r=576, c=1024]
 
+// #![no_std]
+extern crate alloc;
+
+use alloc::vec;
+use alloc::vec::Vec;
+
 mod keccak224;
 mod keccak256;
 mod keccak384;
@@ -50,9 +56,18 @@ impl Keccak {
         if ![25, 50, 100, 200, 400, 800, 1600].contains(&(r + c)) {
             panic!("bitrate must be in [25, 50, 100, 200, 400, 800, 1600], but got {}(rate={}, capacity={})", r + c, r, c);
         }
+        let l = {
+            let mut w = (r + c) / 25;
+            let mut l = 0;
+            while w > 1 {
+                w /= 2;
+                l += 1;
+            }
+            l
+        };
         Self {
             state: [[0; 5]; 5],
-            l: (((r + c) / 25) as f32).log2() as usize,
+            l,
             n,
             r,
             w: (r + c) / 25,

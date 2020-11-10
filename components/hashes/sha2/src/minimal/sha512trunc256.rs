@@ -1,5 +1,7 @@
-use super::{Sha2, H512_TRUNC256};
+use alloc::vec::Vec;
 use core::cmp::Ordering;
+
+use super::{Sha2, H512_TRUNC256};
 use utils::{impl_md_flow_minimal, Hash};
 
 pub struct Sha512Trunc256(Sha2<u64>);
