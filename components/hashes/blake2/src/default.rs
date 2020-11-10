@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use crate::consts::*;
 use utils::{uint_from_bytes, Hash};
 

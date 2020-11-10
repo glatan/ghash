@@ -4,6 +4,9 @@
 // SHA3-384: [r=832, c=768, d(suffix)=0x06]
 // SHA3-512: [r=576, c=1024, d(suffix)=0x06]
 
+#![no_std]
+extern crate alloc;
+
 mod sha3_224;
 mod sha3_256;
 mod sha3_384;

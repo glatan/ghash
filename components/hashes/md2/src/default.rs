@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use crate::consts::STABLE;
 use utils::Hash;
 

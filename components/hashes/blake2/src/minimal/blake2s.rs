@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use super::Blake2;
 use crate::consts::IV32;
 use utils::Hash;

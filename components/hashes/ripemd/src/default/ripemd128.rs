@@ -1,9 +1,10 @@
+use alloc::vec::Vec;
+use core::cmp::Ordering;
+
 use crate::consts::{f1, f2, f3, f4};
 use crate::consts::{H128, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
 use crate::{round_left_128, round_right_128};
 use utils::{impl_md_flow, uint_from_bytes, Hash};
-
-use core::cmp::Ordering;
 
 pub struct Ripemd128 {
     status: [u32; 4],

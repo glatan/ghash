@@ -1,5 +1,7 @@
-use crate::consts::*;
+use alloc::vec::Vec;
 use core::cmp::Ordering;
+
+use crate::consts::*;
 use utils::{uint_from_bytes, Hash};
 
 macro_rules! g32 {

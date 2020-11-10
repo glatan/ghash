@@ -1,3 +1,7 @@
+use alloc::format;
+use alloc::string::String;
+use alloc::vec::Vec;
+
 pub trait Hash<T = Self> {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8>;
     fn hash_to_lowerhex(&mut self, message: &[u8]) -> String {
@@ -16,6 +20,9 @@ pub trait Hash<T = Self> {
 
 #[cfg(test)]
 mod tests {
+    use alloc::vec;
+    use alloc::vec::Vec;
+
     use super::Hash;
 
     struct Tester(Vec<u8>);

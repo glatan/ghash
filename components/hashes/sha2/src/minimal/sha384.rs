@@ -1,5 +1,7 @@
-use super::{Sha2, H384};
+use alloc::vec::Vec;
 use core::cmp::Ordering;
+
+use super::{Sha2, H384};
 use utils::{impl_md_flow_minimal, Hash};
 
 pub struct Sha384(Sha2<u64>);
