@@ -4,7 +4,7 @@ use crate::{round_left_160_minimal, round_right_160_minimal};
 use utils::{impl_md_flow_minimal, Hash};
 
 use core::cmp::Ordering;
-use std::mem;
+use core::mem;
 
 pub struct Ripemd320 {
     status: [u32; 10],
