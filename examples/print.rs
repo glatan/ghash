@@ -38,6 +38,22 @@ fn main() {
         Blake2b::default().hash_to_lowerhex(&input)
     );
     println!(
+        "EDON-R224\t{:}",
+        EdonR224::default().hash_to_lowerhex(&input)
+    );
+    println!(
+        "EDON-R256\t{:}",
+        EdonR256::default().hash_to_lowerhex(&input)
+    );
+    println!(
+        "EDON-R384\t{:}",
+        EdonR384::default().hash_to_lowerhex(&input)
+    );
+    println!(
+        "EDON-R512\t{:}",
+        EdonR512::default().hash_to_lowerhex(&input)
+    );
+    println!(
         "Keccak-224\t{:}",
         Keccak224::default().hash_to_lowerhex(&input)
     );

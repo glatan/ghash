@@ -36,6 +36,26 @@ subcommands:
       args:
         - file:
             required: true
+  - edon-r224:
+      about: Print or check EDON-R224 checksums
+      args:
+        - file:
+            required: true
+  - edon-r256:
+      about: Print or check EDON-R256 checksums
+      args:
+        - file:
+            required: true
+  - edon-r384:
+      about: Print or check EDON-R384 checksums
+      args:
+        - file:
+            required: true
+  - edon-r512:
+      about: Print or check EDON-R512 checksums
+      args:
+        - file:
+            required: true
   - md2:
       about: Print or check MD2 checksums
       args:
