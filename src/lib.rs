@@ -1,5 +1,6 @@
 pub use blake::*;
 pub use blake2::*;
+pub use edonr::*;
 pub use keccak::*;
 pub use md2::Md2;
 pub use md4::Md4;

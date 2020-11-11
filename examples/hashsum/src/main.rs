@@ -66,6 +66,10 @@ fn main() {
         "blake-512", Blake512;
         "blake2s", Blake2s;
         "blake2b", Blake2b;
+        "edon-r224", EdonR224;
+        "edon-r256", EdonR256;
+        "edon-r384", EdonR384;
+        "edon-r512", EdonR512;
         "md2", Md2;
         "md4", Md4;
         "md5", Md5;
