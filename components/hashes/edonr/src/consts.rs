@@ -30,9 +30,9 @@ pub(crate) const P512: [u64; 16] =[
     0xA0A1_A2A3_A4A5_A6A7, 0xA8A9_AAAB_ACAD_AEAF,
     0xB0B1_B2B3_B4B5_B6B7, 0xB8B9_BABB_BCBD_BEBF,
     0xC0C1_C2C3_C4C5_C6C7, 0xC8C9_CACB_CCCD_CECF,
-    0xD0D1_D2D3_D4D5_D6D7, 0xD8D9_DADB_DCCD_DEDF,
+    0xD0D1_D2D3_D4D5_D6D7, 0xD8D9_DADB_DCDD_DEDF,
     0xE0E1_E2E3_E4E5_E6E7, 0xE8E9_EAEB_ECED_EEEF,
-    0xF0F1_F2F3_F4F5_F6F7, 0xF8F9_FAFB_FCFD_FEFF,
+    0xF0F1_F2F3_F4F5_F6F7, 0xF8F9_FAFB_FCFD_FEFF
 ];
 
 pub(crate) const fn q256(x: &[u32; 8], y: &[u32; 8]) -> [u32; 8] {
@@ -144,6 +144,125 @@ pub(crate) const fn q256(x: &[u32; 8], y: &[u32; 8]) -> [u32; 8] {
         .wrapping_add(y[6])
         .wrapping_add(y[7])
         .rotate_left(29);
+    z[5] = t[8].wrapping_add(t[3] ^ t[4] ^ t[6]);
+    z[6] = t[9].wrapping_add(t[2] ^ t[5] ^ t[7]);
+    z[7] = t[10].wrapping_add(t[4] ^ t[6] ^ t[7]);
+    z[0] = t[11].wrapping_add(t[0] ^ t[1] ^ t[5]);
+    z[1] = t[12].wrapping_add(t[2] ^ t[6] ^ t[7]);
+    z[2] = t[13].wrapping_add(t[0] ^ t[1] ^ t[3]);
+    z[3] = t[14].wrapping_add(t[0] ^ t[3] ^ t[4]);
+    z[4] = t[15].wrapping_add(t[1] ^ t[2] ^ t[5]);
+    z
+}
+pub(crate) const fn q512(x: &[u64; 8], y: &[u64; 8]) -> [u64; 8] {
+    let mut z = [0u64; 8];
+    let mut t = [0u64; 16];
+    // First Latin Square
+    t[0] = x[0]
+        .wrapping_add(x[1])
+        .wrapping_add(x[2])
+        .wrapping_add(x[4])
+        .wrapping_add(x[7])
+        .wrapping_add(0xAAAA_AAAA_AAAA_AAAA);
+    t[1] = x[0]
+        .wrapping_add(x[1])
+        .wrapping_add(x[3])
+        .wrapping_add(x[4])
+        .wrapping_add(x[7])
+        .rotate_left(5);
+    t[2] = x[0]
+        .wrapping_add(x[1])
+        .wrapping_add(x[4])
+        .wrapping_add(x[6])
+        .wrapping_add(x[7])
+        .rotate_left(19);
+    t[3] = x[2]
+        .wrapping_add(x[3])
+        .wrapping_add(x[5])
+        .wrapping_add(x[6])
+        .wrapping_add(x[7])
+        .rotate_left(29);
+    t[4] = x[1]
+        .wrapping_add(x[2])
+        .wrapping_add(x[3])
+        .wrapping_add(x[5])
+        .wrapping_add(x[6])
+        .rotate_left(31);
+    t[5] = x[0]
+        .wrapping_add(x[2])
+        .wrapping_add(x[3])
+        .wrapping_add(x[4])
+        .wrapping_add(x[5])
+        .rotate_left(41);
+    t[6] = x[0]
+        .wrapping_add(x[1])
+        .wrapping_add(x[5])
+        .wrapping_add(x[6])
+        .wrapping_add(x[7])
+        .rotate_left(57);
+    t[7] = x[2]
+        .wrapping_add(x[3])
+        .wrapping_add(x[4])
+        .wrapping_add(x[5])
+        .wrapping_add(x[6])
+        .rotate_left(61);
+    t[8] = t[3] ^ t[5] ^ t[6];
+    t[9] = t[2] ^ t[5] ^ t[6];
+    t[10] = t[2] ^ t[3] ^ t[5];
+    t[11] = t[0] ^ t[1] ^ t[4];
+    t[12] = t[0] ^ t[4] ^ t[7];
+    t[13] = t[1] ^ t[6] ^ t[7];
+    t[14] = t[2] ^ t[3] ^ t[4];
+    t[15] = t[0] ^ t[1] ^ t[7];
+    // Second Orthogonal Latin Square
+    t[0] = y[0]
+        .wrapping_add(y[1])
+        .wrapping_add(y[2])
+        .wrapping_add(y[5])
+        .wrapping_add(y[7])
+        .wrapping_add(0x5555_5555_5555_5555);
+    t[1] = y[0]
+        .wrapping_add(y[1])
+        .wrapping_add(y[3])
+        .wrapping_add(y[4])
+        .wrapping_add(y[6])
+        .rotate_left(3);
+    t[2] = y[0]
+        .wrapping_add(y[1])
+        .wrapping_add(y[2])
+        .wrapping_add(y[3])
+        .wrapping_add(y[5])
+        .rotate_left(17);
+    t[3] = y[2]
+        .wrapping_add(y[3])
+        .wrapping_add(y[4])
+        .wrapping_add(y[6])
+        .wrapping_add(y[7])
+        .rotate_left(23);
+    t[4] = y[0]
+        .wrapping_add(y[1])
+        .wrapping_add(y[3])
+        .wrapping_add(y[4])
+        .wrapping_add(y[5])
+        .rotate_left(31);
+    t[5] = y[2]
+        .wrapping_add(y[4])
+        .wrapping_add(y[5])
+        .wrapping_add(y[6])
+        .wrapping_add(y[7])
+        .rotate_left(37);
+    t[6] = y[1]
+        .wrapping_add(y[2])
+        .wrapping_add(y[5])
+        .wrapping_add(y[6])
+        .wrapping_add(y[7])
+        .rotate_left(45);
+    t[7] = y[0]
+        .wrapping_add(y[3])
+        .wrapping_add(y[4])
+        .wrapping_add(y[6])
+        .wrapping_add(y[7])
+        .rotate_left(59);
     z[5] = t[8].wrapping_add(t[3] ^ t[4] ^ t[6]);
     z[6] = t[9].wrapping_add(t[2] ^ t[5] ^ t[7]);
     z[7] = t[10].wrapping_add(t[4] ^ t[6] ^ t[7]);

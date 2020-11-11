@@ -12,7 +12,7 @@ impl EdonR256 {
 
 impl Default for EdonR256 {
     fn default() -> Self {
-        Self(EdonR::new(P256))
+        Self(EdonR::<u32>::new(P256))
     }
 }
 

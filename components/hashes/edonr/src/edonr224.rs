@@ -12,7 +12,7 @@ impl EdonR224 {
 
 impl Default for EdonR224 {
     fn default() -> Self {
-        Self(EdonR::new(P224))
+        Self(EdonR::<u32>::new(P224))
     }
 }
 
