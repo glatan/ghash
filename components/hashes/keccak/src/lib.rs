@@ -13,10 +13,10 @@
 // Keccak-384: [r=832, c=768]
 // Keccak-512: [r=576, c=1024]
 
-// #![no_std]
+#![no_std]
+#[macro_use]
 extern crate alloc;
 
-use alloc::vec;
 use alloc::vec::Vec;
 
 mod keccak224;

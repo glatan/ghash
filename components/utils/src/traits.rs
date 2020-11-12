@@ -1,4 +1,3 @@
-use alloc::format;
 use alloc::string::String;
 use alloc::vec::Vec;
 
@@ -20,7 +19,6 @@ pub trait Hash<T = Self> {
 
 #[cfg(test)]
 mod tests {
-    use alloc::vec;
     use alloc::vec::Vec;
 
     use super::Hash;
