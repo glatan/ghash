@@ -21,10 +21,10 @@ pub use sha512trunc256::Sha512Trunc256;
 pub use utils::Hash;
 
 use crate::consts::*;
+use core::cmp::Ordering;
 
 #[cfg(not(feature = "minimal"))]
 use utils::impl_md_flow;
-
 #[cfg(feature = "minimal")]
 use utils::impl_md_flow_minimal as impl_md_flow;
 
@@ -111,6 +111,9 @@ impl Sha2<u32> {
         self.status[6] = self.status[6].wrapping_add(g);
         self.status[7] = self.status[7].wrapping_add(h);
     }
+    fn sha2(&mut self, message: &[u8]) {
+        impl_md_flow!(u32=> self, message, from_be_bytes, to_be_bytes);
+    }
 }
 
 impl Sha2<u64> {
@@ -190,5 +193,8 @@ impl Sha2<u64> {
         self.status[5] = self.status[5].wrapping_add(f);
         self.status[6] = self.status[6].wrapping_add(g);
         self.status[7] = self.status[7].wrapping_add(h);
+    }
+    fn sha2(&mut self, message: &[u8]) {
+        impl_md_flow!(u64=> self, message, from_be_bytes, to_be_bytes);
     }
 }

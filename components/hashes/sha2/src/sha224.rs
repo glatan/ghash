@@ -1,7 +1,5 @@
+use super::{Sha2, H224};
 use alloc::vec::Vec;
-use core::cmp::Ordering;
-
-use super::{impl_md_flow, Sha2, H224};
 use utils::Hash;
 
 pub struct Sha224(Sha2<u32>);
@@ -21,7 +19,7 @@ impl Default for Sha224 {
 
 impl Hash for Sha224 {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
-        impl_md_flow!(u32=> self.0, message, from_be_bytes, to_be_bytes);
+        self.0.sha2(message);
         self.0.status[0..7]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
