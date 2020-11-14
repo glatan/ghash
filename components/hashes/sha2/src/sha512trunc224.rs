@@ -29,3 +29,28 @@ impl Hash for Sha512Trunc224 {
             .collect()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Sha512Trunc224;
+    use dev_utils::impl_test;
+
+    const OFFICIAL: [(&[u8], &str); 2] = [
+        // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512_224.pdf
+        (
+            "abc".as_bytes(),
+            "4634270f707b6a54daae7530460842e20e37ed265ceee9a43e8924aa",
+        ),
+        (
+            "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu".as_bytes(),
+            "23fec5bb94d60b23308192640b0c453335d664734fe40e7268674af9",
+        ),
+    ];
+
+    impl_test!(
+        Sha512Trunc224,
+        official,
+        OFFICIAL,
+        Sha512Trunc224::default()
+    );
+}

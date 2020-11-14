@@ -28,3 +28,28 @@ impl Hash for Sha512Trunc256 {
             .collect()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Sha512Trunc256;
+    use dev_utils::impl_test;
+
+    const OFFICIAL: [(&[u8], &str); 2] = [
+        // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512_256.pdf
+        (
+            "abc".as_bytes(),
+            "53048e2681941ef99b2e29b76b4c7dabe4c2d0c634fc6d46e0e2f13107e7af23",
+        ),
+        (
+            "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu".as_bytes(),
+            "3928e184fb8690f840da3988121d31be65cb9d3ef83ee6146feac861e19b563a",
+        ),
+    ];
+
+    impl_test!(
+        Sha512Trunc256,
+        official,
+        OFFICIAL,
+        Sha512Trunc256::default()
+    );
+}
