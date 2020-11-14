@@ -1,28 +1,28 @@
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
-use super::{Sha2, H384};
-use utils::{impl_md_flow_minimal, Hash};
+use super::{impl_md_flow, Sha2, H224};
+use utils::Hash;
 
-pub struct Sha384(Sha2<u64>);
+pub struct Sha224(Sha2<u32>);
 
-impl Sha384 {
+impl Sha224 {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Default for Sha384 {
+impl Default for Sha224 {
     #[rustfmt::skip]
     fn default() -> Self {
-        Self(Sha2::<u64>::new(H384))
+        Self(Sha2::<u32>::new(H224))
     }
 }
 
-impl Hash for Sha384 {
+impl Hash for Sha224 {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
-        impl_md_flow_minimal!(u64=> self.0, message, from_be_bytes, to_be_bytes);
-        self.0.status[0..6]
+        impl_md_flow!(u32=> self.0, message, from_be_bytes, to_be_bytes);
+        self.0.status[0..7]
             .iter()
             .flat_map(|word| word.to_be_bytes().to_vec())
             .collect()
