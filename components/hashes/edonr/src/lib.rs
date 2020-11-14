@@ -12,6 +12,10 @@ mod consts;
 
 use consts::*;
 use core::cmp::Ordering;
+#[cfg(not(feature = "minimal"))]
+use utils::impl_md_flow;
+#[cfg(feature = "minimal")]
+use utils::impl_md_flow_minimal as impl_md_flow;
 
 struct EdonR<T> {
     state: [T; 16],
@@ -91,6 +95,9 @@ impl EdonR<u32> {
         state_16 = q256(&state_8, &state_32);
         self.state[0..8].copy_from_slice(&state_8);
         self.state[8..16].copy_from_slice(&state_16);
+    }
+    fn edonr(&mut self, message: &[u8]) {
+        impl_md_flow!(u32=> self, message, from_le_bytes, to_le_bytes);
     }
 }
 
