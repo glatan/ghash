@@ -1,6 +1,5 @@
 use super::{EdonR, P256};
-use core::cmp::Ordering;
-use utils::{impl_md_flow_minimal, Hash};
+use utils::Hash;
 
 pub struct EdonR256(EdonR<u32>);
 
@@ -18,7 +17,7 @@ impl Default for EdonR256 {
 
 impl Hash for EdonR256 {
     fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
-        impl_md_flow_minimal!(u32=> self.0, message, from_le_bytes, to_le_bytes);
+        self.0.edonr(message);
         self.0.state[8..16]
             .iter()
             .flat_map(|word| word.to_le_bytes().to_vec())
