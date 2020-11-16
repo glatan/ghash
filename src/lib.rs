@@ -1,3 +1,5 @@
+#![no_std]
+
 pub use blake::*;
 pub use blake2::*;
 pub use edonr::*;
