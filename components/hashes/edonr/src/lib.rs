@@ -1,3 +1,6 @@
+#![no_std]
+extern crate alloc;
+
 mod edonr224;
 mod edonr256;
 mod edonr384;
