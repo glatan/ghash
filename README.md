@@ -25,9 +25,10 @@
 * SHA3-{224, 256, 384, 512}
 * SHAKE128, SHAKE256
 
-## Demo
+## Example
 
-WebAssemblyターゲットでビルドしたデモが[ここ](https://ghash.glatan.vercel.app/)にあります。
+* WebAssemblyターゲットでビルドしたデモが[ここ](https://ghash.glatan.vercel.app/)にあります。
+* PSP(PlayStation Portable)ターゲットのデモは[ここ](https://gitlab.com/glatan/ghash-psp)。
 
 ## Targets
 
