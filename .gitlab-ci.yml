@@ -35,6 +35,18 @@ variables:
   script:
     - make test.wasm32-wasi
 
+.windows_msvc_template: &windows_msvc_template
+  tags:
+    - shared-windows
+    - windows
+  cache:
+    paths:
+      - target/${TARGET}
+  before_script:
+    - Remove-Item Alias:curl
+    - curl --proto '=https' --tlsv1.2 -sSf https://win.rustup.rs/x86_64 -o rustup-init.exe
+    - ./rustup-init.exe -y -t ${TARGET} --default-toolchain stable --profile minimal
+
 stable-aarch64-unknown-linux-gnu:
   variables:
     PACKAGES: gcc-aarch64-linux-gnu
