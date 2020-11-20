@@ -188,6 +188,7 @@ nightly-wasm32-wasi:
       - target/${TARGET}
   before_script:
     - Remove-Item Alias:curl
+    - choco install make -y
     - curl --proto '=https' --tlsv1.2 -sSf https://win.rustup.rs/x86_64 -o rustup-init.exe
     - ./rustup-init.exe -y -t ${TARGET} --default-toolchain stable --profile minimal
     - $ENV:Path += "${CI_PROJECT_DIR}/cargo/bin"
