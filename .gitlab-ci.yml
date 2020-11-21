@@ -199,3 +199,8 @@ stable-x86_64-pc-windows-msvc:
   variables:
     TARGET: x86_64-pc-windows-msvc
   <<: *windows_msvc_template
+
+stable-i686-pc-windows-msvc:
+  variables:
+    TARGET: i686-pc-windows-msvc
+  <<: *windows_msvc_template
