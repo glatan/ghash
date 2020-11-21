@@ -178,3 +178,29 @@ nightly-wasm32-wasi:
   stage: test
   image: rustlang/rust:nightly-buster-slim
   <<: *wasm32-wasi_template
+
+.windows_msvc_template: &windows_msvc_template
+  tags:
+    - shared-windows
+    - windows
+  cache:
+    paths:
+      - target/${TARGET}
+  before_script:
+    - Remove-Item Alias:curl
+    - choco install make -y
+    - curl --proto '=https' --tlsv1.2 -sSf https://win.rustup.rs/x86_64 -o rustup-init.exe
+    - ./rustup-init.exe -y -t ${TARGET} --default-toolchain stable --profile minimal
+    - $ENV:Path += "${CI_PROJECT_DIR}/cargo/bin"
+  script:
+    - make test.${TARGET}
+
+stable-x86_64-pc-windows-msvc:
+  variables:
+    TARGET: x86_64-pc-windows-msvc
+  <<: *windows_msvc_template
+
+stable-i686-pc-windows-msvc:
+  variables:
+    TARGET: i686-pc-windows-msvc
+  <<: *windows_msvc_template
