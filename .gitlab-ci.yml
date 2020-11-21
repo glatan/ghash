@@ -20,7 +20,7 @@ variables:
 
 .wasm32-wasi_template: &wasm32-wasi_template
   variables:
-    WASMTIME_VERSION: 0.20.0
+    WASMTIME_VERSION: 0.21.0
   cache:
     paths:
       - target/wasm32-wasi
