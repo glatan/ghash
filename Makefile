@@ -1,5 +1,3 @@
-SUBDIRS := $(shell find components/ -name 'Makefile' -printf '%h\n')
-
 .PHONY: default
 default: test_all
 
@@ -15,6 +13,16 @@ bench:
 test_all: test.x86_64-unknown-linux-gnu test.i686-unknown-linux-gnu test.wasm32-wasi
 
 test.%:
-	@for t in $(SUBDIRS); do \
-		$(MAKE) -C $$t test.$*; \
-	done
+	@$(MAKE) -C components/hashes/blake test.$*
+	@$(MAKE) -C components/hashes/blake2 test.$*
+	@$(MAKE) -C components/hashes/edonr test.$*
+	@$(MAKE) -C components/hashes/keccak test.$*
+	@$(MAKE) -C components/hashes/md2 test.$*
+	@$(MAKE) -C components/hashes/md4 test.$*
+	@$(MAKE) -C components/hashes/md5 test.$*
+	@$(MAKE) -C components/hashes/ripemd test.$*
+	@$(MAKE) -C components/hashes/sha0 test.$*
+	@$(MAKE) -C components/hashes/sha1 test.$*
+	@$(MAKE) -C components/hashes/sha2 test.$*
+	@$(MAKE) -C components/hashes/sha3 test.$*
+	@$(MAKE) -C components/utils test.$*
