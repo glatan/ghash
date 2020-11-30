@@ -17,7 +17,7 @@ struct Blake2<T> {
 
 impl Blake2<u32> {
     fn new(n: usize) -> Self {
-        if n < 1 || n > 32 {
+        if !(1..=32).contains(&n) {
             panic!("{} is not a valid number. n must be between 1 and 32.", n);
         }
         Self {
@@ -39,7 +39,7 @@ impl Blake2<u32> {
         }
     }
     fn with_key(n: usize, k: usize, salt: [u32; 2], personal: [u32; 2]) -> Self {
-        if n < 1 || n > 32 {
+        if !(1..=32).contains(&n) {
             panic!("{} is not a valid number. n must be between 1 and 32.", n);
         }
         if k > 32 {
@@ -133,7 +133,7 @@ impl Blake2<u32> {
 
 impl Blake2<u64> {
     fn new(n: usize) -> Self {
-        if n < 1 || n > 64 {
+        if !(1..=64).contains(&n) {
             panic!("{} is not a valid number. n must be between 1 and 32.", n);
         }
         Self {
@@ -155,7 +155,7 @@ impl Blake2<u64> {
         }
     }
     fn with_key(n: usize, k: usize, salt: [u64; 2], personal: [u64; 2]) -> Self {
-        if n < 1 || n > 64 {
+        if !(1..=64).contains(&n) {
             panic!("{} is not a valid number. n must be between 1 and 32.", n);
         }
         if k > 64 {

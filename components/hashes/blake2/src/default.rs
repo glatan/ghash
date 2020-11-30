@@ -48,7 +48,7 @@ macro_rules! impl_blake2s {
         }
         impl $T {
             pub fn new(n: usize) -> Self {
-                if n < 1 || n > 32 {
+                if !(1..=32).contains(&n) {
                     panic!("{} is not a valid number. n must be between 1 and 32.", n);
                 }
                 Self {
@@ -70,7 +70,7 @@ macro_rules! impl_blake2s {
                 }
             }
             pub fn with_key(n: usize, k: usize, salt: [u32; 2], personal: [u32; 2]) -> Self {
-                if n < 1 || n > 32 {
+                if !(1..=32).contains(&n) {
                     panic!("{} is not a valid number. n must be between 1 and 32.", n);
                 }
                 if k > 32 {
@@ -252,7 +252,7 @@ macro_rules! impl_blake2b {
         }
         impl $T {
             pub fn new(n: usize) -> Self {
-                if n < 1 || n > 64 {
+                if !(1..=64).contains(&n) {
                     panic!("{} is not a valid number. n must be between 1 and 32.", n);
                 }
                 Self {
@@ -274,7 +274,7 @@ macro_rules! impl_blake2b {
                 }
             }
             pub fn with_key(n: usize, k: usize, salt: [u64; 2], personal: [u64; 2]) -> Self {
-                if n < 1 || n > 64 {
+                if !(1..=64).contains(&n) {
                     panic!("{} is not a valid number. n must be between 1 and 32.", n);
                 }
                 if k > 64 {
