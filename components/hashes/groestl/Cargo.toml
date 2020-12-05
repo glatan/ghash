@@ -1,0 +1,7 @@
+[package]
+name = "groestl"
+version = "0.1.0"
+authors = ["glatan <glatan@protonmail.com>"]
+edition = "2018"
+
+[dependencies]
