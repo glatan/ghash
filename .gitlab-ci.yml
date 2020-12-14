@@ -5,6 +5,8 @@ stages:
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
 
+# Templates
+
 .cross_compile_template: &cross_compile_template
   image: amd64/ubuntu:groovy
   stage: ${STAGE}
@@ -51,6 +53,24 @@ variables:
     - rustc --version
   script:
     - make test.x86_64-unknown-linux-gnu
+
+.windows_msvc_template: &windows_msvc_template
+  tags:
+    - shared-windows
+    - windows
+  cache:
+    paths:
+      - target/${TARGET}
+  before_script:
+    - Remove-Item Alias:curl
+    - choco install make -y
+    - curl --proto '=https' --tlsv1.2 -sSf https://win.rustup.rs/x86_64 -o rustup-init.exe
+    - ./rustup-init.exe -y -t ${TARGET} --default-toolchain stable --profile minimal
+    - $ENV:Path += "${CI_PROJECT_DIR}/cargo/bin"
+  script:
+    - make test.${TARGET}
+
+# Stable Rust
 
 stable-aarch64-unknown-linux-gnu:
   variables:
@@ -203,22 +223,6 @@ nightly-wasm32-wasi:
   STAGE: stable
   image: rustlang/rust:nightly-buster-slim
   <<: *wasm32-wasi_template
-
-.windows_msvc_template: &windows_msvc_template
-  tags:
-    - shared-windows
-    - windows
-  cache:
-    paths:
-      - target/${TARGET}
-  before_script:
-    - Remove-Item Alias:curl
-    - choco install make -y
-    - curl --proto '=https' --tlsv1.2 -sSf https://win.rustup.rs/x86_64 -o rustup-init.exe
-    - ./rustup-init.exe -y -t ${TARGET} --default-toolchain stable --profile minimal
-    - $ENV:Path += "${CI_PROJECT_DIR}/cargo/bin"
-  script:
-    - make test.${TARGET}
 
 stable-x86_64-pc-windows-msvc:
   variables:
