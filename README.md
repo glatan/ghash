@@ -30,6 +30,10 @@
 * WebAssemblyターゲットでビルドしたデモが[ここ](https://ghash.glatan.vercel.app/)にあります。
 * PSP(PlayStation Portable)ターゲットのデモは[ここ](https://gitlab.com/glatan/ghash-psp)。
 
+## MSRV(Minimum Supported Rust Version)
+
+1.43
+
 ## Targets
 
 以下のターゲットでテストを通しています。(x86_64, wasm32以外はQEMUを使用)
