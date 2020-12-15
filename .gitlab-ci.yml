@@ -25,7 +25,7 @@ variables:
   <<: *cross_compile_template
 
 .msrv_cross_compile_template: &msrv_cross_compile_template
-  image: amd64/rust:slim-buster
+  image: amd64/rust:1.43.0-slim-buster
   stage: msrv
   <<: *cross_compile_template
 
