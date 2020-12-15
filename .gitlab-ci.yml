@@ -1,5 +1,6 @@
 stages:
   - stable
+  - nightly
   - msrv # Minimum Supported Rust Version
 
 variables:
@@ -7,24 +8,36 @@ variables:
 
 # Templates
 
+## Cross Compile Templates
+
 .cross_compile_template: &cross_compile_template
-  image: amd64/ubuntu:groovy
-  stage: ${STAGE}
   cache:
     paths:
       - target/${TARGET}
   before_script:
     - apt update -y
     - apt install -y curl make qemu-user ${PACKAGES}
-    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > setup.sh
-    - sh setup.sh -y -t ${TARGET} --default-toolchain stable --profile minimal
-    - source ${CI_PROJECT_DIR}/cargo/env
+    - rustup target add ${TARGET}
   script:
     - make test.${TARGET}
 
-.wasm32-wasi_template: &wasm32-wasi_template
+.stable_cross_compile_template: &stable_cross_compile_template
+  # image: amd64/ubuntu:groovy
   image: amd64/rust:slim-buster
-  stage: ${STAGE}
+  stage: stable
+  variables:
+    CHANNEL: stable
+  <<: *cross_compile_template
+
+.msrv_cross_compile_template: &msrv_cross_compile_template
+  # image: amd64/ubuntu:groovy
+  image: amd64/rust:slim-buster
+  stage: msrv
+  <<: *cross_compile_template
+
+## wasm32-wasi
+
+.wasm32-wasi_template: &wasm32-wasi_template
   variables:
     WASMTIME_VERSION: 0.21.0
   cache:
@@ -41,9 +54,9 @@ variables:
   script:
     - make test.wasm32-wasi
 
+## x86_64-unknown-linux-gnu
+
 .x86_64-unknown-linux-gnu-template: &x86_64-unknown-linux-gnu-template
-  image: amd64/rust:slim-buster
-  stage: ${STAGE}
   cache:
     paths:
       - target/x86_64-unknown-linux-gnu
@@ -53,6 +66,8 @@ variables:
     - rustc --version
   script:
     - make test.x86_64-unknown-linux-gnu
+
+## Windows
 
 .windows_msvc_template: &windows_msvc_template
   tags:
@@ -74,165 +89,141 @@ variables:
 
 stable-aarch64-unknown-linux-gnu:
   variables:
-    STAGE: stable
     PACKAGES: gcc-aarch64-linux-gnu
     TARGET: aarch64-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-arm-unknown-linux-gnueabi:
   variables:
-    STAGE: stable
     PACKAGES: gcc-arm-linux-gnueabi
     TARGET: arm-unknown-linux-gnueabi
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-arm-unknown-linux-gnueabihf:
   variables:
-    STAGE: stable
     PACKAGES: gcc-arm-linux-gnueabihf
     TARGET: arm-unknown-linux-gnueabihf
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-armv5te-unknown-linux-gnueabi:
   variables:
-    STAGE: stable
     PACKAGES: gcc-arm-linux-gnueabi
     TARGET: armv5te-unknown-linux-gnueabi
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-armv7-unknown-linux-gnueabi:
   variables:
-    STAGE: stable
     PACKAGES: gcc-arm-linux-gnueabi
     TARGET: armv7-unknown-linux-gnueabi
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-armv7-unknown-linux-gnueabihf:
   variables:
-    STAGE: stable
     PACKAGES: gcc-arm-linux-gnueabihf
     TARGET: armv7-unknown-linux-gnueabihf
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-i586-unknown-linux-gnu:
   variables:
-    STAGE: stable
     PACKAGES: gcc-i686-linux-gnu
     TARGET: i586-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-i686-unknown-linux-gnu:
   variables:
-    STAGE: stable
     PACKAGES: gcc-i686-linux-gnu
     TARGET: i686-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-mips-unknown-linux-gnu:
   variables:
-    STAGE: stable
     PACKAGES: gcc-mips-linux-gnu
     TARGET: mips-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-mipsel-unknown-linux-gnu:
   variables:
-    STAGE: stable
     PACKAGES: gcc-mipsel-linux-gnu
     TARGET: mipsel-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-mips64-unknown-linux-gnuabi64:
   variables:
-    STAGE: stable
     PACKAGES: gcc-mips64-linux-gnuabi64
     TARGET: mips64-unknown-linux-gnuabi64
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-mips64el-unknown-linux-gnuabi64:
   variables:
-    STAGE: stable
     PACKAGES: gcc-mips64el-linux-gnuabi64
     TARGET: mips64el-unknown-linux-gnuabi64
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-powerpc-unknown-linux-gnu:
   variables:
-    STAGE: stable
     PACKAGES: gcc-powerpc-linux-gnu
     TARGET: powerpc-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-powerpc64-unknown-linux-gnu:
   variables:
-    STAGE: stable
     PACKAGES: gcc-powerpc64-linux-gnu
     TARGET: powerpc64-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-powerpc64le-unknown-linux-gnu:
   variables:
-    STAGE: stable
     PACKAGES: gcc-powerpc64le-linux-gnu
     TARGET: powerpc64le-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-riscv64gc-unknown-linux-gnu:
   variables:
-    STAGE: stable
     PACKAGES: gcc-riscv64-linux-gnu
     TARGET: riscv64gc-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-s390x-unknown-linux-gnu:
   variables:
-    STAGE: stable
     PACKAGES: gcc-s390x-linux-gnu
     TARGET: s390x-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-sparc64-unknown-linux-gnu:
   variables:
-    STAGE: stable
     PACKAGES: gcc-sparc64-linux-gnu
     TARGET: sparc64-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *stable_cross_compile_template
 
 stable-x86_64-unknown-linux-gnu:
-  STAGE: stable
+  image: amd64/rust:slim-buster
+  stage: stable
   <<: *x86_64-unknown-linux-gnu-template
 
 stable-wasm32-wasi:
-  STAGE: stable
+  image: amd64/rust:slim-buster
+  stage: stable
   <<: *wasm32-wasi_template
 
 nightly-x86_64-unknown-linux-gnu:
-  STAGE: stable
+  stage: nightly
   image: rustlang/rust:nightly-buster-slim
-  cache:
-    paths:
-      - target/x86_64-unknown-linux-gnu
-  before_script:
-    - apt update -y
-    - apt install -y make
-    - rustc --version
-  script:
-    - make test.x86_64-unknown-linux-gnu
+  <<: *x86_64-unknown-linux-gnu-template
 
 nightly-wasm32-wasi:
-  STAGE: stable
+  stage: nightly
   image: rustlang/rust:nightly-buster-slim
   <<: *wasm32-wasi_template
 
 stable-x86_64-pc-windows-msvc:
+  stage: stable
   variables:
-    STAGE: stable
     TARGET: x86_64-pc-windows-msvc
   <<: *windows_msvc_template
 
 stable-i686-pc-windows-msvc:
+  stage: stable
   variables:
-    STAGE: stable
     TARGET: i686-pc-windows-msvc
   <<: *windows_msvc_template
 
@@ -240,147 +231,130 @@ stable-i686-pc-windows-msvc:
 
 msrv-aarch64-unknown-linux-gnu:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-aarch64-linux-gnu
     TARGET: aarch64-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-arm-unknown-linux-gnueabi:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-arm-linux-gnueabi
     TARGET: arm-unknown-linux-gnueabi
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-arm-unknown-linux-gnueabihf:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-arm-linux-gnueabihf
     TARGET: arm-unknown-linux-gnueabihf
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-armv5te-unknown-linux-gnueabi:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-arm-linux-gnueabi
     TARGET: armv5te-unknown-linux-gnueabi
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-armv7-unknown-linux-gnueabi:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-arm-linux-gnueabi
     TARGET: armv7-unknown-linux-gnueabi
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-armv7-unknown-linux-gnueabihf:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-arm-linux-gnueabihf
     TARGET: armv7-unknown-linux-gnueabihf
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-i586-unknown-linux-gnu:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-i686-linux-gnu
     TARGET: i586-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-i686-unknown-linux-gnu:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-i686-linux-gnu
     TARGET: i686-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-mips-unknown-linux-gnu:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-mips-linux-gnu
     TARGET: mips-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-mipsel-unknown-linux-gnu:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-mipsel-linux-gnu
     TARGET: mipsel-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-mips64-unknown-linux-gnuabi64:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-mips64-linux-gnuabi64
     TARGET: mips64-unknown-linux-gnuabi64
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-mips64el-unknown-linux-gnuabi64:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-mips64el-linux-gnuabi64
     TARGET: mips64el-unknown-linux-gnuabi64
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-powerpc-unknown-linux-gnu:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-powerpc-linux-gnu
     TARGET: powerpc-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-powerpc64-unknown-linux-gnu:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-powerpc64-linux-gnu
     TARGET: powerpc64-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-powerpc64le-unknown-linux-gnu:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-powerpc64le-linux-gnu
     TARGET: powerpc64le-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-riscv64gc-unknown-linux-gnu:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-riscv64-linux-gnu
     TARGET: riscv64gc-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-s390x-unknown-linux-gnu:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-s390x-linux-gnu
     TARGET: s390x-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-sparc64-unknown-linux-gnu:
   variables:
-    STAGE: msrv
     PACKAGES: gcc-sparc64-linux-gnu
     TARGET: sparc64-unknown-linux-gnu
-  <<: *cross_compile_template
+  <<: *msrv_cross_compile_template
 
 msrv-x86_64-unknown-linux-gnu:
+  image: amd64/rust:slim-buster
   stage: msrv
   <<: *x86_64-unknown-linux-gnu-template
 
 msrv-wasm32-wasi:
-  stage: msrv
   image: amd64/rust:slim-buster
+  stage: msrv
   <<: *wasm32-wasi_template
 
 msrv-x86_64-pc-windows-msvc:
+  stage: msrv
   variables:
-    STAGE: msrv
     TARGET: x86_64-pc-windows-msvc
   <<: *windows_msvc_template
 
 msrv-i686-pc-windows-msvc:
+  stage: msrv
   variables:
-    STAGE: msrv
     TARGET: i686-pc-windows-msvc
   <<: *windows_msvc_template
