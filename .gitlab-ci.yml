@@ -6,8 +6,76 @@ stages:
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
 
-include:
-  - local: '/.gitlab/ci/template.yml'
+# Template
+
+.cross_compile_template: &cross_compile_template
+  cache:
+    paths:
+      - target/${TARGET}
+  before_script:
+    - apt update -y
+    - apt install -y curl make qemu-user ${PACKAGES}
+    - rustup target add ${TARGET}
+  script:
+    - make test.${TARGET}
+
+.stable_cross_compile_template: &stable_cross_compile_template
+  # image: amd64/ubuntu:groovy
+  image: amd64/rust:slim-buster
+  stage: stable
+  <<: *cross_compile_template
+
+.msrv_cross_compile_template: &msrv_cross_compile_template
+  # image: amd64/ubuntu:groovy
+  image: amd64/rust:slim-buster
+  stage: msrv
+  <<: *cross_compile_template
+
+.wasm32-wasi_template: &wasm32-wasi_template
+  variables:
+    WASMTIME_VERSION: 0.21.0
+  cache:
+    paths:
+      - target/wasm32-wasi
+  before_script:
+    - rustc --version
+    - rustup target add wasm32-wasi
+    - apt update -y
+    - apt install -y curl make xz-utils
+    - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" > wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
+    - tar -xvf wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
+    - mv wasmtime-v${WASMTIME_VERSION}-x86_64-linux/wasmtime /usr/bin/
+  script:
+    - make test.wasm32-wasi
+
+.x86_64-unknown-linux-gnu-template: &x86_64-unknown-linux-gnu-template
+  cache:
+    paths:
+      - target/x86_64-unknown-linux-gnu
+  before_script:
+    - apt update -y
+    - apt install -y make
+    - rustc --version
+  script:
+    - make test.x86_64-unknown-linux-gnu
+
+## Windows
+
+.windows_msvc_template: &windows_msvc_template
+  tags:
+    - shared-windows
+    - windows
+  cache:
+    paths:
+      - target/${TARGET}
+  before_script:
+    - Remove-Item Alias:curl
+    - choco install make -y
+    - curl --proto '=https' --tlsv1.2 -sSf https://win.rustup.rs/x86_64 -o rustup-init.exe
+    - ./rustup-init.exe -y -t ${TARGET} --default-toolchain stable --profile minimal
+    - $ENV:Path += "${CI_PROJECT_DIR}/cargo/bin"
+  script:
+    - make test.${TARGET}
 
 # Stable
 
