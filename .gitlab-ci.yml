@@ -1,7 +1,7 @@
 stages:
   - stable
-  - nightly
   - msrv # Minimum Supported Rust Version
+  - nightly
 
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
@@ -25,8 +25,6 @@ variables:
   # image: amd64/ubuntu:groovy
   image: amd64/rust:slim-buster
   stage: stable
-  variables:
-    CHANNEL: stable
   <<: *cross_compile_template
 
 .msrv_cross_compile_template: &msrv_cross_compile_template
