@@ -1,0 +1,9 @@
+nightly-x86_64-unknown-linux-gnu:
+  stage: nightly
+  image: rustlang/rust:nightly-buster-slim
+  <<: *x86_64-unknown-linux-gnu-template
+
+nightly-wasm32-wasi:
+  stage: nightly
+  image: rustlang/rust:nightly-buster-slim
+  <<: *wasm32-wasi_template
