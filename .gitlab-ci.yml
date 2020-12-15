@@ -29,6 +29,11 @@ variables:
   stage: msrv
   <<: *cross_compile_template
 
+.nightly_cross_compile_template: &nightly_cross_compile_template
+  image: rustlang/rust:nightly-buster-slim
+  stage: nightly
+  <<: *cross_compile_template
+
 .wasm32-wasi_template: &wasm32-wasi_template
   variables:
     WASMTIME_VERSION: 0.21.0
@@ -353,6 +358,119 @@ msrv-wasm32-wasi:
 # Nightly
 
 ## Linux
+
+nightly-aarch64-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-aarch64-linux-gnu
+    TARGET: aarch64-unknown-linux-gnu
+  <<: *nightly_cross_compile_template
+
+nightly-arm-unknown-linux-gnueabi:
+  variables:
+    PACKAGES: gcc-arm-linux-gnueabi
+    TARGET: arm-unknown-linux-gnueabi
+  <<: *nightly_cross_compile_template
+
+nightly-arm-unknown-linux-gnueabihf:
+  variables:
+    PACKAGES: gcc-arm-linux-gnueabihf
+    TARGET: arm-unknown-linux-gnueabihf
+  <<: *nightly_cross_compile_template
+
+nightly-armv5te-unknown-linux-gnueabi:
+  variables:
+    PACKAGES: gcc-arm-linux-gnueabi
+    TARGET: armv5te-unknown-linux-gnueabi
+  <<: *nightly_cross_compile_template
+
+nightly-armv7-unknown-linux-gnueabi:
+  variables:
+    PACKAGES: gcc-arm-linux-gnueabi
+    TARGET: armv7-unknown-linux-gnueabi
+  <<: *nightly_cross_compile_template
+
+nightly-armv7-unknown-linux-gnueabihf:
+  variables:
+    PACKAGES: gcc-arm-linux-gnueabihf
+    TARGET: armv7-unknown-linux-gnueabihf
+  <<: *nightly_cross_compile_template
+
+nightly-i586-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-i686-linux-gnu
+    TARGET: i586-unknown-linux-gnu
+  <<: *nightly_cross_compile_template
+
+nightly-i686-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-i686-linux-gnu
+    TARGET: i686-unknown-linux-gnu
+  <<: *nightly_cross_compile_template
+
+nightly-mips-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-mips-linux-gnu
+    TARGET: mips-unknown-linux-gnu
+  <<: *nightly_cross_compile_template
+
+nightly-mipsel-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-mipsel-linux-gnu
+    TARGET: mipsel-unknown-linux-gnu
+  <<: *nightly_cross_compile_template
+
+nightly-mips64-unknown-linux-gnuabi64:
+  variables:
+    PACKAGES: gcc-mips64-linux-gnuabi64
+    TARGET: mips64-unknown-linux-gnuabi64
+  <<: *nightly_cross_compile_template
+
+nightly-mips64el-unknown-linux-gnuabi64:
+  variables:
+    PACKAGES: gcc-mips64el-linux-gnuabi64
+    TARGET: mips64el-unknown-linux-gnuabi64
+  <<: *nightly_cross_compile_template
+
+nightly-powerpc-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-powerpc-linux-gnu
+    TARGET: powerpc-unknown-linux-gnu
+  <<: *nightly_cross_compile_template
+
+nightly-powerpc64-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-powerpc64-linux-gnu
+    TARGET: powerpc64-unknown-linux-gnu
+  <<: *nightly_cross_compile_template
+
+nightly-powerpc64le-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-powerpc64le-linux-gnu
+    TARGET: powerpc64le-unknown-linux-gnu
+  <<: *nightly_cross_compile_template
+
+nightly-riscv64gc-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-riscv64-linux-gnu
+    TARGET: riscv64gc-unknown-linux-gnu
+  <<: *nightly_cross_compile_template
+
+nightly-s390x-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-s390x-linux-gnu
+    TARGET: s390x-unknown-linux-gnu
+  <<: *nightly_cross_compile_template
+
+nightly-sparc64-unknown-linux-gnu:
+  variables:
+    PACKAGES: gcc-sparc64-linux-gnu
+    TARGET: sparc64-unknown-linux-gnu
+  <<: *nightly_cross_compile_template
+
+nightly-x86_64-unknown-linux-gnu:
+  image: amd64/rust:slim-buster
+  stage: nightly
+  <<: *x86_64-unknown-linux-gnu-template
 
 nightly-x86_64-unknown-linux-gnu:
   stage: nightly
