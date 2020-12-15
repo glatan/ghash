@@ -330,14 +330,14 @@ msrv-sparc64-unknown-linux-gnu:
   <<: *msrv_cross_compile_template
 
 msrv-x86_64-unknown-linux-gnu:
-  image: amd64/rust:slim-buster
+  image: amd64/rust:1.43.0-slim-buster
   stage: msrv
   <<: *x86_64-unknown-linux-gnu-template
 
 ## WebAssembly
 
 msrv-wasm32-wasi:
-  image: amd64/rust:slim-buster
+  image: amd64/rust:1.43.0-slim-buster
   stage: msrv
   <<: *wasm32-wasi_template
 
@@ -466,11 +466,6 @@ nightly-sparc64-unknown-linux-gnu:
     PACKAGES: gcc-sparc64-linux-gnu
     TARGET: sparc64-unknown-linux-gnu
   <<: *nightly_cross_compile_template
-
-nightly-x86_64-unknown-linux-gnu:
-  image: amd64/rust:slim-buster
-  stage: nightly
-  <<: *x86_64-unknown-linux-gnu-template
 
 nightly-x86_64-unknown-linux-gnu:
   stage: nightly
