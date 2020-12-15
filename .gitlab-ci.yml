@@ -6,8 +6,7 @@ stages:
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
 
-include:
-  - local: /ci/template.yml
+include: /ci/template.yml
 
 # Stable
 
