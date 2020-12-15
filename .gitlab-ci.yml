@@ -57,6 +57,7 @@ variables:
   script:
     - make test.x86_64-unknown-linux-gnu
 
+# TODO: Support MSRV
 .windows_msvc_template: &windows_msvc_template
   tags:
     - shared-windows
@@ -337,17 +338,17 @@ msrv-wasm32-wasi:
 
 ## Windows
 
-msrv-x86_64-pc-windows-msvc:
-  stage: msrv
-  variables:
-    TARGET: x86_64-pc-windows-msvc
-  <<: *windows_msvc_template
+# msrv-x86_64-pc-windows-msvc:
+#   stage: msrv
+#   variables:
+#     TARGET: x86_64-pc-windows-msvc
+#   <<: *windows_msvc_template
 
-msrv-i686-pc-windows-msvc:
-  stage: msrv
-  variables:
-    TARGET: i686-pc-windows-msvc
-  <<: *windows_msvc_template
+# msrv-i686-pc-windows-msvc:
+#   stage: msrv
+#   variables:
+#     TARGET: i686-pc-windows-msvc
+#   <<: *windows_msvc_template
 
 # Nightly
 
