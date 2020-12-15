@@ -34,9 +34,11 @@
 
 1.43
 
-## Targets
+## Tests
 
 以下のターゲットでテストを通しています。(x86_64, wasm32以外はQEMUを使用)
+
+### Stable
 
 * aarch64-unknown-linux-gnu
 * arm-unknown-linux-gnueabi
@@ -59,6 +61,52 @@
 * sparc64-unknown-linux-gnu
 * wasm32-wasi
 * x86_64-pc-windows-msvc
+* x86_64-unknown-linux-gnu
+
+### MSRV
+
+* aarch64-unknown-linux-gnu
+* arm-unknown-linux-gnueabi
+* arm-unknown-linux-gnueabihf
+* armv5te-unknown-linux-gnueabi
+* armv7-unknown-linux-gnueabi
+* armv7-unknown-linux-gnueabihf
+* i586-unknown-linux-gnu
+* i686-unknown-linux-gnu
+* mips-unknown-linux-gnu
+* mips64-unknown-linux-gnuabi64
+* mips64el-unknown-linux-gnuabi64
+* mipsel-unknown-linux-gnu
+* powerpc-unknown-linux-gnu
+* powerpc64-unknown-linux-gnu
+* powerpc64le-unknown-linux-gnu
+* riscv64gc-unknown-linux-gnu
+* s390x-unknown-linux-gnu
+* sparc64-unknown-linux-gnu
+* wasm32-wasi
+* x86_64-unknown-linux-gnu
+
+### Nightly
+
+* aarch64-unknown-linux-gnu
+* arm-unknown-linux-gnueabi
+* arm-unknown-linux-gnueabihf
+* armv5te-unknown-linux-gnueabi
+* armv7-unknown-linux-gnueabi
+* armv7-unknown-linux-gnueabihf
+* i586-unknown-linux-gnu
+* i686-unknown-linux-gnu
+* mips-unknown-linux-gnu
+* mips64-unknown-linux-gnuabi64
+* mips64el-unknown-linux-gnuabi64
+* mipsel-unknown-linux-gnu
+* powerpc-unknown-linux-gnu
+* powerpc64-unknown-linux-gnu
+* powerpc64le-unknown-linux-gnu
+* riscv64gc-unknown-linux-gnu
+* s390x-unknown-linux-gnu
+* sparc64-unknown-linux-gnu
+* wasm32-wasi
 * x86_64-unknown-linux-gnu
 
 ## Features
