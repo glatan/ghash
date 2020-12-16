@@ -6,13 +6,11 @@ stages:
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
 
-cache:
-  key: ${CI_JOB_NAME}
-
 # Templates
 
 .cross_compile_template: &cross_compile_template
   cache:
+    key: ${CI_JOB_NAME}
     paths:
       - target/${TARGET}
   before_script:
@@ -41,6 +39,7 @@ cache:
   variables:
     WASMTIME_VERSION: 0.21.0
   cache:
+    key: ${CI_JOB_NAME}
     paths:
       - target/wasm32-wasi
   before_script:
@@ -56,6 +55,7 @@ cache:
 
 .x86_64-unknown-linux-gnu-template: &x86_64-unknown-linux-gnu-template
   cache:
+    key: ${CI_JOB_NAME}
     paths:
       - target/x86_64-unknown-linux-gnu
   before_script:
@@ -71,6 +71,7 @@ cache:
     - shared-windows
     - windows
   cache:
+    key: ${CI_JOB_NAME}
     paths:
       - target/${TARGET}
   before_script:
