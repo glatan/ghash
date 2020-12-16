@@ -10,6 +10,7 @@ variables:
 
 .cross_compile_template: &cross_compile_template
   cache:
+    key: ${CI_JOB_NAME}
     paths:
       - target/${TARGET}
   before_script:
@@ -38,6 +39,7 @@ variables:
   variables:
     WASMTIME_VERSION: 0.21.0
   cache:
+    key: ${CI_JOB_NAME}
     paths:
       - target/wasm32-wasi
   before_script:
@@ -53,6 +55,7 @@ variables:
 
 .x86_64-unknown-linux-gnu-template: &x86_64-unknown-linux-gnu-template
   cache:
+    key: ${CI_JOB_NAME}
     paths:
       - target/x86_64-unknown-linux-gnu
   before_script:
@@ -68,6 +71,7 @@ variables:
     - shared-windows
     - windows
   cache:
+    key: ${CI_JOB_NAME}
     paths:
       - target/${TARGET}
   before_script:
