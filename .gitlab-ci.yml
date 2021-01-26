@@ -226,9 +226,9 @@ stable-x86_64-apple-darwin:
   tags:
     - mac
   cache:
-  key: stable-x86_64-apple-darwin
-  paths:
-    - target/x86_64-apple-darwin
+    key: stable-x86_64-apple-darwin
+    paths:
+      - target/x86_64-apple-darwin
   before_script:
     - brew update
     - brwe install make rust -y
