@@ -221,6 +221,20 @@ stable-i686-pc-windows-msvc:
     TARGET: i686-pc-windows-msvc
   <<: *windows_msvc_template
 
+stable-x86_64-apple-darwin:
+  stage: stable
+  tags:
+    - mac
+  cache:
+  key: stable-x86_64-apple-darwin
+  paths:
+    - target/x86_64-apple-darwin
+  before_script:
+    - brew update
+    - brwe install make rust -y
+  script:
+    - make test.x86_64-apple-darwin
+
 # Minimum Supported Rust Version
 
 ## Linux
