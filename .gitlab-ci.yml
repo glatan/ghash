@@ -69,6 +69,7 @@ variables:
 ## Linux
 
 stable-aarch64-unknown-linux-gnu:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-aarch64-linux-gnu
@@ -76,6 +77,7 @@ stable-aarch64-unknown-linux-gnu:
   <<: *cross_compile_template
 
 stable-arm-unknown-linux-gnueabi:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-arm-linux-gnueabi
@@ -83,6 +85,7 @@ stable-arm-unknown-linux-gnueabi:
   <<: *cross_compile_template
 
 stable-arm-unknown-linux-gnueabihf:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-arm-linux-gnueabihf
@@ -90,6 +93,7 @@ stable-arm-unknown-linux-gnueabihf:
   <<: *cross_compile_template
 
 stable-armv5te-unknown-linux-gnueabi:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-arm-linux-gnueabi
@@ -97,6 +101,7 @@ stable-armv5te-unknown-linux-gnueabi:
   <<: *cross_compile_template
 
 stable-armv7-unknown-linux-gnueabi:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-arm-linux-gnueabi
@@ -104,6 +109,7 @@ stable-armv7-unknown-linux-gnueabi:
   <<: *cross_compile_template
 
 stable-armv7-unknown-linux-gnueabihf:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-arm-linux-gnueabihf
@@ -111,6 +117,7 @@ stable-armv7-unknown-linux-gnueabihf:
   <<: *cross_compile_template
 
 stable-i586-unknown-linux-gnu:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-i686-linux-gnu
@@ -118,6 +125,7 @@ stable-i586-unknown-linux-gnu:
   <<: *cross_compile_template
 
 stable-i686-unknown-linux-gnu:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-i686-linux-gnu
@@ -125,12 +133,14 @@ stable-i686-unknown-linux-gnu:
   <<: *cross_compile_template
 
 stable-mips-unknown-linux-gnu:
+  stage: stable
   variables:
     PACKAGES: gcc-mips-linux-gnu
     TARGET: mips-unknown-linux-gnu
   <<: *cross_compile_template
 
 stable-mipsel-unknown-linux-gnu:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-mipsel-linux-gnu
@@ -138,6 +148,7 @@ stable-mipsel-unknown-linux-gnu:
   <<: *cross_compile_template
 
 stable-mips64-unknown-linux-gnuabi64:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-mips64-linux-gnuabi64
@@ -145,6 +156,7 @@ stable-mips64-unknown-linux-gnuabi64:
   <<: *cross_compile_template
 
 stable-mips64el-unknown-linux-gnuabi64:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-mips64el-linux-gnuabi64
@@ -152,6 +164,7 @@ stable-mips64el-unknown-linux-gnuabi64:
   <<: *cross_compile_template
 
 stable-powerpc-unknown-linux-gnu:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-powerpc-linux-gnu
@@ -159,6 +172,7 @@ stable-powerpc-unknown-linux-gnu:
   <<: *cross_compile_template
 
 stable-powerpc64-unknown-linux-gnu:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-powerpc64-linux-gnu
@@ -166,6 +180,7 @@ stable-powerpc64-unknown-linux-gnu:
   <<: *cross_compile_template
 
 stable-powerpc64le-unknown-linux-gnu:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-powerpc64le-linux-gnu
@@ -173,6 +188,7 @@ stable-powerpc64le-unknown-linux-gnu:
   <<: *cross_compile_template
 
 stable-riscv64gc-unknown-linux-gnu:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-riscv64-linux-gnu
@@ -180,6 +196,7 @@ stable-riscv64gc-unknown-linux-gnu:
   <<: *cross_compile_template
 
 stable-s390x-unknown-linux-gnu:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-s390x-linux-gnu
@@ -187,6 +204,7 @@ stable-s390x-unknown-linux-gnu:
   <<: *cross_compile_template
 
 stable-sparc64-unknown-linux-gnu:
+  stage: stable
   variables:
     CHANNEL: stable
     PACKAGES: gcc-sparc64-linux-gnu
@@ -194,12 +212,14 @@ stable-sparc64-unknown-linux-gnu:
   <<: *cross_compile_template
 
 stable-x86_64-unknown-linux-gnu:
+  stage: stable
   variables:
     CHANNEL: stable
     TARGET: x86_64-unknown-linux-gnu
   <<: *cross_compile_template
 
 stable-x86_64-unknown-linux-musl:
+  stage: stable
   variables:
     CHANNEL: stable
     TARGET: x86_64-unknown-linux-musl
@@ -231,6 +251,7 @@ stable-i686-pc-windows-msvc:
 ## Linux
 
 msrv-aarch64-unknown-linux-gnu:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-aarch64-linux-gnu
@@ -238,6 +259,7 @@ msrv-aarch64-unknown-linux-gnu:
   <<: *cross_compile_template
 
 msrv-arm-unknown-linux-gnueabi:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-arm-linux-gnueabi
@@ -245,6 +267,7 @@ msrv-arm-unknown-linux-gnueabi:
   <<: *cross_compile_template
 
 msrv-arm-unknown-linux-gnueabihf:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-arm-linux-gnueabihf
@@ -252,6 +275,7 @@ msrv-arm-unknown-linux-gnueabihf:
   <<: *cross_compile_template
 
 msrv-armv5te-unknown-linux-gnueabi:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-arm-linux-gnueabi
@@ -259,6 +283,7 @@ msrv-armv5te-unknown-linux-gnueabi:
   <<: *cross_compile_template
 
 msrv-armv7-unknown-linux-gnueabi:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-arm-linux-gnueabi
@@ -266,6 +291,7 @@ msrv-armv7-unknown-linux-gnueabi:
   <<: *cross_compile_template
 
 msrv-armv7-unknown-linux-gnueabihf:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-arm-linux-gnueabihf
@@ -273,6 +299,7 @@ msrv-armv7-unknown-linux-gnueabihf:
   <<: *cross_compile_template
 
 msrv-i586-unknown-linux-gnu:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-i686-linux-gnu
@@ -280,6 +307,7 @@ msrv-i586-unknown-linux-gnu:
   <<: *cross_compile_template
 
 msrv-i686-unknown-linux-gnu:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-i686-linux-gnu
@@ -287,6 +315,7 @@ msrv-i686-unknown-linux-gnu:
   <<: *cross_compile_template
 
 msrv-mips-unknown-linux-gnu:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-mips-linux-gnu
@@ -294,6 +323,7 @@ msrv-mips-unknown-linux-gnu:
   <<: *cross_compile_template
 
 msrv-mipsel-unknown-linux-gnu:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-mipsel-linux-gnu
@@ -301,6 +331,7 @@ msrv-mipsel-unknown-linux-gnu:
   <<: *cross_compile_template
 
 msrv-mips64-unknown-linux-gnuabi64:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-mips64-linux-gnuabi64
@@ -308,6 +339,7 @@ msrv-mips64-unknown-linux-gnuabi64:
   <<: *cross_compile_template
 
 msrv-mips64el-unknown-linux-gnuabi64:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-mips64el-linux-gnuabi64
@@ -315,6 +347,7 @@ msrv-mips64el-unknown-linux-gnuabi64:
   <<: *cross_compile_template
 
 msrv-powerpc-unknown-linux-gnu:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-powerpc-linux-gnu
@@ -322,6 +355,7 @@ msrv-powerpc-unknown-linux-gnu:
   <<: *cross_compile_template
 
 msrv-powerpc64-unknown-linux-gnu:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-powerpc64-linux-gnu
@@ -329,6 +363,7 @@ msrv-powerpc64-unknown-linux-gnu:
   <<: *cross_compile_template
 
 msrv-powerpc64le-unknown-linux-gnu:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-powerpc64le-linux-gnu
@@ -336,6 +371,7 @@ msrv-powerpc64le-unknown-linux-gnu:
   <<: *cross_compile_template
 
 msrv-riscv64gc-unknown-linux-gnu:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-riscv64-linux-gnu
@@ -343,6 +379,7 @@ msrv-riscv64gc-unknown-linux-gnu:
   <<: *cross_compile_template
 
 msrv-s390x-unknown-linux-gnu:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-s390x-linux-gnu
@@ -350,6 +387,7 @@ msrv-s390x-unknown-linux-gnu:
   <<: *cross_compile_template
 
 msrv-sparc64-unknown-linux-gnu:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     PACKAGES: gcc-sparc64-linux-gnu
@@ -357,12 +395,14 @@ msrv-sparc64-unknown-linux-gnu:
   <<: *cross_compile_template
 
 msrv-x86_64-unknown-linux-gnu:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     TARGET: x86_64-unknown-linux-gnu
   <<: *cross_compile_template
 
 msrv-x86_64-unknown-linux-musl:
+  stage: msrv
   variables:
     CHANNEL: ${MSRV}
     TARGET: x86_64-unknown-linux-musl
@@ -394,6 +434,7 @@ msrv-wasm32-wasi:
 ## Linux
 
 nightly-aarch64-unknown-linux-gnu:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-aarch64-linux-gnu
@@ -401,6 +442,7 @@ nightly-aarch64-unknown-linux-gnu:
   <<: *cross_compile_template
 
 nightly-arm-unknown-linux-gnueabi:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-arm-linux-gnueabi
@@ -408,6 +450,7 @@ nightly-arm-unknown-linux-gnueabi:
   <<: *cross_compile_template
 
 nightly-arm-unknown-linux-gnueabihf:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-arm-linux-gnueabihf
@@ -415,6 +458,7 @@ nightly-arm-unknown-linux-gnueabihf:
   <<: *cross_compile_template
 
 nightly-armv5te-unknown-linux-gnueabi:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-arm-linux-gnueabi
@@ -422,6 +466,7 @@ nightly-armv5te-unknown-linux-gnueabi:
   <<: *cross_compile_template
 
 nightly-armv7-unknown-linux-gnueabi:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-arm-linux-gnueabi
@@ -429,6 +474,7 @@ nightly-armv7-unknown-linux-gnueabi:
   <<: *cross_compile_template
 
 nightly-armv7-unknown-linux-gnueabihf:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-arm-linux-gnueabihf
@@ -436,6 +482,7 @@ nightly-armv7-unknown-linux-gnueabihf:
   <<: *cross_compile_template
 
 nightly-i586-unknown-linux-gnu:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-i686-linux-gnu
@@ -443,6 +490,7 @@ nightly-i586-unknown-linux-gnu:
   <<: *cross_compile_template
 
 nightly-i686-unknown-linux-gnu:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-i686-linux-gnu
@@ -450,6 +498,7 @@ nightly-i686-unknown-linux-gnu:
   <<: *cross_compile_template
 
 nightly-mips-unknown-linux-gnu:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-mips-linux-gnu
@@ -457,6 +506,7 @@ nightly-mips-unknown-linux-gnu:
   <<: *cross_compile_template
 
 nightly-mipsel-unknown-linux-gnu:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-mipsel-linux-gnu
@@ -464,6 +514,7 @@ nightly-mipsel-unknown-linux-gnu:
   <<: *cross_compile_template
 
 nightly-mips64-unknown-linux-gnuabi64:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-mips64-linux-gnuabi64
@@ -471,6 +522,7 @@ nightly-mips64-unknown-linux-gnuabi64:
   <<: *cross_compile_template
 
 nightly-mips64el-unknown-linux-gnuabi64:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-mips64el-linux-gnuabi64
@@ -478,6 +530,7 @@ nightly-mips64el-unknown-linux-gnuabi64:
   <<: *cross_compile_template
 
 nightly-powerpc-unknown-linux-gnu:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-powerpc-linux-gnu
@@ -485,6 +538,7 @@ nightly-powerpc-unknown-linux-gnu:
   <<: *cross_compile_template
 
 nightly-powerpc64-unknown-linux-gnu:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-powerpc64-linux-gnu
@@ -492,6 +546,7 @@ nightly-powerpc64-unknown-linux-gnu:
   <<: *cross_compile_template
 
 nightly-powerpc64le-unknown-linux-gnu:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-powerpc64le-linux-gnu
@@ -499,6 +554,7 @@ nightly-powerpc64le-unknown-linux-gnu:
   <<: *cross_compile_template
 
 nightly-riscv64gc-unknown-linux-gnu:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-riscv64-linux-gnu
@@ -506,6 +562,7 @@ nightly-riscv64gc-unknown-linux-gnu:
   <<: *cross_compile_template
 
 nightly-s390x-unknown-linux-gnu:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-s390x-linux-gnu
@@ -513,6 +570,7 @@ nightly-s390x-unknown-linux-gnu:
   <<: *cross_compile_template
 
 nightly-sparc64-unknown-linux-gnu:
+  stage: nightly
   variables:
     CHANNEL: nightly
     PACKAGES: gcc-sparc64-linux-gnu
@@ -520,12 +578,14 @@ nightly-sparc64-unknown-linux-gnu:
   <<: *cross_compile_template
 
 nightly-x86_64-unknown-linux-gnu:
+  stage: nightly
   variables:
     CHANNEL: nightly
     TARGET: x86_64-unknown-linux-gnu
   <<: *cross_compile_template
 
 nightly-x86_64-unknown-linux-musl:
+  stage: nightly
   variables:
     CHANNEL: nightly
     TARGET: x86_64-unknown-linux-musl
