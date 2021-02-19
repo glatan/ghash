@@ -5,7 +5,6 @@ stages:
 
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
-  PATH: ${PATH}:/root/.cargo/bin
   MSRV: '1.43'
 
 # Templates
@@ -26,6 +25,7 @@ variables:
         apt install -y qemu-user ${PACKAGES};
       fi;
   script:
+    - source ${CARGO_HOME}/env
     - make test.${TARGET}
 
 .stable_cross_compile_template: &stable_cross_compile_template
