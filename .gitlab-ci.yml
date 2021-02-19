@@ -17,16 +17,16 @@ variables:
     paths:
       - target/${TARGET}
   before_script:
+    - apt update -y
+    - apt install -y curl make
+    - curl https://sh.rustup.rs -sSf > install.sh
+    - sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t ${TARGET}
     - >
-      apt update -y;
-      apt install -y curl make;
-      curl https://sh.rustup.rs -sSf > install.sh;
-      sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t ${TARGET};
       if [[ ${#PACKAGES[@]} -ne 0 ]]; then
         apt install -y qemu-user ${PACKAGES};
-      fi;
+      fi
+    - export PATH="${PATH}:${CARGO_HOME}/bin"
   script:
-    - source ${CARGO_HOME}/env
     - make test.${TARGET}
 
 .linux-matrix_template: &linux_matrix_template
@@ -110,6 +110,7 @@ nightly-linux:
     - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" > wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
     - tar -xvf wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
     - mv wasmtime-v${WASMTIME_VERSION}-x86_64-linux/wasmtime /usr/bin/
+    - export PATH="${PATH}:${CARGO_HOME}/bin"
   script:
     - make test.wasm32-wasi
 
