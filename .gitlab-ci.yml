@@ -14,9 +14,12 @@ variables:
     paths:
       - target/${TARGET}
   before_script:
-    - apt update -y
-    - apt install -y curl make qemu-user ${PACKAGES}
-    - rustup target add ${TARGET}
+    - >
+      if [[ ${PACKAGES} -ne '' ]]; then
+        apt update -y
+        apt install -y curl make qemu-user ${PACKAGES}
+      fi
+      rustup target add ${TARGET}
   script:
     - make test.${TARGET}
 
@@ -200,6 +203,11 @@ stable-x86_64-unknown-linux-gnu:
   stage: stable
   <<: *x86_64-unknown-linux-gnu-template
 
+stable-x86_64-unknown-linux-musl:
+  variables:
+    TARGET: x86_64-unknown-linux-musl
+  <<: *stable_cross_compile_template
+
 ## WebAssembly
 
 stable-wasm32-wasi:
@@ -338,6 +346,11 @@ msrv-x86_64-unknown-linux-gnu:
   stage: msrv
   <<: *x86_64-unknown-linux-gnu-template
 
+msrv-x86_64-unknown-linux-musl:
+  variables:
+    TARGET: x86_64-unknown-linux-musl
+  <<: *msrv_cross_compile_template
+
 ## WebAssembly
 
 msrv-wasm32-wasi:
@@ -475,6 +488,11 @@ nightly-x86_64-unknown-linux-gnu:
   stage: nightly
   image: rustlang/rust:nightly-buster-slim
   <<: *x86_64-unknown-linux-gnu-template
+
+nightly-x86_64-unknown-linux-musl:
+  variables:
+    TARGET: x86_64-unknown-linux-musl
+  <<: *nightly_cross_compile_template
 
 ## WebAssembly
 
