@@ -135,6 +135,7 @@ stable-i686-unknown-linux-gnu:
 stable-mips-unknown-linux-gnu:
   stage: stable
   variables:
+    CHANNEL: stable
     PACKAGES: gcc-mips-linux-gnu
     TARGET: mips-unknown-linux-gnu
   <<: *cross_compile_template
@@ -215,6 +216,7 @@ stable-x86_64-unknown-linux-gnu:
   stage: stable
   variables:
     CHANNEL: stable
+    PACKAGES: gcc
     TARGET: x86_64-unknown-linux-gnu
   <<: *cross_compile_template
 
@@ -222,6 +224,7 @@ stable-x86_64-unknown-linux-musl:
   stage: stable
   variables:
     CHANNEL: stable
+    PACKAGES: gcc
     TARGET: x86_64-unknown-linux-musl
   <<: *cross_compile_template
 
@@ -398,6 +401,7 @@ msrv-x86_64-unknown-linux-gnu:
   stage: msrv
   variables:
     CHANNEL: ${MSRV}
+    PACKAGES: gcc
     TARGET: x86_64-unknown-linux-gnu
   <<: *cross_compile_template
 
@@ -405,6 +409,7 @@ msrv-x86_64-unknown-linux-musl:
   stage: msrv
   variables:
     CHANNEL: ${MSRV}
+    PACKAGES: gcc
     TARGET: x86_64-unknown-linux-musl
   <<: *cross_compile_template
 
@@ -581,6 +586,7 @@ nightly-x86_64-unknown-linux-gnu:
   stage: nightly
   variables:
     CHANNEL: nightly
+    PACKAGES: gcc
     TARGET: x86_64-unknown-linux-gnu
   <<: *cross_compile_template
 
@@ -588,6 +594,7 @@ nightly-x86_64-unknown-linux-musl:
   stage: nightly
   variables:
     CHANNEL: nightly
+    PACKAGES: gcc
     TARGET: x86_64-unknown-linux-musl
   <<: *cross_compile_template
 
