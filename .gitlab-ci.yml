@@ -16,9 +16,9 @@ variables:
   before_script:
     - >
       if [[ ${PACKAGES} -ne '' ]]; then
-        apt update -y
-        apt install -y curl make qemu-user ${PACKAGES}
-      fi
+        apt update -y;
+        apt install -y curl make qemu-user ${PACKAGES};
+      fi;
       rustup target add ${TARGET}
   script:
     - make test.${TARGET}
