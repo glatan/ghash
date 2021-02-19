@@ -17,10 +17,10 @@ variables:
       - target/${TARGET}
   before_script:
     - >
+      apt update -y;
+      apt install -y curl make;
       curl https://sh.rustup.rs -sSf > install.sh;
       sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t ${TARGET};
-      apt update -y;
-      apt install -y make;
       if [[ ${#PACKAGES[@]} -ne 0 ]]; then
         apt install -y qemu-user ${PACKAGES};
       fi;
