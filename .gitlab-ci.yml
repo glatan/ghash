@@ -6,7 +6,7 @@ stages:
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
   MSRV: '1.43'
-  WASMTIME_VERSION: 0.21.0
+  WASMTIME_VERSION: 0.23.0
 
 # Linux
 
