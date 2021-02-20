@@ -3,6 +3,7 @@ name = "ripemd"
 version = "0.1.0"
 authors = ["glatan <glatan@protonmail.com>"]
 edition = "2018"
+build = "../../../build.rs"
 
 [features]
 minimal = []
