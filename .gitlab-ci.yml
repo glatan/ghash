@@ -17,9 +17,8 @@ variables:
     paths:
       - target/${TARGET}
   before_script:
-    - cat .cargo/config
     - apt update -y
-    - apt install -y curl make
+    - apt install -y curl gcc make 
     - curl https://sh.rustup.rs -sSf > install.sh
     - sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t ${TARGET}
     - >
@@ -95,10 +94,8 @@ variables:
         TARGET: sparc64-unknown-linux-gnu
       - PACKAGES: gcc-arm-linux-gnueabihf
         TARGET: thumbv7neon-unknown-linux-gnueabihf
-      - PACKAGES: gcc
-        TARGET: x86_64-unknown-linux-gnu
-      - PACKAGES: gcc
-        TARGET: x86_64-unknown-linux-musl
+      - TARGET: x86_64-unknown-linux-gnu
+      - TARGET: x86_64-unknown-linux-musl
 
 stable-linux:
   stage: stable
@@ -131,7 +128,7 @@ nightly-linux:
       - target/wasm32-wasi
   before_script:
     - apt update -y
-    - apt install -y curl make xz-utils
+    - apt install -y curl gcc make xz-utils
     - curl https://sh.rustup.rs -sSf > install.sh
     - sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t wasm32-wasi
     - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" > wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
@@ -173,7 +170,7 @@ nightly-wasm32-wasi:
     - Remove-Item Alias:curl
     - choco install make -y
     - curl --proto '=https' --tlsv1.2 -sSf https://win.rustup.rs/x86_64 -o rustup-init.exe
-    - ./rustup-init.exe -y -t ${TARGET} --default-toolchain ${CHANNEL} --profile minimal
+    - ./rustup-init.exe -y --default-toolchain ${CHANNEL} --profile minimal -t ${TARGET} 
     - $ENV:Path += "${CI_PROJECT_DIR}/cargo/bin"
   script:
     - make test.${TARGET}
