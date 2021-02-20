@@ -1,3 +1,3 @@
 test.%:
-	@cargo test --target $*
-	@cargo test --target $* --features minimal
+	@cargo test -vv--target $*
+	@cargo test -vv--target $* --features minimal

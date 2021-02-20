@@ -1,2 +1,2 @@
 test.%:
-	@cargo test --target $*
+	@cargo test -vv--target $*
