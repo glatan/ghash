@@ -25,9 +25,10 @@ fn main() {
             &target_endian,
         )
     {
-        let gcc_libdir = get_gcc_library_path("aarch64-linux-gnu-gcc");
-        println!("cargo:rustc-link-search=native={}", gcc_libdir);
-        println!("cargo:rustc-link-lib=static=gcc");
+        // let gcc_libdir = get_gcc_library_path("mips64-linux-gnuabi64-gcc");
+        // println!("cargo:rustc-link-search=native={}", gcc_libdir);
+        // println!("cargo:rustc-link-lib=static=gcc");
+        println!("cargo:rustc-flags=-lgcc");
     }
     // Version: 1.43(MSRV) ~ 1.46
     // Target : mips-unknown-linux-musl
@@ -41,9 +42,10 @@ fn main() {
             &target_endian,
         )
     {
-        let gcc_libdir = get_gcc_library_path("mips-linux-gnu-gcc");
-        println!("cargo:rustc-link-search=native={}", gcc_libdir);
-        println!("cargo:rustc-link-lib=static=gcc");
+        // let gcc_libdir = get_gcc_library_path("mips64-linux-gnuabi64-gcc");
+        // println!("cargo:rustc-link-search=native={}", gcc_libdir);
+        // println!("cargo:rustc-link-lib=static=gcc");
+        println!("cargo:rustc-flags=-lgcc");
     }
     // Version: 1.43(MSRV) ~ 1.47
     // Target : mips64-unknown-linux-muslabi64
@@ -57,9 +59,10 @@ fn main() {
             &target_endian,
         )
     {
-        let gcc_libdir = get_gcc_library_path("mips64-linux-gnuabi64-gcc");
-        println!("cargo:rustc-link-search=native={}", gcc_libdir);
-        println!("cargo:rustc-link-lib=static=gcc");
+        // let gcc_libdir = get_gcc_library_path("mips64-linux-gnuabi64-gcc");
+        // println!("cargo:rustc-link-search=native={}", gcc_libdir);
+        // println!("cargo:rustc-link-lib=static=gcc");
+        println!("cargo:rustc-flags=-lgcc");
     }
     // Version: 1.43(MSRV) ~ 1.47
     // Target : mips64el-unknown-linux-muslabi64
@@ -73,9 +76,10 @@ fn main() {
             &target_endian,
         )
     {
-        let gcc_libdir = get_gcc_library_path("mips64el-linux-gnuabi64-gcc");
-        println!("cargo:rustc-link-search=native={}", gcc_libdir);
-        println!("cargo:rustc-link-lib=static=gcc");
+        // let gcc_libdir = get_gcc_library_path("mips64el-linux-gnuabi64-gcc");
+        // println!("cargo:rustc-link-search=native={}", gcc_libdir);
+        // println!("cargo:rustc-link-lib=static=gcc");
+        println!("cargo:rustc-flags=-lgcc");
     }
 }
 
@@ -96,23 +100,23 @@ fn get_rustc_version() -> (u32, u32, u32) {
     (major_version, minor_version, patch_version)
 }
 
-fn get_gcc_library_path(cmd: &str) -> String {
-    let output = Command::new(cmd)
-        .arg("-print-search-dirs")
-        .output()
-        .ok()
-        .unwrap();
+// fn get_gcc_library_path(cmd: &str) -> String {
+//     let output = Command::new(cmd)
+//         .arg("-print-search-dirs")
+//         .output()
+//         .ok()
+//         .unwrap();
 
-    // install: PATH <- get this
-    // programs: PATH
-    // libraries: PATH
-    let install_path = str::from_utf8(&output.stdout)
-        .unwrap()
-        .split("\n")
-        .collect::<Vec<&str>>()[0];
-    let path = install_path.trim_start_matches("install: ");
-    path.to_owned()
-}
+//     // install: PATH <- get this
+//     // programs: PATH
+//     // libraries: PATH
+//     let install_path = str::from_utf8(&output.stdout)
+//         .unwrap()
+//         .split("\n")
+//         .collect::<Vec<&str>>()[0];
+//     let path = install_path.trim_start_matches("install: ");
+//     path.to_owned()
+// }
 
 fn is_aarch64_unknown_linux_musl(
     target_arch: &str,
