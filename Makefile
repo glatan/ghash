@@ -1,3 +1,5 @@
+CONTAINER_NAME = ghash
+
 .PHONY: default
 default: test_all
 
@@ -26,3 +28,12 @@ test.%:
 	@$(MAKE) -C components/hashes/sha2 test.$*
 	@$(MAKE) -C components/hashes/sha3 test.$*
 	@$(MAKE) -C components/utils test.$*
+
+.PHONY: p.build
+p.build:
+	@podman build -t ${CONTAINER_NAME} .
+
+.PHONY: run.bash
+run.bash:
+	-@podman run --name $@ -v .:/workdir -it ${CONTAINER_NAME} bash
+	@podman rm $@
