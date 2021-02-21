@@ -70,7 +70,7 @@ runner = 'qemu-mips -L /usr/mips-linux-gnu/'
 [target.mips-unknown-linux-musl]
 linker = 'mips-linux-gnu-gcc'
 runner = 'qemu-mips -L /usr/mips-linux-gnu/'
-rustflags = ["-C", "link-arg=-lgcc"]
+rustflags = ["-C", "target-feature=+crt-static", "-C", "link-arg=-lgcc"]
 
 [target.mips64-unknown-linux-gnuabi64]
 linker = 'mips64-linux-gnuabi64-gcc'
