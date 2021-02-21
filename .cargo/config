@@ -5,6 +5,7 @@ runner = 'qemu-aarch64 -L /usr/aarch64-linux-gnu/'
 [target.aarch64-unknown-linux-musl]
 linker = 'aarch64-linux-gnu-gcc'
 runner = 'qemu-aarch64 -L /usr/aarch64-linux-gnu/'
+rustflags = ["-C", "link-arg=-lgcc"]
 
 [target.arm-unknown-linux-gnueabi]
 linker = 'arm-linux-gnueabi-gcc'
@@ -68,8 +69,8 @@ runner = 'qemu-mips -L /usr/mips-linux-gnu/'
 
 [target.mips-unknown-linux-musl]
 linker = 'mips-linux-gnu-gcc'
-rustflags = [ "-C", "target-feature=+crt-static"]
 runner = 'qemu-mips -L /usr/mips-linux-gnu/'
+rustflags = ["-C", "link-arg=-lgcc"]
 
 [target.mips64-unknown-linux-gnuabi64]
 linker = 'mips64-linux-gnuabi64-gcc'
@@ -78,6 +79,7 @@ runner = 'qemu-mips64 -L /usr/mips64-linux-gnuabi64/'
 [target.mips64-unknown-linux-muslabi64]
 linker = 'mips64-linux-gnuabi64-gcc'
 runner = 'qemu-mips64 -L /usr/mips64-linux-gnuabi64/'
+rustflags = ["-C", "link-arg=-lgcc"]
 
 [target.mips64el-unknown-linux-gnuabi64]
 linker = 'mips64el-linux-gnuabi64-gcc'
@@ -86,6 +88,7 @@ runner = 'qemu-mips64el -L /usr/mips64el-linux-gnuabi64/'
 [target.mips64el-unknown-linux-muslabi64]
 linker = 'mips64el-linux-gnuabi64-gcc'
 runner = 'qemu-mips64el -L /usr/mips64el-linux-gnuabi64/'
+rustflags = ["-C", "link-arg=-lgcc"]
 
 [target.mipsel-unknown-linux-gnu]
 linker = 'mipsel-linux-gnu-gcc'
@@ -93,8 +96,8 @@ runner = 'qemu-mipsel -L /usr/mipsel-linux-gnu/'
 
 [target.mipsel-unknown-linux-musl]
 linker = 'mipsel-linux-gnu-gcc'
-rustflags = [ "-C", "target-feature=+crt-static"]
 runner = 'qemu-mipsel -L /usr/mipsel-linux-gnu/'
+rustflags = ["-C", "target-feature=+crt-static"]
 
 [target.powerpc-unknown-linux-gnu]
 linker = 'powerpc-linux-gnu-gcc'
