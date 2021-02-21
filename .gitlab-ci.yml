@@ -18,7 +18,7 @@ variables:
       - target/${TARGET}
   before_script:
     - apt update -y
-    - apt install -y curl gcc make 
+    - apt install -y curl make 
     - curl https://sh.rustup.rs -sSf > install.sh
     - sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t ${TARGET}
     - >
@@ -94,8 +94,10 @@ variables:
         TARGET: sparc64-unknown-linux-gnu
       - PACKAGES: gcc-arm-linux-gnueabihf
         TARGET: thumbv7neon-unknown-linux-gnueabihf
-      - TARGET: x86_64-unknown-linux-gnu
-      - TARGET: x86_64-unknown-linux-musl
+      - PACKAGES: gcc
+        TARGET: x86_64-unknown-linux-gnu
+      - PACKAGES: gcc
+        TARGET: x86_64-unknown-linux-musl
 
 stable-linux:
   stage: stable
