@@ -18,7 +18,7 @@ variables:
       - target/${TARGET}
   before_script:
     - apt update -y
-    - apt install -y curl make
+    - apt install -y curl make 
     - curl https://sh.rustup.rs -sSf > install.sh
     - sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t ${TARGET}
     - >
@@ -34,28 +34,52 @@ variables:
     matrix:
       - PACKAGES: gcc-aarch64-linux-gnu
         TARGET: aarch64-unknown-linux-gnu
+      - PACKAGES: gcc-aarch64-linux-gnu
+        TARGET: aarch64-unknown-linux-musl
       - PACKAGES: gcc-arm-linux-gnueabi
         TARGET: arm-unknown-linux-gnueabi
       - PACKAGES: gcc-arm-linux-gnueabihf
         TARGET: arm-unknown-linux-gnueabihf
       - PACKAGES: gcc-arm-linux-gnueabi
+        TARGET: arm-unknown-linux-musleabi
+      - PACKAGES: gcc-arm-linux-gnueabihf
+        TARGET: arm-unknown-linux-musleabihf
+      - PACKAGES: gcc-arm-linux-gnueabi
         TARGET: armv5te-unknown-linux-gnueabi
+      - PACKAGES: gcc-arm-linux-gnueabi
+        TARGET: armv5te-unknown-linux-musleabi
       - PACKAGES: gcc-arm-linux-gnueabi
         TARGET: armv7-unknown-linux-gnueabi
       - PACKAGES: gcc-arm-linux-gnueabihf
         TARGET: armv7-unknown-linux-gnueabihf
+      - PACKAGES: gcc-arm-linux-gnueabi
+        TARGET: armv7-unknown-linux-musleabi
+      - PACKAGES: gcc-arm-linux-gnueabihf
+        TARGET: armv7-unknown-linux-musleabihf
       - PACKAGES: gcc-i686-linux-gnu
         TARGET: i586-unknown-linux-gnu
       - PACKAGES: gcc-i686-linux-gnu
+        TARGET: i586-unknown-linux-musl
+      - PACKAGES: gcc-i686-linux-gnu
         TARGET: i686-unknown-linux-gnu
+      - PACKAGES: gcc-i686-linux-gnu
+        TARGET: i686-unknown-linux-musl
       - PACKAGES: gcc-mips-linux-gnu
         TARGET: mips-unknown-linux-gnu
-      - PACKAGES: gcc-mipsel-linux-gnu
-        TARGET: mipsel-unknown-linux-gnu
+      - PACKAGES: gcc-mips-linux-gnu
+        TARGET: mips-unknown-linux-musl
       - PACKAGES: gcc-mips64-linux-gnuabi64
         TARGET: mips64-unknown-linux-gnuabi64
+      - PACKAGES: gcc-mips64-linux-gnuabi64
+        TARGET: mips64-unknown-linux-muslabi64
       - PACKAGES: gcc-mips64el-linux-gnuabi64
         TARGET: mips64el-unknown-linux-gnuabi64
+      - PACKAGES: gcc-mips64el-linux-gnuabi64
+        TARGET: mips64el-unknown-linux-muslabi64
+      - PACKAGES: gcc-mipsel-linux-gnu
+        TARGET: mipsel-unknown-linux-gnu
+      - PACKAGES: gcc-mipsel-linux-gnu
+        TARGET: mipsel-unknown-linux-musl
       - PACKAGES: gcc-powerpc-linux-gnu
         TARGET: powerpc-unknown-linux-gnu
       - PACKAGES: gcc-powerpc64-linux-gnu
@@ -68,6 +92,8 @@ variables:
         TARGET: s390x-unknown-linux-gnu
       - PACKAGES: gcc-sparc64-linux-gnu
         TARGET: sparc64-unknown-linux-gnu
+      - PACKAGES: gcc-arm-linux-gnueabihf
+        TARGET: thumbv7neon-unknown-linux-gnueabihf
       - PACKAGES: gcc
         TARGET: x86_64-unknown-linux-gnu
       - PACKAGES: gcc
@@ -104,7 +130,7 @@ nightly-linux:
       - target/wasm32-wasi
   before_script:
     - apt update -y
-    - apt install -y curl make xz-utils
+    - apt install -y curl gcc make xz-utils
     - curl https://sh.rustup.rs -sSf > install.sh
     - sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t wasm32-wasi
     - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" > wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
@@ -146,7 +172,7 @@ nightly-wasm32-wasi:
     - Remove-Item Alias:curl
     - choco install make -y
     - curl --proto '=https' --tlsv1.2 -sSf https://win.rustup.rs/x86_64 -o rustup-init.exe
-    - ./rustup-init.exe -y -t ${TARGET} --default-toolchain ${CHANNEL} --profile minimal
+    - ./rustup-init.exe -y --default-toolchain ${CHANNEL} --profile minimal -t ${TARGET} 
     - $ENV:Path += "${CI_PROJECT_DIR}/cargo/bin"
   script:
     - make test.${TARGET}
