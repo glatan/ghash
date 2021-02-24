@@ -132,6 +132,14 @@ runner = 'wasmtime'
 
 # Tier3
 
+[target.mipsisa32r6-unknown-linux-gnu]
+linker = 'mipsisa32r6-linux-gnu-gcc'
+runner = 'qemu-mips -L /usr/mipsisa32r6-linux-gnu/'
+
+[target.mipsisa32r6el-unknown-linux-gnu]
+linker = 'mipsisa32r6el-linux-gnu-gcc'
+runner = 'qemu-mipsel -L /usr/mipsisa32r6el-linux-gnu/'
+
 [target.mipsisa64r6-unknown-linux-gnuabi64]
 linker = 'mipsisa64r6-linux-gnuabi64-gcc'
 runner = 'qemu-mips64 -L /usr/mipsisa64r6-linux-gnuabi64/'
