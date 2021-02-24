@@ -29,6 +29,21 @@ test.%:
 	@$(MAKE) -C components/hashes/sha3 test.$*
 	@$(MAKE) -C components/utils test.$*
 
+xargo_test.%:
+	@$(MAKE) -C components/hashes/blake xargo_test.$*
+	@$(MAKE) -C components/hashes/blake2 xargo_test.$*
+	@$(MAKE) -C components/hashes/edonr xargo_test.$*
+	@$(MAKE) -C components/hashes/keccak xargo_test.$*
+	@$(MAKE) -C components/hashes/md2 xargo_test.$*
+	@$(MAKE) -C components/hashes/md4 xargo_test.$*
+	@$(MAKE) -C components/hashes/md5 xargo_test.$*
+	@$(MAKE) -C components/hashes/ripemd xargo_test.$*
+	@$(MAKE) -C components/hashes/sha0 xargo_test.$*
+	@$(MAKE) -C components/hashes/sha1 xargo_test.$*
+	@$(MAKE) -C components/hashes/sha2 xargo_test.$*
+	@$(MAKE) -C components/hashes/sha3 xargo_test.$*
+	@$(MAKE) -C components/utils xargo_test.$*
+
 .PHONY: p.build
 p.build:
 	@podman build -t ${CONTAINER_NAME} .
