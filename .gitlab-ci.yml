@@ -132,7 +132,7 @@ tier3-linux:
       - target/${TARGET}
   before_script:
     - apt update -y
-    - apt install -y curl make
+    - apt install -y curl gcc make
     - curl https://sh.rustup.rs -sSf > install.sh
     - sh install.sh -y --default-toolchain nightly --profile minimal -t ${TARGET}
     - >
