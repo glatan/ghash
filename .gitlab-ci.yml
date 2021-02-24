@@ -141,6 +141,7 @@ tier3-linux:
       fi
     - export PATH="${PATH}:${CARGO_HOME}/bin"
     - cargo install xargo
+    - rustup component add rust-src
   script:
     - make xargo_test.${TARGET}
   parallel:
