@@ -7,6 +7,7 @@ variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
   MSRV: '1.43'
   WASMTIME_VERSION: 0.23.0
+  XARGO_VERSION: 0.3.20
 
 # Linux
 
@@ -119,6 +120,40 @@ nightly-linux:
     CHANNEL: nightly
   <<: *linux_cross_compile_template
   <<: *linux_matrix_template
+
+tier3-linux:
+  rules:
+    - allow_failure: true
+  stage: nightly
+  image: ubuntu:groovy
+  cache:
+    key: ${CI_JOB_STAGE}-${TARGET}
+    paths:
+      - target/${TARGET}
+  before_script:
+    - apt update -y
+    - apt install -y curl gcc make
+    - curl https://sh.rustup.rs -sSf > install.sh
+    - sh install.sh -y --default-toolchain nightly --profile minimal -t ${TARGET}
+    - >
+      if [[ ${#PACKAGES[@]} -ne 0 ]]; then
+        apt install -y qemu-user ${PACKAGES};
+      fi
+    - export PATH="${PATH}:${CARGO_HOME}/bin"
+    - cargo install xargo
+    - rustup component add rust-src
+  script:
+    - make xargo_test.${TARGET}
+  parallel:
+    matrix:
+      - PACKAGES: gcc-mipsisa32r6-linux-gnu
+        TARGET: mipsisa32r6-unknown-linux-gnu
+      - PACKAGES: gcc-mipsisa32r6el-linux-gnu
+        TARGET: mipsisa32r6el-unknown-linux-gnu
+      - PACKAGES: gcc-mipsisa64r6-linux-gnuabi64
+        TARGET: mipsisa64r6-unknown-linux-gnuabi64
+      - PACKAGES: gcc-mipsisa64r6el-linux-gnuabi64
+        TARGET: mipsisa64r6el-unknown-linux-gnuabi64
 
 # WebAssembly
 
