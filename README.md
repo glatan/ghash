@@ -77,6 +77,13 @@
 * x86_64-unknown-linux-gnu
 * x86_64-unknown-linux-musl
 
+### Tier 3(Nightly Only)
+
+* mipsisa32r6-unknown-linux-gnu
+* mipsisa32r6el-unknown-linux-gnu
+* mipsisa64r6-unknown-linux-gnuabi64
+* mipsisa64r6el-unknown-linux-gnuabi64
+
 ## Features
 
 ### default
