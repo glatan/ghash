@@ -215,7 +215,9 @@ nightly-wasm32-wasi:
 .windows_matrix_template: &windows_matrix_template
   parallel:
     matrix:
-      - TARGET: [x86_64-pc-windows-msvc, i686-pc-windows-msvc]
+      - TARGET: x86_64-pc-windows-msvc
+      - TARGET: i686-pc-windows-msvc
+      - TARGET: i586-pc-windows-msvc
 
 stable-windows-msvc:
   stage: stable
