@@ -12,7 +12,7 @@ variables:
 # FORCE_RUNをtrueにして手動で実行すればNightlyのテストも動く
 .run_scheduled_or_merged: &run_scheduled_or_merged
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_MERGE_REQUEST_EVENT_TYPE  == "merged_result"'
       when: always
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
