@@ -9,6 +9,17 @@ variables:
   WASMTIME_VERSION: 0.23.0
   XARGO_VERSION: 0.3.20
 
+# FORCE_RUNをtrueにして手動で実行すればNightlyのテストも動く
+.run_scheduled_or_merged: &run_scheduled_or_merged
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - if: '$FORCE_RUN == "true"'
+      when: always
+    - when: never
+
 # Linux
 
 .linux_cross_compile_template: &linux_cross_compile_template
@@ -116,16 +127,16 @@ msrv-linux:
 
 nightly-linux:
   stage: nightly
+  <<: *run_scheduled_or_merged
   variables:
     CHANNEL: nightly
   <<: *linux_cross_compile_template
   <<: *linux_matrix_template
 
 tier3-linux:
-  rules:
-    - allow_failure: true
   stage: nightly
   image: ubuntu:groovy
+  <<: *run_scheduled_or_merged
   cache:
     key: ${CI_JOB_STAGE}-${TARGET}
     paths:
@@ -189,6 +200,7 @@ msrv-wasm32-wasi:
 
 nightly-wasm32-wasi:
   stage: nightly
+  <<: *run_scheduled_or_merged
   variables:
     CHANNEL: nightly
   <<: *wasm32-wasi_template
@@ -235,6 +247,7 @@ msrv-windows-msvc:
 
 nightly-windows-msvc:
   stage: nightly
+  <<: *run_scheduled_or_merged
   variables:
     CHANNEL: nightly
   <<: *windows_msvc_template
