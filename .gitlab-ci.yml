@@ -9,8 +9,15 @@ variables:
   WASMTIME_VERSION: 0.23.0
   XARGO_VERSION: 0.3.20
 
+.changes_rule: &changes_rule
+  changes:
+    - .cargo/config
+    - Cargo.toml
+    - components/**.rs
+    - src/**.rs
+
 # FORCE_RUNをtrueにして手動で実行すればNightlyのテストも動く
-.run_scheduled_or_merged: &run_scheduled_or_merged
+.nightly_rules: &nightly_rules
   rules:
     - if: '$CI_MERGE_REQUEST_EVENT_TYPE  == "merged_result"'
       when: always
@@ -19,6 +26,7 @@ variables:
     - if: '$FORCE_RUN == "true"'
       when: always
     - when: never
+    - <<: *changes_rule
 
 # Linux
 
@@ -113,6 +121,8 @@ variables:
 
 stable-linux:
   stage: stable
+  rules:
+    - <<: *changes_rule
   variables:
     CHANNEL: stable
   <<: *linux_cross_compile_template
@@ -120,6 +130,8 @@ stable-linux:
 
 msrv-linux:
   stage: msrv
+  rules:
+    - <<: *changes_rule
   variables:
     CHANNEL: ${MSRV}
   <<: *linux_cross_compile_template
@@ -127,7 +139,7 @@ msrv-linux:
 
 nightly-linux:
   stage: nightly
-  <<: *run_scheduled_or_merged
+  <<: *nightly_rules
   variables:
     CHANNEL: nightly
   <<: *linux_cross_compile_template
@@ -136,7 +148,7 @@ nightly-linux:
 tier3-linux:
   stage: nightly
   image: ubuntu:groovy
-  <<: *run_scheduled_or_merged
+  <<: *nightly_rules
   cache:
     key: ${CI_JOB_STAGE}-${TARGET}
     paths:
@@ -188,19 +200,23 @@ tier3-linux:
 
 stable-wasm32-wasi:
   stage: stable
+  rules:
+    - <<: *changes_rule
   variables:
     CHANNEL: stable
   <<: *wasm32-wasi_template
 
 msrv-wasm32-wasi:
   stage: msrv
+  rules:
+    - <<: *changes_rule
   variables:
     CHANNEL: ${MSRV}
   <<: *wasm32-wasi_template
 
 nightly-wasm32-wasi:
   stage: nightly
-  <<: *run_scheduled_or_merged
+  <<: *nightly_rules
   variables:
     CHANNEL: nightly
   <<: *wasm32-wasi_template
@@ -233,6 +249,8 @@ nightly-wasm32-wasi:
 
 stable-windows-msvc:
   stage: stable
+  rules:
+    - <<: *changes_rule
   variables:
     CHANNEL: stable
   <<: *windows_msvc_template
@@ -240,6 +258,8 @@ stable-windows-msvc:
 
 msrv-windows-msvc:
   stage: msrv
+  rules:
+    - <<: *changes_rule
   variables:
     CHANNEL: ${MSRV}
   <<: *windows_msvc_template
@@ -247,7 +267,7 @@ msrv-windows-msvc:
 
 nightly-windows-msvc:
   stage: nightly
-  <<: *run_scheduled_or_merged
+  <<: *nightly_rules
   variables:
     CHANNEL: nightly
   <<: *windows_msvc_template
