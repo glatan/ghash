@@ -1,13 +1,14 @@
 use alloc::vec::Vec;
 
-use keccak::Keccak;
+use keccak::KeccakF1600;
+
 use utils::Hash;
 
-pub struct Shake128(Keccak);
+pub struct Shake128(KeccakF1600);
 
 impl Shake128 {
     pub fn new(n: usize) -> Self {
-        Self(Keccak::new(1344, 256, n))
+        Self(KeccakF1600::new(1344, 256, n))
     }
 }
 
