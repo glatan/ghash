@@ -48,6 +48,12 @@ macro_rules! impl_keccak_f {
             pub fn new(r: usize, c: usize, n: usize) -> Self {
                 // w = b/25
                 // w = 2^l => l = log2(w)
+                if r < 8 {
+                    panic!(
+                        "r must be smaller than 8, but got {}",
+                        r
+                    );
+                }
                 if r % 8 != 0 {
                     panic!(
                         "r must be a multiple of 8 in this implementation, but got {}",
@@ -240,6 +246,11 @@ mod tests {
     #[should_panic(expected = "r must be a multiple of 8 in this implementation, but got 570")]
     fn keccak_f_1600_r_is_not_multiple_of_8() {
         KeccakF1600::new(570, 1030, 64);
+    }
+    #[test]
+    #[should_panic(expected = "r must be smaller than 8, but got 0")]
+    fn keccak_f_1600_r_is_smaller_than_8() {
+        KeccakF1600::new(0, 1025, 64);
     }
     #[test]
     #[should_panic(expected = "bitrate must be 1600, but got 1601(rate=576, capacity=1025)")]
