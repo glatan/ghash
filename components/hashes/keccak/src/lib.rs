@@ -18,14 +18,15 @@
 extern crate alloc;
 
 mod consts;
-mod keccak_f1600;
 
 mod keccak224;
 mod keccak256;
 mod keccak384;
 mod keccak512;
 
-pub use keccak_f1600::KeccakF1600;
+use alloc::vec::Vec;
+
+use consts::*;
 
 pub use keccak224::Keccak224;
 pub use keccak256::Keccak256;
@@ -41,7 +42,7 @@ struct Keccak<T> {
 }
 
 macro_rules! impl_keccak_f {
-    ($Name: ident, $Size: ident) => {
+    ($Name: ident, $Size: ident, $Bitrate: expr) => {
         struct $Name(Keccak<$Size>);
         impl $Name {
             pub fn new(r: usize, c: usize, n: usize) -> Self {
@@ -53,7 +54,7 @@ macro_rules! impl_keccak_f {
                         r
                     );
                 }
-                if (r + c) != 1600 {
+                if (r + c) != $Bitrate {
                     panic!(
                         "bitrate must be 1600, but got {}(rate={}, capacity={})",
                         r + c,
@@ -227,5 +228,23 @@ macro_rules! impl_keccak_f {
             }
         }
     };
+}
+
+impl_keccak_f!(KeccakF1600, u64, 1600);
+
+#[cfg(test)]
+mod tests {
+    use super::KeccakF1600;
+
+    #[test]
+    #[should_panic(expected = "r must be a multiple of 8 in this implementation, but got 570")]
+    fn keccak_f_1600_r_is_not_multiple_of_8() {
+        KeccakF1600::new(570, 1030, 64);
+    }
+    #[test]
+    #[should_panic(expected = "bitrate must be 1600, but got 1601(rate=576, capacity=1025)")]
+    fn keccak_f_1600_bitrate_is_not_1600() {
+        KeccakF1600::new(576, 1025, 64);
+    }
 }
 
