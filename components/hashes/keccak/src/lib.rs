@@ -37,7 +37,7 @@ struct Keccak<T> {
     state: [[T; 5]; 5], // A, S
     l: usize,
     n: usize,
-    r: usize, // bitrate
+    r: usize, // rate
     w: usize, // lane size
 }
 
