@@ -31,6 +31,8 @@ use core::mem;
 
 use consts::*;
 
+use utils::Hash;
+
 pub use keccak224::Keccak224;
 pub use keccak256::Keccak256;
 pub use keccak384::Keccak384;
@@ -45,8 +47,8 @@ struct Keccak<T> {
 }
 
 macro_rules! impl_keccak_f {
-    ($Name: ident, $Size: ident, $Bitrate: expr, $RC: expr) => {
-        struct $Name(Keccak<$Size>);
+    ($Name: ident, $Size: ident, $Bitrate: expr, $RC: expr, $R: expr) => {
+        pub struct $Name(Keccak<$Size>);
         impl $Name {
             pub fn new(r: usize, c: usize, n: usize) -> Self {
                 // w = b/25
@@ -111,7 +113,7 @@ macro_rules! impl_keccak_f {
                 // Rho and Pi step
                 for x in 0..5 {
                     for y in 0..5 {
-                        b[y][(2 * x + 3 * y) % 5] = self.0.state[x][y].rotate_left(R[x][y]);
+                        b[y][(2 * x + 3 * y) % 5] = self.0.state[x][y].rotate_left($R[x][y]);
                     }
                 }
                 // Chi step
@@ -167,7 +169,7 @@ macro_rules! impl_keccak_f {
                 let l = message.len();
                 let lane_size = self.0.w / 8;
                 let rate_size = self.0.r / 8;
-                let mut padded_lane = [0u8; 8];
+                let mut padded_lane = [0u8; mem::size_of::<$Size>()];
                 let mut padded_block = [0u8; 8 * 25];
                 let mut pi: [[$Size; 5]; 5] = [[0; 5]; 5];
                 if l >= rate_size {
@@ -236,10 +238,18 @@ macro_rules! impl_keccak_f {
                 self.squeeze()
             }
         }
+        impl Hash for $Name {
+            fn hash_to_bytes(&mut self, message: &[u8]) -> Vec<u8> {
+                self.keccak(message, 0x01)
+            }
+        }
     };
 }
 
-impl_keccak_f!(KeccakF1600, u64, 1600, RC64);
+impl_keccak_f!(KeccakF1600, u64, 1600, RC1600, R1600);
+impl_keccak_f!(KeccakF800, u32, 800, RC800, R800);
+impl_keccak_f!(KeccakF400, u16, 400, RC400, R400);
+impl_keccak_f!(KeccakF200, u8, 200, RC200, R200);
 
 #[cfg(test)]
 mod tests {
