@@ -25,6 +25,9 @@ mod keccak384;
 mod keccak512;
 
 use alloc::vec::Vec;
+use core::any;
+use core::convert::TryInto;
+use core::mem;
 
 use consts::*;
 
@@ -42,17 +45,14 @@ struct Keccak<T> {
 }
 
 macro_rules! impl_keccak_f {
-    ($Name: ident, $Size: ident, $Bitrate: expr) => {
+    ($Name: ident, $Size: ident, $Bitrate: expr, $RC: expr) => {
         struct $Name(Keccak<$Size>);
         impl $Name {
             pub fn new(r: usize, c: usize, n: usize) -> Self {
                 // w = b/25
                 // w = 2^l => l = log2(w)
                 if r < 8 {
-                    panic!(
-                        "r must be smaller than 8, but got {}",
-                        r
-                    );
+                    panic!("r must be smaller than 8, but got {}", r);
                 }
                 if r % 8 != 0 {
                     panic!(
@@ -77,7 +77,7 @@ macro_rules! impl_keccak_f {
                     }
                     l
                 };
-                Self(Keccak::<u64> {
+                Self(Keccak::<$Size> {
                     state: [[0; 5]; 5],
                     l,
                     n,
@@ -85,7 +85,7 @@ macro_rules! impl_keccak_f {
                     w: (r + c) / 25,
                 })
             }
-            fn round(&mut self, rc: u64) {
+            fn round(&mut self, rc: $Size) {
                 let mut b = [[0; 5]; 5];
                 let mut c = [0; 5];
                 let mut d = [0; 5];
@@ -125,10 +125,10 @@ macro_rules! impl_keccak_f {
             }
             fn keccak_f(&mut self) {
                 for i in 0..(12 + 2 * self.0.l) {
-                    self.round(RC[i]);
+                    self.round($RC[i]);
                 }
             }
-            fn absorb(&mut self, pi: &[[u64; 5]; 5]) {
+            fn absorb(&mut self, pi: &[[$Size; 5]; 5]) {
                 for x in 0..5 {
                     for y in 0..5 {
                         self.0.state[y][x] ^= pi[x][y];
@@ -185,16 +185,19 @@ macro_rules! impl_keccak_f {
                     padded_block[0] = d;
                     padded_block[rate_size - 1] |= 0x80;
                     (0..25).for_each(|i| {
-                        pi[i / 5][i % 5] = u64::from_le_bytes([
-                            padded_block[i * 8],
-                            padded_block[i * 8 + 1],
-                            padded_block[i * 8 + 2],
-                            padded_block[i * 8 + 3],
-                            padded_block[i * 8 + 4],
-                            padded_block[i * 8 + 5],
-                            padded_block[i * 8 + 6],
-                            padded_block[i * 8 + 7],
-                        ]);
+                        pi[i / 5][i % 5] = $Size::from_le_bytes(
+                            (0..mem::size_of::<$Size>())
+                                .map(|j| padded_block[i * 8 + j])
+                                .collect::<Vec<u8>>()
+                                .try_into()
+                                .unwrap_or_else(|_| {
+                                    panic!(
+                                        "Failed to convert Vec<{}> into [u8; {}]",
+                                        any::type_name::<$Size>(),
+                                        mem::size_of::<$Size>()
+                                    )
+                                }),
+                        );
                     });
                     self.absorb(&pi)
                 }
@@ -210,7 +213,7 @@ macro_rules! impl_keccak_f {
                         .enumerate()
                         .for_each(|(i, lane)| {
                             padded_lane[8 - lane_size..8].copy_from_slice(lane);
-                            pi[i / 5][i % 5] = u64::from_le_bytes(padded_lane);
+                            pi[i / 5][i % 5] = $Size::from_le_bytes(padded_lane);
                         });
                     self.absorb(&pi);
                 }
@@ -236,7 +239,7 @@ macro_rules! impl_keccak_f {
     };
 }
 
-impl_keccak_f!(KeccakF1600, u64, 1600);
+impl_keccak_f!(KeccakF1600, u64, 1600, RC64);
 
 #[cfg(test)]
 mod tests {
@@ -258,4 +261,3 @@ mod tests {
         KeccakF1600::new(576, 1025, 64);
     }
 }
-
