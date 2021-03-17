@@ -74,7 +74,7 @@ macro_rules! impl_keccak_f {
                     800 => 5,
                     400 => 4,
                     200 => 3,
-                    _ => unreachable!("bitrate must be in 200, 400, 800 and 1600.")
+                    _ => unreachable!("bitrate must be in 200, 400, 800 and 1600."),
                 };
                 Self(Keccak::<$Size> {
                     state: [[0; 5]; 5],
@@ -136,11 +136,11 @@ macro_rules! impl_keccak_f {
                 self.keccak_f();
             }
             fn squeeze(&mut self) -> Vec<u8> {
-                let lane_size = self.0.w / 8;
-                let rate_size = self.0.r / 8;
+                let lane_size = self.0.w / 8; // bit -> byte
+                let rate_size = self.0.r / 8; // bit -> byte
                 let mut z = vec![0; self.0.n];
-                let mut s = [0; 8 * 5 * 5];
-                let mut output_length = self.0.n * 8;
+                let mut s = [0; mem::size_of::<$Size>() * 5 * 5];
+                let mut output_length = self.0.n;
                 let mut z_len = 0;
                 while output_length > 0 {
                     for x in 0..5 {
@@ -150,13 +150,13 @@ macro_rules! impl_keccak_f {
                                 .copy_from_slice(&self.0.state[y][x].to_le_bytes()[0..lane_size]);
                         }
                     }
-                    if output_length > self.0.r {
+                    if output_length > rate_size {
                         z[z_len..z_len + rate_size].copy_from_slice(&s[..rate_size]);
                         z_len += rate_size;
                         self.keccak_f();
-                        output_length -= self.0.r;
+                        output_length -= rate_size;
                     } else {
-                        z[z_len..].copy_from_slice(&s[..output_length / 8]);
+                        z[z_len..].copy_from_slice(&s[..output_length]);
                         output_length = 0;
                     }
                 }
@@ -164,10 +164,10 @@ macro_rules! impl_keccak_f {
             }
             pub fn keccak(&mut self, message: &[u8], d: u8) -> Vec<u8> {
                 let l = message.len();
-                let lane_size = self.0.w / 8;
-                let rate_size = self.0.r / 8;
+                let lane_size = self.0.w / 8; // bit -> byte
+                let rate_size = self.0.r / 8; // bit -> byte
                 let mut padded_lane = [0u8; mem::size_of::<$Size>()];
-                let mut padded_block = [0u8; 8 * 25];
+                let mut padded_block = [0u8; mem::size_of::<$Size>() * 25];
                 let mut pi: [[$Size; 5]; 5] = [[0; 5]; 5];
                 if l >= rate_size {
                     message.chunks_exact(rate_size).for_each(|lanes| {
@@ -175,7 +175,9 @@ macro_rules! impl_keccak_f {
                             .chunks_exact(lane_size)
                             .enumerate()
                             .for_each(|(i, lane)| {
-                                padded_lane[8 - lane_size..8].copy_from_slice(lane);
+                                padded_lane
+                                    [mem::size_of::<$Size>() - lane_size..mem::size_of::<$Size>()]
+                                    .copy_from_slice(lane);
                                 pi[i / 5][i % 5] = $Size::from_le_bytes(padded_lane);
                             });
                         self.absorb(&pi)
@@ -186,7 +188,7 @@ macro_rules! impl_keccak_f {
                     (0..25).for_each(|i| {
                         pi[i / 5][i % 5] = $Size::from_le_bytes(
                             (0..mem::size_of::<$Size>())
-                                .map(|j| padded_block[i * 8 + j])
+                                .map(|j| padded_block[i * mem::size_of::<$Size>() + j])
                                 .collect::<Vec<u8>>()
                                 .try_into()
                                 .unwrap_or_else(|_| {
@@ -203,7 +205,7 @@ macro_rules! impl_keccak_f {
                 if l != 0 {
                     let offset = (l / rate_size) * rate_size;
                     let remainder = l % rate_size;
-                    let mut byte_block = [0u8; 8 * 25];
+                    let mut byte_block = [0u8; mem::size_of::<$Size>() * 25];
                     byte_block[..remainder].copy_from_slice(&message[offset..]);
                     byte_block[remainder] = d;
                     byte_block[rate_size - 1] |= 0x80;
@@ -211,21 +213,14 @@ macro_rules! impl_keccak_f {
                         .chunks_exact(lane_size)
                         .enumerate()
                         .for_each(|(i, lane)| {
-                            padded_lane[8 - lane_size..8].copy_from_slice(lane);
+                            padded_lane
+                                [mem::size_of::<$Size>() - lane_size..mem::size_of::<$Size>()]
+                                .copy_from_slice(lane);
                             pi[i / 5][i % 5] = $Size::from_le_bytes(padded_lane);
                         });
                     self.absorb(&pi);
                 }
                 // Squeezing phase
-                let mut output_length = self.0.n;
-                while output_length > 0 {
-                    if output_length > self.0.r {
-                        self.keccak_f();
-                        output_length -= self.0.r;
-                    } else {
-                        output_length = 0;
-                    }
-                }
                 self.squeeze()
             }
         }
