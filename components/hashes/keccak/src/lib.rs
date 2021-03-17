@@ -69,14 +69,12 @@ macro_rules! impl_keccak_f {
                         c
                     );
                 }
-                let l = {
-                    let mut w = (r + c) / 25;
-                    let mut l = 0;
-                    while w > 1 {
-                        w /= 2;
-                        l += 1;
-                    }
-                    l
+                let l = match (r + c) {
+                    1600 => 6,
+                    800 => 5,
+                    400 => 4,
+                    200 => 3,
+                    _ => unreachable!("bitrate must be in 200, 400, 800 and 1600.")
                 };
                 Self(Keccak::<$Size> {
                     state: [[0; 5]; 5],
