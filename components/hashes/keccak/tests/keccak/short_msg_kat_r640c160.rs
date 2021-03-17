@@ -1278,4 +1278,9 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	),
 ];
 
-impl_short_msg_kat!(keccak, KeccakF800, SHORT_MSG_KAT, KeccakF800::new(640, 160, 512));
+impl_short_msg_kat!(
+    keccak,
+    KeccakF800,
+    SHORT_MSG_KAT,
+    KeccakF800::new(640, 160, 512)
+);

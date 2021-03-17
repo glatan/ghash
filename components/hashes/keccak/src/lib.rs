@@ -25,9 +25,8 @@ mod keccak384;
 mod keccak512;
 
 use alloc::vec::Vec;
-use core::any;
 use core::convert::TryInto;
-use core::mem;
+use core::{any, mem};
 
 use consts::*;
 
