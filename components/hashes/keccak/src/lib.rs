@@ -219,14 +219,8 @@ macro_rules! impl_keccak_f {
                     self.absorb(&pi);
                 }
                 // Squeezing phase
-                let mut z = Vec::new();
                 let mut output_length = self.0.n;
                 while output_length > 0 {
-                    for x in 0..5 {
-                        for y in 0..5 {
-                            z.append(&mut self.0.state[y][x].to_le_bytes().to_vec());
-                        }
-                    }
                     if output_length > self.0.r {
                         self.keccak_f();
                         output_length -= self.0.r;
