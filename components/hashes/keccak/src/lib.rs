@@ -63,7 +63,8 @@ macro_rules! impl_keccak_f {
                 }
                 if (r + c) != $Bitrate {
                     panic!(
-                        "bitrate must be 1600, but got {}(rate={}, capacity={})",
+                        "bitrate must be {}, but got {}(rate={}, capacity={})",
+                        $Bitrate,
                         r + c,
                         r,
                         c
@@ -239,21 +240,36 @@ impl_keccak_f!(KeccakF200, u8, 200, RC200, R200);
 
 #[cfg(test)]
 mod tests {
-    use super::KeccakF1600;
+    use super::*;
 
     #[test]
     #[should_panic(expected = "r must be a multiple of 8 in this implementation, but got 570")]
-    fn keccak_f_1600_r_is_not_multiple_of_8() {
+    fn r_is_not_multiple_of_8() {
         KeccakF1600::new(570, 1030, 64);
     }
     #[test]
     #[should_panic(expected = "r must be smaller than 8, but got 0")]
-    fn keccak_f_1600_r_is_smaller_than_8() {
+    fn r_is_smaller_than_8() {
         KeccakF1600::new(0, 1025, 64);
     }
     #[test]
     #[should_panic(expected = "bitrate must be 1600, but got 1601(rate=576, capacity=1025)")]
-    fn keccak_f_1600_bitrate_is_not_1600() {
+    fn keccak_f_1600_invalid_bitrate() {
         KeccakF1600::new(576, 1025, 64);
+    }
+    #[test]
+    #[should_panic(expected = "bitrate must be 800, but got 801(rate=544, capacity=257)")]
+    fn keccak_f_800_invalid_bitrate() {
+        KeccakF800::new(544, 257, 64);
+    }
+    #[test]
+    #[should_panic(expected = "bitrate must be 400, but got 401(rate=144, capacity=257)")]
+    fn keccak_f_400_invalid_bitrate() {
+        KeccakF400::new(144, 257, 64);
+    }
+    #[test]
+    #[should_panic(expected = "bitrate must be 200, but got 201(rate=40, capacity=161)")]
+    fn keccak_f_200_invalid_bitrate() {
+        KeccakF200::new(40, 161, 64);
     }
 }
