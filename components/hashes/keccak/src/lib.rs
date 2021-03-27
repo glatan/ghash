@@ -75,7 +75,13 @@ macro_rules! impl_keccak_f {
                     800 => 5,
                     400 => 4,
                     200 => 3,
-                    _ => unreachable!("bitrate must be in 200, 400, 800 and 1600."),
+                    _ => unreachable!(
+                        "bitrate must be {}, but got {}(rate={}, capacity={})",
+                        $Bitrate,
+                        r + c,
+                        r,
+                        c
+                    ),
                 };
                 Self(Keccak::<$Size> {
                     state: [[0; 5]; 5],
