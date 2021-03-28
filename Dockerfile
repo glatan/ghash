@@ -1,10 +1,10 @@
-FROM ubuntu:groovy
+FROM ubuntu:hirsute
 
 WORKDIR /workdir
 
 ENV CARGO_HOME='/cargo' \
     PATH="${PATH}:/cargo/bin" \
-    MSRV='1.43' \
+    MSRV='1.50' \
     WASMTIME_VERSION='0.23.0'
 
 RUN \

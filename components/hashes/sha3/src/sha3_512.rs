@@ -1,9 +1,10 @@
 use alloc::vec::Vec;
 
-use keccak::Keccak;
+use keccak::KeccakF1600;
+
 use utils::Hash;
 
-pub struct Sha3_512(Keccak);
+pub struct Sha3_512(KeccakF1600);
 
 impl Sha3_512 {
     pub fn new() -> Self {
@@ -13,7 +14,7 @@ impl Sha3_512 {
 
 impl Default for Sha3_512 {
     fn default() -> Self {
-        Self(Keccak::new(576, 1024, 512 / 8))
+        Self(KeccakF1600::new(576, 1024, 512 / 8))
     }
 }
 

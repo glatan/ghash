@@ -1,9 +1,10 @@
 use alloc::vec::Vec;
 
-use super::Keccak;
+use super::KeccakF1600;
+
 use utils::Hash;
 
-pub struct Keccak512(Keccak);
+pub struct Keccak512(KeccakF1600);
 
 impl Keccak512 {
     pub fn new() -> Self {
@@ -13,7 +14,7 @@ impl Keccak512 {
 
 impl Default for Keccak512 {
     fn default() -> Self {
-        Self(Keccak::new(576, 1024, 512 / 8))
+        Self(KeccakF1600::new(576, 1024, 512 / 8))
     }
 }
 

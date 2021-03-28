@@ -5,7 +5,7 @@ stages:
 
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
-  MSRV: '1.43'
+  MSRV: '1.50'
   WASMTIME_VERSION: 0.23.0
   XARGO_VERSION: 0.3.20
 
@@ -31,7 +31,7 @@ variables:
 # Linux
 
 .linux_cross_compile_template: &linux_cross_compile_template
-  image: ubuntu:groovy
+  image: ubuntu:hirsute
   cache:
     key: ${CI_JOB_STAGE}-${TARGET}
     paths:
@@ -147,7 +147,7 @@ nightly-linux:
 
 tier3-linux:
   stage: nightly
-  image: ubuntu:groovy
+  image: ubuntu:hirsute
   <<: *nightly_rules
   cache:
     key: ${CI_JOB_STAGE}-${TARGET}
@@ -181,7 +181,7 @@ tier3-linux:
 # WebAssembly
 
 .wasm32-wasi_template: &wasm32-wasi_template
-  image: ubuntu:groovy
+  image: ubuntu:hirsute
   cache:
     key: ${CI_JOB_STAGE}-wasm32-wasi
     paths:

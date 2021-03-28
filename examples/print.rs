@@ -54,6 +54,30 @@ fn main() {
         EdonR512::default().hash_to_lowerhex(&input)
     );
     println!(
+        "Keccak-f[200](r=40, c=160):\t{:}",
+        KeccakF200::new(40, 160, 64).hash_to_lowerhex(&input)
+    );
+    println!(
+        "Keccak-f[400](r=144, c=256):\t{:}",
+        KeccakF400::new(144, 256, 64).hash_to_lowerhex(&input)
+    );
+    println!(
+        "Keccak-f[400](r=240, c=160):\t{:}",
+        KeccakF400::new(240, 160, 64).hash_to_lowerhex(&input)
+    );
+    println!(
+        "Keccak-f[800](r=288, c=512):\t{:}",
+        KeccakF800::new(288, 512, 64).hash_to_lowerhex(&input)
+    );
+    println!(
+        "Keccak-f[800](r=544, c=256):\t{:}",
+        KeccakF800::new(544, 256, 64).hash_to_lowerhex(&input)
+    );
+    println!(
+        "Keccak-f[800](r=640, c=160):\t{:}",
+        KeccakF800::new(640, 160, 64).hash_to_lowerhex(&input)
+    );
+    println!(
         "Keccak-224\t{:}",
         Keccak224::default().hash_to_lowerhex(&input)
     );

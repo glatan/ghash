@@ -14,6 +14,7 @@
 * BLAKE2s
 * BLAKE2b
 * EDON-R{224, 256, 384, 512}
+* Keccak-f{200, 400, 800, 1600}
 * Keccak-{224, 256, 384, 512}
 * MD2
 * MD4
@@ -32,7 +33,7 @@
 
 ## MSRV(Minimum Supported Rust Version)
 
-1.43
+1.50
 
 ## Tests
 
