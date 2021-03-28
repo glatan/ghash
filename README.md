@@ -33,7 +33,7 @@
 
 ## MSRV(Minimum Supported Rust Version)
 
-1.43
+1.48
 
 ## Tests
 
