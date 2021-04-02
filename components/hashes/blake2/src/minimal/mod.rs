@@ -4,7 +4,7 @@ mod blake2s;
 pub use blake2b::Blake2b;
 pub use blake2s::Blake2s;
 
-use crate::consts::*;
+use crate::consts::{IV32, IV64, SIGMA};
 
 struct Blake2<T> {
     f: bool,  // finalization flag

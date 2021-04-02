@@ -1,24 +1,25 @@
 #![no_std]
 extern crate alloc;
 
+mod consts;
 mod edonr224;
 mod edonr256;
 mod edonr384;
 mod edonr512;
 
-pub use edonr224::EdonR224;
-pub use edonr256::EdonR256;
-pub use edonr384::EdonR384;
-pub use edonr512::EdonR512;
-
-mod consts;
-
-use consts::*;
 use core::cmp::Ordering;
+
 #[cfg(not(feature = "minimal"))]
 use utils::impl_md_flow;
 #[cfg(feature = "minimal")]
 use utils::impl_md_flow_minimal as impl_md_flow;
+
+use consts::{q256, q512, P224, P256, P384, P512};
+
+pub use edonr224::EdonR224;
+pub use edonr256::EdonR256;
+pub use edonr384::EdonR384;
+pub use edonr512::EdonR512;
 
 struct EdonR<T> {
     state: [T; 16],

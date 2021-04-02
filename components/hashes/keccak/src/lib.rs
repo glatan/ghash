@@ -28,7 +28,7 @@ use alloc::vec::Vec;
 use core::convert::TryInto;
 use core::{any, mem};
 
-use consts::*;
+use consts::{R1600, R200, R400, R800, RC1600, RC200, RC400, RC800};
 
 use utils::Hash;
 
@@ -246,7 +246,7 @@ impl_keccak_f!(KeccakF200, u8, 200, RC200, R200);
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{KeccakF1600, KeccakF200, KeccakF400, KeccakF800};
 
     #[test]
     #[should_panic(expected = "r must be a multiple of 8 in this implementation, but got 570")]

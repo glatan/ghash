@@ -1,27 +1,25 @@
-// Round1/2 submission version
+mod blake224;
+mod blake256;
 mod blake28;
 mod blake32;
+mod blake384;
 mod blake48;
+mod blake512;
 mod blake64;
 
+use core::cmp::Ordering;
+
+use crate::consts::{C32, C64, IV224, IV256, IV384, IV512, SIGMA};
+// Round1/2 submission version
 pub use blake28::Blake28;
 pub use blake32::Blake32;
 pub use blake48::Blake48;
 pub use blake64::Blake64;
-
 // Final version
-mod blake224;
-mod blake256;
-mod blake384;
-mod blake512;
-
 pub use blake224::Blake224;
 pub use blake256::Blake256;
 pub use blake384::Blake384;
 pub use blake512::Blake512;
-
-use crate::consts::*;
-use core::cmp::Ordering;
 
 // Blake<u32>: BLAKE-224(BLAKE-28) and BLAKE-256(BLAKE-32)
 // Blake<u64>: BLAKE-384(BLAKE-48) and BLAKE-512(BLAKE-64)

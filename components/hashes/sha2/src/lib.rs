@@ -12,6 +12,14 @@ mod sha512;
 mod sha512trunc224;
 mod sha512trunc256;
 
+use core::cmp::Ordering;
+
+use crate::consts::{
+    big_sigma32_0, big_sigma32_1, big_sigma64_0, big_sigma64_1, ch32, ch64, maj32, maj64,
+    small_sigma32_0, small_sigma32_1, small_sigma64_0, small_sigma64_1, H224, H256, H384, H512,
+    H512_TRUNC224, H512_TRUNC256, K32, K64,
+};
+
 pub use sha224::Sha224;
 pub use sha256::Sha256;
 pub use sha384::Sha384;
@@ -19,9 +27,6 @@ pub use sha512::Sha512;
 pub use sha512trunc224::Sha512Trunc224;
 pub use sha512trunc256::Sha512Trunc256;
 pub use utils::Hash;
-
-use crate::consts::*;
-use core::cmp::Ordering;
 
 #[cfg(not(feature = "minimal"))]
 use utils::impl_md_flow;
