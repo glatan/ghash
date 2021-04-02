@@ -5,7 +5,7 @@ WORKDIR /workdir
 ENV CARGO_HOME='/cargo' \
     PATH="${PATH}:/cargo/bin" \
     MSRV='1.50' \
-    WASMTIME_VERSION='0.23.0'
+    WASMTIME_VERSION='0.25.0'
 
 RUN \
     apt update -y && \
