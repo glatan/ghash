@@ -15,6 +15,7 @@
 
 #![no_std]
 
+#[macro_use]
 extern crate alloc;
 
 mod consts;
@@ -145,7 +146,7 @@ macro_rules! impl_keccak_f {
             fn squeeze(&mut self) -> Vec<u8> {
                 let lane_size = self.0.w / 8; // bit -> byte
                 let rate_size = self.0.r / 8; // bit -> byte
-                let mut z = Vec::with_capacity(self.0.n);
+                let mut z = vec![0; self.0.n];
                 let mut s = [0; mem::size_of::<$Size>() * 5 * 5];
                 let mut output_length = self.0.n;
                 let mut z_len = 0;
