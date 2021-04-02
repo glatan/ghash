@@ -19,11 +19,9 @@ variables:
 # FORCE_RUNをtrueにして手動で実行すればNightlyのテストも動く
 .nightly_rules: &nightly_rules
   rules:
-    - if: '$CI_MERGE_REQUEST_EVENT_TYPE  == "merged_result"'
-      when: always
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: always
-    - if: '$FORCE_RUN == "true"'
+    - if: '$RUN_NIGHTLY_TESTS == "true"'
       when: always
     - when: never
     - <<: *changes_rule
