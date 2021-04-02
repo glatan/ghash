@@ -4,8 +4,6 @@ extern crate alloc;
 mod consts;
 mod macros;
 
-pub use utils::Hash;
-
 #[cfg(feature = "minimal")]
 mod minimal;
 #[cfg(feature = "minimal")]

@@ -14,8 +14,6 @@ mod sha3_512;
 mod shake128;
 mod shake256;
 
-pub use utils::Hash;
-
 pub use sha3_224::Sha3_224;
 pub use sha3_256::Sha3_256;
 pub use sha3_384::Sha3_384;

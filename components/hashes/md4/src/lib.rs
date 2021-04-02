@@ -4,7 +4,7 @@ extern crate alloc;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
-pub use utils::Hash;
+use utils::Hash;
 
 #[cfg(feature = "minimal")]
 use utils::impl_md_flow_minimal;
