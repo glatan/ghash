@@ -1,13 +1,13 @@
 #![no_std]
+
 extern crate alloc;
 
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
-pub use utils::Hash;
-
 #[cfg(feature = "minimal")]
 use utils::impl_md_flow_minimal;
+use utils::Hash;
 #[cfg(not(feature = "minimal"))]
 use utils::{impl_md_flow, uint_from_bytes};
 

@@ -1,6 +1,8 @@
-use super::{EdonR, P512};
 use alloc::vec::Vec;
+
 use utils::Hash;
+
+use super::{EdonR, P512};
 
 pub struct EdonR512(EdonR<u64>);
 

@@ -1,7 +1,8 @@
 use alloc::vec::Vec;
 
-use crate::consts::*;
 use utils::{uint_from_bytes, Hash};
+
+use crate::consts::{IV32, IV64, SIGMA};
 
 macro_rules! g32 {
     ($self:ident, $block:expr, $r:expr, $i:expr, $a:expr, $b:expr, $c:expr, $d:expr) => {

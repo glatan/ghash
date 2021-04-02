@@ -1,10 +1,10 @@
 #![no_std]
+
 extern crate alloc;
 
 mod consts;
 #[cfg(not(feature = "minimal"))]
 mod macros;
-
 mod sha224;
 mod sha256;
 mod sha384;
@@ -12,21 +12,27 @@ mod sha512;
 mod sha512trunc224;
 mod sha512trunc256;
 
-pub use sha224::Sha224;
-pub use sha256::Sha256;
-pub use sha384::Sha384;
-pub use sha512::Sha512;
-pub use sha512trunc224::Sha512Trunc224;
-pub use sha512trunc256::Sha512Trunc256;
-pub use utils::Hash;
-
-use crate::consts::*;
 use core::cmp::Ordering;
 
 #[cfg(not(feature = "minimal"))]
 use utils::impl_md_flow;
 #[cfg(feature = "minimal")]
 use utils::impl_md_flow_minimal as impl_md_flow;
+
+use crate::consts::{
+    {
+        big_sigma32_0, big_sigma32_1, big_sigma64_0, big_sigma64_1, ch32, ch64, maj32, maj64,
+        small_sigma32_0, small_sigma32_1, small_sigma64_0, small_sigma64_1,
+    },
+    {H224, H256, H384, H512, H512_TRUNC224, H512_TRUNC256, K32, K64},
+};
+
+pub use sha224::Sha224;
+pub use sha256::Sha256;
+pub use sha384::Sha384;
+pub use sha512::Sha512;
+pub use sha512trunc224::Sha512Trunc224;
+pub use sha512trunc256::Sha512Trunc256;
 
 // Sha2<u32>: SHA-224 and SHA-256
 // Sha2<u64>: SHA-384, SHA-512, SHA-512/224 and SHA-512/256

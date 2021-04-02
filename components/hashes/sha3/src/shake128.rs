@@ -1,7 +1,6 @@
 use alloc::vec::Vec;
 
 use keccak::KeccakF1600;
-
 use utils::Hash;
 
 pub struct Shake128(KeccakF1600);

@@ -1,6 +1,8 @@
-use super::{Sha2, H384};
 use alloc::vec::Vec;
+
 use utils::Hash;
+
+use super::{Sha2, H384};
 
 pub struct Sha384(Sha2<u64>);
 

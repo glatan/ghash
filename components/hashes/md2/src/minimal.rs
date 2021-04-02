@@ -1,7 +1,8 @@
 use alloc::vec::Vec;
 
-use crate::consts::STABLE;
 use utils::Hash;
+
+use crate::consts::STABLE;
 
 pub struct Md2 {
     state: [u8; 48],

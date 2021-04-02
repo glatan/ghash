@@ -1,8 +1,8 @@
 use alloc::vec::Vec;
 
-use super::KeccakF1600;
-
 use utils::Hash;
+
+use crate::KeccakF1600;
 
 pub struct Keccak512(KeccakF1600);
 

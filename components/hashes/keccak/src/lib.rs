@@ -14,24 +14,25 @@
 // Keccak-512: [r=576, c=1024]
 
 #![no_std]
+
 #[macro_use]
 extern crate alloc;
 
 mod consts;
-
 mod keccak224;
 mod keccak256;
 mod keccak384;
 mod keccak512;
 
 use alloc::vec::Vec;
-use core::convert::TryInto;
-use core::{any, mem};
-
-use consts::*;
+use core::{
+    convert::TryInto,
+    {any, mem},
+};
 
 use utils::Hash;
 
+use consts::{R1600, R200, R400, R800, RC1600, RC200, RC400, RC800};
 pub use keccak224::Keccak224;
 pub use keccak256::Keccak256;
 pub use keccak384::Keccak384;
@@ -246,7 +247,7 @@ impl_keccak_f!(KeccakF200, u8, 200, RC200, R200);
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{KeccakF1600, KeccakF200, KeccakF400, KeccakF800};
 
     #[test]
     #[should_panic(expected = "r must be a multiple of 8 in this implementation, but got 570")]

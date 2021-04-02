@@ -1,20 +1,21 @@
 #![no_std]
+
 extern crate alloc;
 
+mod consts;
 mod edonr224;
 mod edonr256;
 mod edonr384;
 mod edonr512;
+
+use core::cmp::Ordering;
 
 pub use edonr224::EdonR224;
 pub use edonr256::EdonR256;
 pub use edonr384::EdonR384;
 pub use edonr512::EdonR512;
 
-mod consts;
-
-use consts::*;
-use core::cmp::Ordering;
+use consts::{q256, q512, P224, P256, P384, P512};
 #[cfg(not(feature = "minimal"))]
 use utils::impl_md_flow;
 #[cfg(feature = "minimal")]
