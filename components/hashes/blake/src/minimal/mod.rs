@@ -10,6 +10,7 @@ mod blake64;
 use core::cmp::Ordering;
 
 use crate::consts::{C32, C64, IV224, IV256, IV384, IV512, SIGMA};
+
 // Round1/2 submission version
 pub use blake28::Blake28;
 pub use blake32::Blake32;
@@ -23,7 +24,7 @@ pub use blake512::Blake512;
 
 // Blake<u32>: BLAKE-224(BLAKE-28) and BLAKE-256(BLAKE-32)
 // Blake<u64>: BLAKE-384(BLAKE-48) and BLAKE-512(BLAKE-64)
-pub(crate) struct Blake<T> {
+struct Blake<T> {
     salt: [T; 4],
     l: usize, // 未処理のビット数
     pub(crate) h: [T; 8],
@@ -34,7 +35,7 @@ pub(crate) struct Blake<T> {
 }
 
 impl Blake<u32> {
-    pub(crate) fn new(h: [u32; 8], salt: [u32; 4], round_limit: usize) -> Self {
+    fn new(h: [u32; 8], salt: [u32; 4], round_limit: usize) -> Self {
         Self {
             salt,
             l: 0,
@@ -110,7 +111,7 @@ impl Blake<u32> {
             self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
         }
     }
-    pub(crate) fn blake(&mut self, message: &[u8], last_byte: u8) {
+    fn blake(&mut self, message: &[u8], last_byte: u8) {
         self.l = message.len() * 8;
         let l = message.len();
         let mut block = [0u32; 16];
@@ -196,7 +197,7 @@ impl Blake<u32> {
 }
 
 impl Blake<u64> {
-    pub(crate) fn new(h: [u64; 8], salt: [u64; 4], round_limit: usize) -> Self {
+    fn new(h: [u64; 8], salt: [u64; 4], round_limit: usize) -> Self {
         Self {
             salt,
             l: 0,
@@ -275,7 +276,7 @@ impl Blake<u64> {
             self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
         }
     }
-    pub(crate) fn blake(&mut self, message: &[u8], last_byte: u8) {
+    fn blake(&mut self, message: &[u8], last_byte: u8) {
         self.l = message.len() * 8;
         let l = message.len();
         let mut block = [0u64; 16];

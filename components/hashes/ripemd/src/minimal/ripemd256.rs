@@ -1,11 +1,14 @@
 use alloc::vec::Vec;
-use core::cmp::Ordering;
-use core::mem;
+use core::{cmp::Ordering, mem};
 
-use crate::consts::{f1, f2, f3, f4};
-use crate::consts::{H256, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use crate::{round_left_128_minimal, round_right_128_minimal};
 use utils::{impl_md_flow_minimal, Hash};
+
+use crate::{
+    consts::{
+        {f1, f2, f3, f4}, {H256, K128_LEFT, K128_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT},
+    },
+    {round_left_128_minimal, round_right_128_minimal},
+};
 
 pub struct Ripemd256 {
     status: [u32; 8],

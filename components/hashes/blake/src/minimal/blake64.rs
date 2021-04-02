@@ -1,7 +1,8 @@
 use alloc::vec::Vec;
 
-use super::{Blake, IV512};
 use utils::Hash;
+
+use super::{Blake, IV512};
 
 pub struct Blake64(Blake<u64>);
 

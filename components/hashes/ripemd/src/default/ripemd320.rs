@@ -1,11 +1,14 @@
 use alloc::vec::Vec;
-use core::cmp::Ordering;
-use core::mem;
+use core::{cmp::Ordering, mem};
 
-use crate::consts::{f1, f2, f3, f4, f5};
-use crate::consts::{H320, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use crate::{round_left_160, round_right_160};
 use utils::{impl_md_flow, uint_from_bytes, Hash};
+
+use crate::{
+    consts::{
+        {f1, f2, f3, f4, f5}, {H320, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT},
+    },
+    {round_left_160, round_right_160},
+};
 
 pub struct Ripemd320 {
     status: [u32; 10],

@@ -1,10 +1,14 @@
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
-use crate::consts::{f1, f2, f3, f4, f5};
-use crate::consts::{H160, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT};
-use crate::{round_left_160_minimal, round_right_160_minimal};
 use utils::{impl_md_flow_minimal, Hash};
+
+use crate::{
+    consts::{
+        {f1, f2, f3, f4, f5}, {H160, K160_LEFT, K160_RIGHT, R_LEFT, R_RIGHT, S_LEFT, S_RIGHT},
+    },
+    {round_left_160_minimal, round_right_160_minimal},
+};
 
 pub struct Ripemd160 {
     status: [u32; 5],

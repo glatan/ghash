@@ -1,7 +1,8 @@
 use alloc::vec::Vec;
 
-use crate::consts::STABLE;
 use utils::Hash;
+
+use crate::consts::STABLE;
 
 macro_rules! init_state {
     ($self:expr, $block:expr, $( $i:expr ), +) => {

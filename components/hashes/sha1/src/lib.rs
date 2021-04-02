@@ -1,17 +1,17 @@
 #![no_std]
+
 extern crate alloc;
 
 mod consts;
-
-#[cfg(feature = "minimal")]
-mod minimal;
-#[cfg(feature = "minimal")]
-pub use minimal::Sha1;
-
 #[cfg(not(feature = "minimal"))]
 mod default;
+#[cfg(feature = "minimal")]
+mod minimal;
+
 #[cfg(not(feature = "minimal"))]
 pub use default::Sha1;
+#[cfg(feature = "minimal")]
+pub use minimal::Sha1;
 
 #[cfg(test)]
 mod tests {

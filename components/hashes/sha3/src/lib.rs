@@ -5,6 +5,7 @@
 // SHA3-512: [r=576, c=1024, d(suffix)=0x06]
 
 #![no_std]
+
 extern crate alloc;
 
 mod sha3_224;

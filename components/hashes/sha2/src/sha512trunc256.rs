@@ -1,6 +1,8 @@
-use super::{Sha2, H512_TRUNC256};
 use alloc::vec::Vec;
+
 use utils::Hash;
+
+use super::{Sha2, H512_TRUNC256};
 
 pub struct Sha512Trunc256(Sha2<u64>);
 

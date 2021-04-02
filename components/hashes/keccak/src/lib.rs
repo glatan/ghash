@@ -14,24 +14,24 @@
 // Keccak-512: [r=576, c=1024]
 
 #![no_std]
-#[macro_use]
+
 extern crate alloc;
 
 mod consts;
-
 mod keccak224;
 mod keccak256;
 mod keccak384;
 mod keccak512;
 
 use alloc::vec::Vec;
-use core::convert::TryInto;
-use core::{any, mem};
-
-use consts::{R1600, R200, R400, R800, RC1600, RC200, RC400, RC800};
+use core::{
+    convert::TryInto,
+    {any, mem},
+};
 
 use utils::Hash;
 
+use consts::{R1600, R200, R400, R800, RC1600, RC200, RC400, RC800};
 pub use keccak224::Keccak224;
 pub use keccak256::Keccak256;
 pub use keccak384::Keccak384;
@@ -145,7 +145,7 @@ macro_rules! impl_keccak_f {
             fn squeeze(&mut self) -> Vec<u8> {
                 let lane_size = self.0.w / 8; // bit -> byte
                 let rate_size = self.0.r / 8; // bit -> byte
-                let mut z = vec![0; self.0.n];
+                let mut z = Vec::with_capacity(self.0.n);
                 let mut s = [0; mem::size_of::<$Size>() * 5 * 5];
                 let mut output_length = self.0.n;
                 let mut z_len = 0;

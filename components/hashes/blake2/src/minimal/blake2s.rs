@@ -1,8 +1,9 @@
 use alloc::vec::Vec;
 
+use utils::Hash;
+
 use super::Blake2;
 use crate::consts::IV32;
-use utils::Hash;
 
 pub struct Blake2s(Blake2<u32>);
 
