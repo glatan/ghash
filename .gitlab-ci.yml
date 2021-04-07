@@ -20,9 +20,9 @@ variables:
 # FORCE_RUNをtrueにして手動で実行すればNightlyのテストも動く
 .nightly_rules: &nightly_rules
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule" && ${MSRV} != ${STABLE_RUST_VERSION}'
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $MSRV != $STABLE_RUST_VERSION'
       when: always
-    - if: '$RUN_NIGHTLY_TESTS == "true" && ${MSRV} != ${STABLE_RUST_VERSION}'
+    - if: '$RUN_NIGHTLY_TESTS == "true" && $MSRV != $STABLE_RUST_VERSION'
       when: always
     - when: never
     - <<: *changes_rule
