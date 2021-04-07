@@ -12,6 +12,7 @@ variables:
 
 .changes_rule: &changes_rule
   changes:
+    - .gitlab-ci.yml
     - .cargo/config.toml
     - Cargo.toml
     - components/**.rs
