@@ -37,6 +37,7 @@ variables:
     paths:
       - target/${TARGET}
   before_script:
+    - set -eux
     - apt update -y
     - apt install -y curl make 
     - curl https://sh.rustup.rs -sSf > install.sh
