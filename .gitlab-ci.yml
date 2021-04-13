@@ -6,11 +6,13 @@ stages:
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
   MSRV: '1.50'
-  WASMTIME_VERSION: 0.23.0
-  XARGO_VERSION: 0.3.20
+  STABLE_RUST_VERSION: '1.51'
+  WASMTIME_VERSION: '0.26.0'
+  XARGO_VERSION: '0.3.20'
 
 .changes_rule: &changes_rule
   changes:
+    - .gitlab-ci.yml
     - .cargo/config.toml
     - Cargo.toml
     - components/**.rs
@@ -19,11 +21,9 @@ variables:
 # FORCE_RUNをtrueにして手動で実行すればNightlyのテストも動く
 .nightly_rules: &nightly_rules
   rules:
-    - if: '$CI_MERGE_REQUEST_EVENT_TYPE  == "merged_result"'
+    - if: '$CI_PIPELINE_SOURCE == "schedule" && $MSRV != $STABLE_RUST_VERSION'
       when: always
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: always
-    - if: '$FORCE_RUN == "true"'
+    - if: '$RUN_NIGHTLY_TESTS == "true" && $MSRV != $STABLE_RUST_VERSION'
       when: always
     - when: never
     - <<: *changes_rule
@@ -37,9 +37,10 @@ variables:
     paths:
       - target/${TARGET}
   before_script:
+    - set -ex
     - apt update -y
     - apt install -y curl make 
-    - curl https://sh.rustup.rs -sSf > install.sh
+    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > install.sh
     - sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t ${TARGET}
     - >
       if [[ ${#PACKAGES[@]} -ne 0 ]]; then
@@ -124,7 +125,7 @@ stable-linux:
   rules:
     - <<: *changes_rule
   variables:
-    CHANNEL: stable
+    CHANNEL: ${STABLE_RUST_VERSION}
   <<: *linux_cross_compile_template
   <<: *linux_matrix_template
 
@@ -189,7 +190,7 @@ tier3-linux:
   before_script:
     - apt update -y
     - apt install -y curl gcc make xz-utils
-    - curl https://sh.rustup.rs -sSf > install.sh
+    - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > install.sh
     - sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t wasm32-wasi
     - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" > wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
     - tar -xvf wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
@@ -203,7 +204,7 @@ stable-wasm32-wasi:
   rules:
     - <<: *changes_rule
   variables:
-    CHANNEL: stable
+    CHANNEL: ${STABLE_RUST_VERSION}
   <<: *wasm32-wasi_template
 
 msrv-wasm32-wasi:
@@ -252,7 +253,7 @@ stable-windows-msvc:
   rules:
     - <<: *changes_rule
   variables:
-    CHANNEL: stable
+    CHANNEL: ${STABLE_RUST_VERSION}
   <<: *windows_msvc_template
   <<: *windows_matrix_template
 
