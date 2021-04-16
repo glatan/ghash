@@ -170,6 +170,8 @@ tier3-linux:
     - make xargo_test.${TARGET}
   parallel:
     matrix:
+      - PACKAGES: gcc-arm-linux-gnueabi
+        TARGET: armv4t-unknown-linux-gnueabi
       - PACKAGES: gcc-mipsisa32r6-linux-gnu
         TARGET: mipsisa32r6-unknown-linux-gnu
       - PACKAGES: gcc-mipsisa32r6el-linux-gnu
