@@ -28,7 +28,6 @@ variables:
       when: always
       allow_failure: true
     - when: never
-    - <<: *changes_rule
 
 # Linux
 
