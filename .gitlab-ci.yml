@@ -26,6 +26,7 @@ variables:
     - if: '$RUN_NIGHTLY_TESTS == "true" && $MSRV != $STABLE_RUST_VERSION'
       when: always
     - when: never
+    - allow_failure: true
     - <<: *changes_rule
 
 # Linux
