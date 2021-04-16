@@ -23,10 +23,11 @@ variables:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule" && $MSRV != $STABLE_RUST_VERSION'
       when: always
+      allow_failure: true
     - if: '$RUN_NIGHTLY_TESTS == "true" && $MSRV != $STABLE_RUST_VERSION'
       when: always
+      allow_failure: true
     - when: never
-    - allow_failure: true
     - <<: *changes_rule
 
 # Linux
