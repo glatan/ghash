@@ -5,7 +5,42 @@ WORKDIR /workdir
 ENV CARGO_HOME='/cargo' \
     PATH="${PATH}:/cargo/bin" \
     MSRV='1.50' \
-    WASMTIME_VERSION='0.25.0'
+    WASMTIME_VERSION='0.25.0' \
+    TARGETS='\
+        aarch64-unknown-linux-gnu \
+        aarch64-unknown-linux-musl \
+        arm-unknown-linux-gnueabi \
+        arm-unknown-linux-gnueabihf \
+        arm-unknown-linux-musleabi \
+        arm-unknown-linux-musleabihf \
+        armv5te-unknown-linux-gnueabi \
+        armv5te-unknown-linux-musleabi \
+        armv7-unknown-linux-gnueabi \
+        armv7-unknown-linux-gnueabihf \
+        armv7-unknown-linux-musleabi \
+        armv7-unknown-linux-musleabihf \
+        i586-unknown-linux-gnu \
+        i586-unknown-linux-musl \
+        i686-unknown-linux-gnu \
+        i686-unknown-linux-musl \
+        mips-unknown-linux-gnu \
+        mips-unknown-linux-musl \
+        mips64-unknown-linux-gnuabi64 \
+        mips64-unknown-linux-muslabi64 \
+        mips64el-unknown-linux-gnuabi64 \
+        mips64el-unknown-linux-muslabi64 \
+        mipsel-unknown-linux-gnu \
+        mipsel-unknown-linux-musl \
+        powerpc-unknown-linux-gnu \
+        powerpc64-unknown-linux-gnu \
+        powerpc64le-unknown-linux-gnu \
+        riscv64gc-unknown-linux-gnu \
+        s390x-unknown-linux-gnu \
+        sparc64-unknown-linux-gnu \
+        thumbv7neon-unknown-linux-gnueabihf \
+        x86_64-unknown-linux-gnu \
+        x86_64-unknown-linux-musl \
+        wasm32-wasi'
 
 RUN \
     apt update -y && \
@@ -41,38 +76,8 @@ RUN \
 RUN \
     curl https://sh.rustup.rs -sSf > install.sh && \
     sh install.sh -y --default-toolchain stable --profile minimal && \
-    rustup target add \
-        aarch64-unknown-linux-gnu \
-        aarch64-unknown-linux-musl \
-        arm-unknown-linux-gnueabi \
-        arm-unknown-linux-gnueabihf \
-        arm-unknown-linux-musleabi \
-        arm-unknown-linux-musleabihf \
-        armv5te-unknown-linux-gnueabi \
-        armv5te-unknown-linux-musleabi \
-        armv7-unknown-linux-gnueabi \
-        armv7-unknown-linux-gnueabihf \
-        armv7-unknown-linux-musleabi \
-        armv7-unknown-linux-musleabihf \
-        i586-unknown-linux-gnu \
-        i586-unknown-linux-musl \
-        i686-unknown-linux-gnu \
-        i686-unknown-linux-musl \
-        mips-unknown-linux-gnu \
-        mips-unknown-linux-musl \
-        mips64-unknown-linux-gnuabi64 \
-        mips64-unknown-linux-muslabi64 \
-        mips64el-unknown-linux-gnuabi64 \
-        mips64el-unknown-linux-muslabi64 \
-        mipsel-unknown-linux-gnu \
-        mipsel-unknown-linux-musl \
-        powerpc-unknown-linux-gnu \
-        powerpc64-unknown-linux-gnu \
-        powerpc64le-unknown-linux-gnu \
-        riscv64gc-unknown-linux-gnu \
-        s390x-unknown-linux-gnu \
-        sparc64-unknown-linux-gnu \
-        thumbv7neon-unknown-linux-gnueabihf \
-        x86_64-unknown-linux-gnu \
-        x86_64-unknown-linux-musl \
-        wasm32-wasi
+    rustup target add ${TARGETS} && \
+    rustup default "${MSRV}" && \
+    rustup target add ${TARGETS} && \
+    rustup default nightly && \
+    rustup target add ${TARGETS}
