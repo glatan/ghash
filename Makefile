@@ -29,20 +29,20 @@ test.%:
 	@$(MAKE) -C components/hashes/sha3 test.$*
 	@$(MAKE) -C components/utils test.$*
 
-xargo_test.%:
-	@$(MAKE) -C components/hashes/blake xargo_test.$*
-	@$(MAKE) -C components/hashes/blake2 xargo_test.$*
-	@$(MAKE) -C components/hashes/edonr xargo_test.$*
-	@$(MAKE) -C components/hashes/keccak xargo_test.$*
-	@$(MAKE) -C components/hashes/md2 xargo_test.$*
-	@$(MAKE) -C components/hashes/md4 xargo_test.$*
-	@$(MAKE) -C components/hashes/md5 xargo_test.$*
-	@$(MAKE) -C components/hashes/ripemd xargo_test.$*
-	@$(MAKE) -C components/hashes/sha0 xargo_test.$*
-	@$(MAKE) -C components/hashes/sha1 xargo_test.$*
-	@$(MAKE) -C components/hashes/sha2 xargo_test.$*
-	@$(MAKE) -C components/hashes/sha3 xargo_test.$*
-	@$(MAKE) -C components/utils xargo_test.$*
+test_build_std.%:
+	@$(MAKE) -C components/hashes/blake test_build_std.$*
+	@$(MAKE) -C components/hashes/blake2 test_build_std.$*
+	@$(MAKE) -C components/hashes/edonr test_build_std.$*
+	@$(MAKE) -C components/hashes/keccak test_build_std.$*
+	@$(MAKE) -C components/hashes/md2 test_build_std.$*
+	@$(MAKE) -C components/hashes/md4 test_build_std.$*
+	@$(MAKE) -C components/hashes/md5 test_build_std.$*
+	@$(MAKE) -C components/hashes/ripemd test_build_std.$*
+	@$(MAKE) -C components/hashes/sha0 test_build_std.$*
+	@$(MAKE) -C components/hashes/sha1 test_build_std.$*
+	@$(MAKE) -C components/hashes/sha2 test_build_std.$*
+	@$(MAKE) -C components/hashes/sha3 test_build_std.$*
+	@$(MAKE) -C components/utils test_build_std.$*
 
 .PHONY: p.build
 p.build:

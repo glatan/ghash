@@ -165,10 +165,9 @@ tier3-linux:
         apt install -y qemu-user ${PACKAGES};
       fi
     - export PATH="${PATH}:${CARGO_HOME}/bin"
-    - cargo install xargo
     - rustup component add rust-src
   script:
-    - make xargo_test.${TARGET}
+    - make test_build_std.${TARGET}
   parallel:
     matrix:
       - PACKAGES: gcc-arm-linux-gnueabi
