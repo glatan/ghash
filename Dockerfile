@@ -84,5 +84,4 @@ RUN \
     rustup target add ${TARGETS}
 
 RUN \
-    cargo install xargo && \
     rustup component add rust-src
