@@ -86,6 +86,7 @@
 
 |Target|Linker|Runner + Option|Note|
 |-|-|-|-|
+|armv4t-unknown-linux-gnueabi|arm-linux-gnueabi-gcc|qemu-arm -L /usr/arm-linux-gnueabi/||
 |mipsisa32r6-unknown-linux-gnu|mipsisa32r6-linux-gnu-gcc|qemu-mips -L /usr/mipsisa32r6-linux-gnu/||
 |mipsisa32r6el-unknown-linux-gnu|mipsisa32r6el-linux-gnu-gcc|qemu-mipsel -L /usr/mipsisa32r6el-linux-gnu/||
 |mipsisa64r6-unknown-linux-gnuabi64|mipsisa64r6-linux-gnuabi64-gcc|qemu-mips64 -L /usr/mipsisa64r6-linux-gnuabi64/||
