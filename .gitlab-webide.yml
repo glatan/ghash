@@ -1,0 +1,5 @@
+terminal:
+  # This can be any image that has the necessary runtime environment for your project.
+  image: docker:dind
+  before_script: docker build -t ghash .
+  script: docker run -it ghash -v $(pwd):/workdir bash
