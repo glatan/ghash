@@ -14,8 +14,8 @@ variables:
     - .gitlab-ci.yml
     - .cargo/config.toml
     - Cargo.toml
-    - components/**.rs
-    - src/**.rs
+    - components/**/*.rs
+    - src/lib.rs
 
 # FORCE_RUNをtrueにして手動で実行すればNightlyのテストも動く
 .nightly_rules: &nightly_rules
