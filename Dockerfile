@@ -1,4 +1,4 @@
-FROM ubuntu:hirsute
+FROM docker.io/ubuntu:hirsute
 
 WORKDIR /workdir
 
@@ -45,10 +45,11 @@ ENV CARGO_HOME='/cargo' \
 
 RUN \
     apt update -y && \
-    apt install -y curl make qemu-user xz-utils
-
-RUN \
     apt install -y \
+        curl \
+        make \
+        qemu-user \
+        xz-utils \
         gcc-aarch64-linux-gnu \
         gcc-arm-linux-gnueabi \
         gcc-arm-linux-gnueabihf \
