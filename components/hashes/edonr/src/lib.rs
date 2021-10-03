@@ -100,7 +100,78 @@ impl EdonR<u32> {
         self.state[8..16].copy_from_slice(&state_16);
     }
     fn edonr(&mut self, message: &[u8]) {
-        impl_md_flow!(u32=> self, message, from_le_bytes, to_le_bytes);
+        let l = message.len();
+        let mut block = [0u32; 16];
+        if l >= 64 {
+            message.chunks_exact(64).for_each(|bytes| {
+                (0..16).for_each(|i| {
+                    block[i] = u32::from_le_bytes([
+                        bytes[i * 4],
+                        bytes[i * 4 + 1],
+                        bytes[i * 4 + 2],
+                        bytes[i * 4 + 3],
+                    ]);
+                });
+                self.compress(&block);
+            });
+        } else if l == 0 {
+            self.compress(&[
+                u32::from_le_bytes([0x80, 0, 0, 0]),
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ])
+        }
+        if l != 0 {
+            let offset = (l / 64) * 64;
+            let remainder = l % 64;
+            match (l % 64).cmp(&55) {
+                Ordering::Greater => {
+                    let mut byte_block = [0u8; 128];
+                    byte_block[..remainder].copy_from_slice(&message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[120..].copy_from_slice(&(8 * l as u64).to_le_bytes());
+                    byte_block.chunks_exact(64).for_each(|bytes| {
+                        (0..16).for_each(|i| {
+                            block[i] = u32::from_le_bytes([
+                                bytes[i * 4],
+                                bytes[i * 4 + 1],
+                                bytes[i * 4 + 2],
+                                bytes[i * 4 + 3],
+                            ]);
+                        });
+                        self.compress(&block);
+                    });
+                }
+                Ordering::Less | Ordering::Equal => {
+                    let mut byte_block = [0u8; 64];
+                    byte_block[..remainder].copy_from_slice(&message[offset..]);
+                    byte_block[remainder] = 0x80;
+                    byte_block[56..].copy_from_slice(&(8 * l as u64).to_le_bytes());
+                    (0..16).for_each(|i| {
+                        block[i] = u32::from_le_bytes([
+                            byte_block[i * 4],
+                            byte_block[i * 4 + 1],
+                            byte_block[i * 4 + 2],
+                            byte_block[i * 4 + 3],
+                        ]);
+                    });
+                    self.compress(&block);
+                }
+            }
+        };
     }
 }
 
