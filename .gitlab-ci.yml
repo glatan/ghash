@@ -6,7 +6,7 @@ stages:
 variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
   MSRV: '1.50'
-  STABLE_RUST_VERSION: '1.56'
+  STABLE_RUST_VERSION: '1.58.1'
   WASMTIME_VERSION: '0.30.0'
 
 .changes_rule: &changes_rule
