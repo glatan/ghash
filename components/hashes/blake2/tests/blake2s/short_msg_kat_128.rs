@@ -2,7 +2,6 @@ use dev_utils::impl_short_msg_kat;
 
 impl_short_msg_kat!(blake2, Blake2s, SHORT_MSG_KAT, Blake2s::new(16));
 
-#[rustfmt::skip]
 const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	(
 		// Len = 0

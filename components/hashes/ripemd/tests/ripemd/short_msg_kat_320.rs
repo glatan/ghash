@@ -1,6 +1,7 @@
 use dev_utils::impl_short_msg_kat;
 
-#[rustfmt::skip]
+impl_short_msg_kat!(ripemd, Ripemd320, SHORT_MSG_KAT, Ripemd320::default());
+
 const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	(
 		// Len = 0
@@ -1278,5 +1279,3 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 		"b19b525ae8e65ce00df026376fe4cd94b05482c61265ff71e47f575d8aa8a41bd8c071a32ad8f448"
 	),
 ];
-
-impl_short_msg_kat!(ripemd, Ripemd320, SHORT_MSG_KAT, Ripemd320::default());

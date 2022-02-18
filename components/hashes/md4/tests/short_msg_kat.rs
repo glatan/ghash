@@ -1,6 +1,7 @@
 use dev_utils::impl_short_msg_kat;
 
-#[rustfmt::skip]
+impl_short_msg_kat!(md4, Md4, SHORT_MSG_KAT, Md4::default());
+
 const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	(
 		// Len = 0
@@ -1278,5 +1279,3 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 		"363b249c26d9dab970672f02ca172d7f"
 	),
 ];
-
-impl_short_msg_kat!(md4, Md4, SHORT_MSG_KAT, Md4::default());

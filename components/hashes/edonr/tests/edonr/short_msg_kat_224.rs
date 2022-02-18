@@ -2,7 +2,6 @@ use dev_utils::impl_short_msg_kat;
 
 impl_short_msg_kat!(edonr, EdonR224, SHORT_MSG_KAT, EdonR224::default());
 
-#[rustfmt::skip]
 const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	(
 		// Len = 0

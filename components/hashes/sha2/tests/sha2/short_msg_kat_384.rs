@@ -1,6 +1,7 @@
 use dev_utils::impl_short_msg_kat;
 
-#[rustfmt::skip]
+impl_short_msg_kat!(sha2, Sha384, SHORT_MSG_KAT, Sha384::default());
+
 const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	(
 		// Len = 0
@@ -1278,5 +1279,3 @@ const SHORT_MSG_KAT: [(&str, &str); 255] = [
 		"18c8518fe4c6cd16ada35545a491a2e95e4d4a66cc9a1e48fd4b3598eccd25e5c7f3a0bb6b50b8b5568a490b29a07ed2"
 	),
 ];
-
-impl_short_msg_kat!(sha2, Sha384, SHORT_MSG_KAT, Sha384::default());
