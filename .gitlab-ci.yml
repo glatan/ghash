@@ -9,13 +9,15 @@ variables:
   STABLE_RUST_VERSION: '1.59.0'
   WASMTIME_VERSION: '0.34.0'
 
-.changes_rule: &changes_rule
-  changes:
-    - .gitlab-ci.yml
-    - .cargo/config.toml
-    - Cargo.toml
-    - components/**/*.rs
-    - src/lib.rs
+.default_rules: &default_rules
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - .gitlab-ci.yml
+        - .cargo/config.toml
+        - Cargo.toml
+        - components/**/*.rs
+        - src/lib.rs
 
 # FORCE_RUNをtrueにして手動で実行すればNightlyのテストも動く
 .nightly_rules: &nightly_rules
@@ -122,8 +124,7 @@ variables:
 
 stable-linux:
   stage: stable
-  rules:
-    - <<: *changes_rule
+  <<: *default_rules
   variables:
     CHANNEL: ${STABLE_RUST_VERSION}
   <<: *linux_cross_compile_template
@@ -131,8 +132,7 @@ stable-linux:
 
 msrv-linux:
   stage: msrv
-  rules:
-    - <<: *changes_rule
+  <<: *default_rules
   variables:
     CHANNEL: ${MSRV}
   <<: *linux_cross_compile_template
@@ -202,16 +202,14 @@ tier3-linux:
 
 stable-wasm32-wasi:
   stage: stable
-  rules:
-    - <<: *changes_rule
+  <<: *default_rules
   variables:
     CHANNEL: ${STABLE_RUST_VERSION}
   <<: *wasm32-wasi_template
 
 msrv-wasm32-wasi:
   stage: msrv
-  rules:
-    - <<: *changes_rule
+  <<: *default_rules
   variables:
     CHANNEL: ${MSRV}
   <<: *wasm32-wasi_template
@@ -251,8 +249,7 @@ nightly-wasm32-wasi:
 
 stable-windows-msvc:
   stage: stable
-  rules:
-    - <<: *changes_rule
+  <<: *default_rules
   variables:
     CHANNEL: ${STABLE_RUST_VERSION}
   <<: *windows_msvc_template
@@ -260,8 +257,7 @@ stable-windows-msvc:
 
 msrv-windows-msvc:
   stage: msrv
-  rules:
-    - <<: *changes_rule
+  <<: *default_rules
   variables:
     CHANNEL: ${MSRV}
   <<: *windows_msvc_template
