@@ -3,7 +3,7 @@ use core::cmp::Ordering;
 
 use utils::{impl_md_flow, uint_from_bytes, Hash};
 
-use crate::consts::{IV, K};
+use crate::consts::{IV, K, ch, parity, maj};
 
 macro_rules! init_w {
     ( $w:expr, $( $t:expr ),* ) => {
@@ -31,16 +31,6 @@ macro_rules! round {
     };
 }
 
-const fn ch(b: u32, c: u32, d: u32) -> u32 {
-    (b & c) | (!b & d)
-}
-const fn parity(b: u32, c: u32, d: u32) -> u32 {
-    b ^ c ^ d
-}
-const fn maj(b: u32, c: u32, d: u32) -> u32 {
-    (b & c) | (b & d) | (c & d)
-}
-
 pub struct Sha0 {
     status: [u32; 5],
 }
@@ -49,7 +39,7 @@ impl Sha0 {
     pub fn new() -> Self {
         Self::default()
     }
-    #[allow(clippy::many_single_char_names)]
+    #[allow(clippy::many_single_char_names, clippy::needless_late_init)]
     fn compress(&mut self, m: &[u32; 16]) {
         let [mut a, mut b, mut c, mut d, mut e] = self.status;
         let mut temp;

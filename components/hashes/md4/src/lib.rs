@@ -11,16 +11,20 @@ use utils::Hash;
 #[cfg(not(feature = "minimal"))]
 use utils::{impl_md_flow, uint_from_bytes};
 
+#[inline(always)]
 #[allow(clippy::many_single_char_names)]
 const fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
+    #[inline(always)]
     const fn f(x: u32, y: u32, z: u32) -> u32 {
         (x & y) | (!x & z)
     }
     a.wrapping_add(f(b, c, d)).wrapping_add(k).rotate_left(s)
 }
 
+#[inline(always)]
 #[allow(clippy::many_single_char_names)]
 const fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
+    #[inline(always)]
     const fn g(x: u32, y: u32, z: u32) -> u32 {
         (x & y) | (x & z) | (y & z)
     }
@@ -30,8 +34,10 @@ const fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
         .rotate_left(s)
 }
 
+#[inline(always)]
 #[allow(clippy::many_single_char_names)]
 const fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32) -> u32 {
+    #[inline(always)]
     const fn h(x: u32, y: u32, z: u32) -> u32 {
         x ^ y ^ z
     }
@@ -49,6 +55,7 @@ impl Md4 {
     pub fn new() -> Self {
         Self::default()
     }
+    #[inline(always)]
     #[allow(clippy::many_single_char_names)]
     fn compress(&mut self, x: &[u32; 16]) {
         let [mut a, mut b, mut c, mut d] = self.status;

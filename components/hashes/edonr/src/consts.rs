@@ -35,6 +35,7 @@ pub(crate) const P512: [u64; 16] =[
     0xF0F1_F2F3_F4F5_F6F7, 0xF8F9_FAFB_FCFD_FEFF
 ];
 
+#[inline(always)]
 pub(crate) const fn q256(x: &[u32; 8], y: &[u32; 8]) -> [u32; 8] {
     let mut z = [0u32; 8];
     let mut t = [0u32; 16];
@@ -154,6 +155,7 @@ pub(crate) const fn q256(x: &[u32; 8], y: &[u32; 8]) -> [u32; 8] {
     z[4] = t[15].wrapping_add(t[1] ^ t[2] ^ t[5]);
     z
 }
+#[inline(always)]
 pub(crate) const fn q512(x: &[u64; 8], y: &[u64; 8]) -> [u64; 8] {
     let mut z = [0u64; 8];
     let mut t = [0u64; 16];

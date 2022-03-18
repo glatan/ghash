@@ -27,8 +27,10 @@ const T: [u32; 64] = [
     0x6FA8_7E4F, 0xFE2C_E6E0, 0xA301_4314, 0x4E08_11A1, 0xF753_7E82, 0xBD3A_F235, 0x2AD7_D2BB, 0xEB86_D391,
 ];
 
+#[inline(always)]
 #[allow(clippy::many_single_char_names)]
 const fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
+    #[inline(always)]
     const fn f(x: u32, y: u32, z: u32) -> u32 {
         (x & y) | (!x & z)
     }
@@ -40,8 +42,10 @@ const fn round1(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
     )
 }
 
+#[inline(always)]
 #[allow(clippy::many_single_char_names)]
 const fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
+    #[inline(always)]
     const fn g(x: u32, y: u32, z: u32) -> u32 {
         (x & z) | (y & !z)
     }
@@ -54,7 +58,9 @@ const fn round2(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
 }
 
 #[allow(clippy::many_single_char_names)]
+#[inline(always)]
 const fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
+    #[inline(always)]
     const fn h(x: u32, y: u32, z: u32) -> u32 {
         x ^ y ^ z
     }
@@ -66,8 +72,10 @@ const fn round3(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
     )
 }
 
+#[inline(always)]
 #[allow(clippy::many_single_char_names)]
 const fn round4(a: u32, b: u32, c: u32, d: u32, k: u32, s: u32, t: u32) -> u32 {
+    #[inline(always)]
     const fn i(x: u32, y: u32, z: u32) -> u32 {
         y ^ (x | !z)
     }
@@ -87,6 +95,7 @@ impl Md5 {
     pub fn new() -> Self {
         Self::default()
     }
+    #[inline(always)]
     #[allow(clippy::many_single_char_names)]
     fn compress(&mut self, x: &[u32; 16]) {
         let [mut a, mut b, mut c, mut d] = self.status;

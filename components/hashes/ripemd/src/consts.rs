@@ -77,18 +77,23 @@ pub(crate) const S_RIGHT: [u32; 80] = [
     8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11, // 64 <= j <= 64
 ];
 
+#[inline(always)]
 pub(crate) const fn f1(x: u32, y: u32, z: u32) -> u32 {
     x ^ y ^ z
 }
+#[inline(always)]
 pub(crate) const fn f2(x: u32, y: u32, z: u32) -> u32 {
     (x & y) | (!x & z)
 }
+#[inline(always)]
 pub(crate) const fn f3(x: u32, y: u32, z: u32) -> u32 {
     (x | !y) ^ z
 }
+#[inline(always)]
 pub(crate) const fn f4(x: u32, y: u32, z: u32) -> u32 {
     (x & z) | (y & !z)
 }
+#[inline(always)]
 pub(crate) const fn f5(x: u32, y: u32, z: u32) -> u32 {
     x ^ (y | !z)
 }

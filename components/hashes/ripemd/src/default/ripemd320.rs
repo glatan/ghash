@@ -18,6 +18,8 @@ impl Ripemd320 {
     pub fn new() -> Self {
         Self::default()
     }
+    #[inline(always)]
+    #[allow(clippy::needless_late_init)]
     fn compress(&mut self, x: &[u32; 16]) {
         let mut t;
         let (mut a_left, mut b_left, mut c_left, mut d_left, mut e_left) = (

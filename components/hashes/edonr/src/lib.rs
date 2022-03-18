@@ -29,6 +29,7 @@ impl EdonR<u32> {
     fn new(iv: [u32; 16]) -> Self {
         Self { state: iv }
     }
+    #[inline(always)]
     fn compress(&mut self, message: &[u32; 16]) {
         let mut state_8 = [
             self.state[0],
@@ -50,10 +51,8 @@ impl EdonR<u32> {
             self.state[14],
             self.state[15],
         ];
-        let mut state_24;
-        let mut state_32;
         // First row of quasigroup e-transformations
-        state_24 = q256(
+        let mut state_24 = q256(
             &[
                 message[15],
                 message[14],
@@ -69,7 +68,7 @@ impl EdonR<u32> {
                 message[7],
             ],
         );
-        state_32 = q256(
+        let mut state_32 = q256(
             &state_24,
             &[
                 message[8],
@@ -109,6 +108,7 @@ impl EdonR<u64> {
     fn new(iv: [u64; 16]) -> Self {
         Self { state: iv }
     }
+    #[inline(always)]
     fn compress(&mut self, message: &[u64; 16]) {
         let mut state_8 = [
             self.state[0],
@@ -130,10 +130,8 @@ impl EdonR<u64> {
             self.state[14],
             self.state[15],
         ];
-        let mut state_24;
-        let mut state_32;
         // First row of quasigroup e-transformations
-        state_24 = q512(
+        let mut state_24 = q512(
             &[
                 message[15],
                 message[14],
@@ -149,7 +147,7 @@ impl EdonR<u64> {
                 message[7],
             ],
         );
-        state_32 = q512(
+        let mut state_32 = q512(
             &state_24,
             &[
                 message[8],

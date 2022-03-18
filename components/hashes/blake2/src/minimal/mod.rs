@@ -66,6 +66,7 @@ impl Blake2<u32> {
             v: [0; 16],
         }
     }
+    #[inline(always)]
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
     fn g(&mut self, block: &[u32; 16], i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
         self.v[a] = self.v[a]
@@ -81,6 +82,7 @@ impl Blake2<u32> {
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(7);
     }
+    #[inline(always)]
     fn compress(&mut self, block: &[u32; 16]) {
         // update counter
         if self.l > 64 {
@@ -182,6 +184,7 @@ impl Blake2<u64> {
             v: [0; 16],
         }
     }
+    #[inline(always)]
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
     fn g(&mut self, block: &[u64; 16], i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
         // a,b,c,d: index of self.v
@@ -200,6 +203,7 @@ impl Blake2<u64> {
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(63);
     }
+    #[inline(always)]
     fn compress(&mut self, block: &[u64; 16]) {
         // update counter
         if self.l > 128 {
