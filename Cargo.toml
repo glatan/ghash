@@ -43,7 +43,6 @@ blake = { path = "components/hashes/blake", optional = true }
 blake2 = { path = "components/hashes/blake2", optional = true }
 edonr = { path = "components/hashes/edonr", optional = true }
 keccak = { path = "components/hashes/keccak", optional = true }
-lake = { path = "components/hashes/lake", optional = true }
 md2 = { path = "components/hashes/md2", optional = true }
 md4 = { path = "components/hashes/md4", optional = true }
 md5 = { path = "components/hashes/md5", optional = true }
