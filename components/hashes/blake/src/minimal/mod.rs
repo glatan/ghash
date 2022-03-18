@@ -208,6 +208,7 @@ impl Blake<u64> {
             round_limit,
         }
     }
+    #[inline(always)]
     #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
     fn g(&mut self, block: &[u64; 16], i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
         // a,b,c,d: index of self.v
@@ -226,6 +227,7 @@ impl Blake<u64> {
         self.v[c] = self.v[c].wrapping_add(self.v[d]);
         self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(11);
     }
+    #[inline(always)]
     fn compress(&mut self, block: &[u64; 16]) {
         // update counter
         if self.l > 1024 {
@@ -276,24 +278,42 @@ impl Blake<u64> {
             self.h[i] ^= self.salt[i % 4] ^ self.v[i] ^ self.v[i + 8];
         }
     }
+    #[inline(always)]
     fn blake(&mut self, message: &[u8], last_byte: u8) {
+        #[inline(always)]
+        fn bytes_to_block(block: &mut [u64; 16], bytes: &[u8]) {
+            // let mut block = [0u64; 16];
+            for i in 0..16 {
+                block[i] = u64::from_be_bytes([
+                    bytes[i * 8],
+                    bytes[i * 8 + 1],
+                    bytes[i * 8 + 2],
+                    bytes[i * 8 + 3],
+                    bytes[i * 8 + 4],
+                    bytes[i * 8 + 5],
+                    bytes[i * 8 + 6],
+                    bytes[i * 8 + 7],
+                ]);
+            }
+        }
         self.l = message.len() * 8;
         let l = message.len();
         let mut block = [0u64; 16];
         if l >= 128 {
             message.chunks_exact(128).for_each(|bytes| {
-                (0..16).for_each(|i| {
-                    block[i] = u64::from_be_bytes([
-                        bytes[i * 8],
-                        bytes[i * 8 + 1],
-                        bytes[i * 8 + 2],
-                        bytes[i * 8 + 3],
-                        bytes[i * 8 + 4],
-                        bytes[i * 8 + 5],
-                        bytes[i * 8 + 6],
-                        bytes[i * 8 + 7],
-                    ]);
-                });
+                bytes_to_block(&mut block, bytes);
+                // (0..16).for_each(|i| {
+                //     block[i] = u64::from_be_bytes([
+                //         bytes[i * 8],
+                //         bytes[i * 8 + 1],
+                //         bytes[i * 8 + 2],
+                //         bytes[i * 8 + 3],
+                //         bytes[i * 8 + 4],
+                //         bytes[i * 8 + 5],
+                //         bytes[i * 8 + 6],
+                //         bytes[i * 8 + 7],
+                //     ]);
+                // });
                 self.compress(&block);
             });
         } else if l == 0 {

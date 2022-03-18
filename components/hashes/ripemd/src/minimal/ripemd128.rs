@@ -18,6 +18,7 @@ impl Ripemd128 {
     pub fn new() -> Self {
         Self::default()
     }
+    #[inline(always)]
     fn compress(&mut self, x: &[u32; 16]) {
         let mut t;
         let [mut a_left, mut b_left, mut c_left, mut d_left] = self.status;

@@ -18,6 +18,7 @@ impl Ripemd320 {
     pub fn new() -> Self {
         Self::default()
     }
+    #[inline(always)]
     #[rustfmt::skip]
     fn compress(&mut self, x: &[u32; 16]) {
         let mut t;

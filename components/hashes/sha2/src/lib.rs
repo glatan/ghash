@@ -44,6 +44,7 @@ impl Sha2<u32> {
     fn new(iv: [u32; 8]) -> Self {
         Self { status: iv }
     }
+    #[inline(always)]
     #[cfg(not(feature = "minimal"))]
     #[allow(clippy::many_single_char_names)]
     fn compress(&mut self, m: &[u32; 16]) {
@@ -75,6 +76,7 @@ impl Sha2<u32> {
         self.status[6] = self.status[6].wrapping_add(g);
         self.status[7] = self.status[7].wrapping_add(h);
     }
+    #[inline(always)]
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     #[cfg(feature = "minimal")]
     fn compress(&mut self, m: &[u32; 16]) {
@@ -126,6 +128,7 @@ impl Sha2<u64> {
     fn new(iv: [u64; 8]) -> Self {
         Self { status: iv }
     }
+    #[inline(always)]
     #[cfg(not(feature = "minimal"))]
     #[allow(clippy::many_single_char_names)]
     fn compress(&mut self, m: &[u64; 16]) {
@@ -158,6 +161,7 @@ impl Sha2<u64> {
         self.status[6] = self.status[6].wrapping_add(g);
         self.status[7] = self.status[7].wrapping_add(h);
     }
+    #[inline(always)]
     #[cfg(feature = "minimal")]
     #[allow(clippy::many_single_char_names, clippy::needless_range_loop)]
     fn compress(&mut self, m: &[u64; 16]) {

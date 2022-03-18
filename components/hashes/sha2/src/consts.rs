@@ -64,40 +64,52 @@ pub(crate) const H512_TRUNC256: [u64; 8] =[
     0x9628_3EE2_A88E_FFE3, 0xBE5E_1E25_5386_3992, 0x2B01_99FC_2C85_B8AA, 0x0EB7_2DDC_81C5_2CA2,
 ];
 
+#[inline(always)]
 pub(crate) const fn ch32(x: u32, y: u32, z: u32) -> u32 {
     (x & y) ^ (!x & z)
 }
+#[inline(always)]
 pub(crate) const fn maj32(x: u32, y: u32, z: u32) -> u32 {
     (x & y) ^ (x & z) ^ (y & z)
 }
+#[inline(always)]
 pub(crate) const fn big_sigma32_0(x: u32) -> u32 {
     x.rotate_right(2) ^ x.rotate_right(13) ^ x.rotate_right(22)
 }
+#[inline(always)]
 pub(crate) const fn big_sigma32_1(x: u32) -> u32 {
     x.rotate_right(6) ^ x.rotate_right(11) ^ x.rotate_right(25)
 }
+#[inline(always)]
 pub(crate) const fn small_sigma32_0(x: u32) -> u32 {
     x.rotate_right(7) ^ x.rotate_right(18) ^ (x >> 3)
 }
+#[inline(always)]
 pub(crate) const fn small_sigma32_1(x: u32) -> u32 {
     x.rotate_right(17) ^ x.rotate_right(19) ^ (x >> 10)
 }
 
+#[inline(always)]
 pub(crate) const fn ch64(x: u64, y: u64, z: u64) -> u64 {
     (x & y) ^ (!x & z)
 }
+#[inline(always)]
 pub(crate) const fn maj64(x: u64, y: u64, z: u64) -> u64 {
     (x & y) ^ (x & z) ^ (y & z)
 }
+#[inline(always)]
 pub(crate) const fn big_sigma64_0(x: u64) -> u64 {
     x.rotate_right(28) ^ x.rotate_right(34) ^ x.rotate_right(39)
 }
+#[inline(always)]
 pub(crate) const fn big_sigma64_1(x: u64) -> u64 {
     x.rotate_right(14) ^ x.rotate_right(18) ^ x.rotate_right(41)
 }
+#[inline(always)]
 pub(crate) const fn small_sigma64_0(x: u64) -> u64 {
     x.rotate_right(1) ^ x.rotate_right(8) ^ (x >> 7)
 }
+#[inline(always)]
 pub(crate) const fn small_sigma64_1(x: u64) -> u64 {
     x.rotate_right(19) ^ x.rotate_right(61) ^ (x >> 6)
 }

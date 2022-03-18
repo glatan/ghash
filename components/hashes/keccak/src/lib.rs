@@ -92,6 +92,7 @@ macro_rules! impl_keccak_f {
                     w: (r + c) / 25,
                 })
             }
+            #[inline(always)]
             fn round(&mut self, rc: $Size) {
                 let mut b = [[0; 5]; 5];
                 let mut c = [0; 5];
@@ -130,11 +131,13 @@ macro_rules! impl_keccak_f {
                 // Iota step
                 self.0.state[0][0] ^= rc;
             }
+            #[inline(always)]
             fn keccak_f(&mut self) {
                 for i in 0..(12 + 2 * self.0.l) {
                     self.round($RC[i]);
                 }
             }
+            #[inline(always)]
             fn absorb(&mut self, pi: &[[$Size; 5]; 5]) {
                 for x in 0..5 {
                     for y in 0..5 {

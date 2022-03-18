@@ -98,6 +98,7 @@ macro_rules! impl_blake2s {
                     v: [0; 16],
                 }
             }
+            #[inline(always)]
             fn compress(&mut self, block: &[u32; 16]) {
                 // update counter
                 if self.l > 64 {
