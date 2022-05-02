@@ -1,8 +1,12 @@
-#![no_std]
+// #![no_std]
 
 extern crate alloc;
 
 mod consts;
+mod params;
+
+pub use params::{Blake2bParams, Blake2sParams};
+
 #[cfg(not(feature = "minimal"))]
 mod default;
 #[cfg(feature = "minimal")]

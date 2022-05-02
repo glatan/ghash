@@ -2,7 +2,10 @@ use alloc::vec::Vec;
 
 use utils::{uint_from_bytes, Hash};
 
-use crate::consts::{IV32, IV64, SIGMA};
+use crate::{
+    consts::{IV32, IV64, SIGMA},
+    Blake2bParams, Blake2sParams,
+};
 
 macro_rules! g32 {
     ($self:ident, $block:expr, $r:expr, $i:expr, $a:expr, $b:expr, $c:expr, $d:expr) => {
@@ -52,11 +55,12 @@ macro_rules! impl_blake2s {
                 if !(1..=32).contains(&n) {
                     panic!("{} is not a valid number. n must be between 1 and 32.", n);
                 }
+                let params = Blake2sParams::default().digest_byte_len(n as u8).to_words();
                 Self {
                     f: false,
                     l: 0,
                     h: [
-                        IV32[0] ^ (0x0101_0000 | n as u32),
+                        IV32[0] ^ params[0],
                         IV32[1],
                         IV32[2],
                         IV32[3],
@@ -257,11 +261,12 @@ macro_rules! impl_blake2b {
                 if !(1..=64).contains(&n) {
                     panic!("{} is not a valid number. n must be between 1 and 32.", n);
                 }
+                let params = Blake2bParams::default().digest_byte_len(n as u8).to_words();
                 Self {
                     f: false,
                     l: 0,
                     h: [
-                        IV64[0] ^ (0x0101_0000 | n as u64),
+                        IV64[0] ^ params[0],
                         IV64[1],
                         IV64[2],
                         IV64[3],
