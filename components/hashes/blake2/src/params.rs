@@ -1,4 +1,4 @@
-struct Params<const SP_LEN: usize> {
+pub struct Params<const SP_LEN: usize> {
     digest_byte_len: u8,
     key_byte_len: u8,
     salt: [u8; SP_LEN],
@@ -30,62 +30,56 @@ impl<const SP_LEN: usize> Default for Params<SP_LEN> {
 
 macro_rules! impl_blake_params {
     ($T:ident, $SP_LEN:expr) => {
-        pub struct $T(Params<$SP_LEN>);
-
-        impl Default for $T {
-            fn default() -> Self {
-                Self(Params::<$SP_LEN>::default())
-            }
-        }
+        pub type $T = Params<$SP_LEN>;
 
         impl $T {
             pub fn digest_byte_len(&mut self, digest_byte_len: u8) -> &mut Self {
-                self.0.digest_byte_len = digest_byte_len;
+                self.digest_byte_len = digest_byte_len;
                 self
             }
 
             pub fn key_byte_len(&mut self, key_byte_len: u8) -> &mut Self {
-                self.0.key_byte_len = key_byte_len;
+                self.key_byte_len = key_byte_len;
                 self
             }
 
             pub fn salt(&mut self, salt: [u8; $SP_LEN]) -> &mut Self {
-                self.0.salt = salt;
+                self.salt = salt;
                 self
             }
 
             pub fn personalization(&mut self, personalization: [u8; $SP_LEN]) -> &mut Self {
-                self.0.personalization = personalization;
+                self.personalization = personalization;
                 self
             }
 
             pub fn fanout(&mut self, fanout: u8) -> &mut Self {
-                self.0.fanout = fanout;
+                self.fanout = fanout;
                 self
             }
 
             pub fn maximum_depth(&mut self, maximum_depth: u8) -> &mut Self {
-                self.0.maximum_depth = maximum_depth;
+                self.maximum_depth = maximum_depth;
                 self
             }
 
             pub fn leaf_maximum_len(&mut self, leaf_maximum_len: u32) -> &mut Self {
-                self.0.leaf_maximum_len = leaf_maximum_len;
+                self.leaf_maximum_len = leaf_maximum_len;
                 self
             }
 
             pub fn node_offset(&mut self, node_offset: u64) -> &mut Self {
-                self.0.node_offset = node_offset;
+                self.node_offset = node_offset;
                 self
             }
 
             pub fn node_depth(&mut self, node_depth: u8) -> &mut Self {
-                self.0.node_depth = node_depth;
+                self.node_depth = node_depth;
                 self
             }
 
             pub fn inner_hash_byte_len(&mut self, inner_hash_byte_len: u8) -> &mut Self {
-                self.0.inner_hash_byte_len = inner_hash_byte_len;
+                self.inner_hash_byte_len = inner_hash_byte_len;
                 self
             }
         }
@@ -97,26 +91,26 @@ impl_blake_params!(Blake2bParams, 16);
 
 impl Blake2sParams {
     pub fn to_words(&self) -> [u32; 8] {
-        let node_offset = self.0.node_offset.to_le();
-        let salt = u64::from_le_bytes(self.0.salt);
-        let personalization = u64::from_le_bytes(self.0.personalization);
+        let node_offset = self.node_offset.to_le();
+        let salt = u64::from_le_bytes(self.salt);
+        let personalization = u64::from_le_bytes(self.personalization);
 
         [
             // 0 ~ 3
             u32::from_le_bytes([
-                self.0.digest_byte_len,
-                self.0.key_byte_len,
-                self.0.fanout,
-                self.0.maximum_depth,
+                self.digest_byte_len,
+                self.key_byte_len,
+                self.fanout,
+                self.maximum_depth,
             ]),
             // 4 ~ 7
-            self.0.leaf_maximum_len.to_le(),
+            self.leaf_maximum_len.to_le(),
             // 8 ~ 11
             (node_offset >> 32) as u32,
             // 12 ~ 15
             (node_offset as u32) & 0xFFFF_0000
-                | ((self.0.node_depth as u32) << 8) & 0x0000_FF00
-                | (self.0.inner_hash_byte_len as u32) & 0x0000_00FF,
+                | ((self.node_depth as u32) << 8) & 0x0000_FF00
+                | (self.inner_hash_byte_len as u32) & 0x0000_00FF,
             // 16 ~ 19
             (salt >> 32) as u32,
             // 20 ~ 23
@@ -131,35 +125,26 @@ impl Blake2sParams {
 
 impl Blake2bParams {
     pub fn to_words(&self) -> [u64; 8] {
-        let leaf_maximum_len = self.0.leaf_maximum_len.to_le_bytes();
-        let salt = u128::from_le_bytes(self.0.salt);
-        let personalization = u128::from_le_bytes(self.0.personalization);
+        let leaf_maximum_len = self.leaf_maximum_len.to_le_bytes();
+        let salt = u128::from_le_bytes(self.salt);
+        let personalization = u128::from_le_bytes(self.personalization);
 
         [
             // 0 ~ 7
             u64::from_le_bytes([
-                self.0.digest_byte_len,
-                self.0.key_byte_len,
-                self.0.fanout,
-                self.0.maximum_depth,
+                self.digest_byte_len,
+                self.key_byte_len,
+                self.fanout,
+                self.maximum_depth,
                 leaf_maximum_len[0],
                 leaf_maximum_len[1],
                 leaf_maximum_len[2],
                 leaf_maximum_len[3],
             ]),
             // 8 ~ 15
-            self.0.node_offset.to_le(),
+            self.node_offset.to_le(),
             // 16 ~ 23
-            u64::from_le_bytes([
-                self.0.node_depth,
-                self.0.inner_hash_byte_len,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]),
+            u64::from_le_bytes([self.node_depth, self.inner_hash_byte_len, 0, 0, 0, 0, 0, 0]),
             // 24 ~ 31
             0u64,
             // 32 ~ 39
