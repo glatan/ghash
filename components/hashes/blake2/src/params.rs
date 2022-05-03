@@ -1,3 +1,5 @@
+use std::fmt;
+
 pub struct Params<const SP_LEN: usize> {
     digest_byte_len: u8,
     key_byte_len: u8,
@@ -25,6 +27,23 @@ impl<const SP_LEN: usize> Default for Params<SP_LEN> {
             node_depth: 0,
             inner_hash_byte_len: 0,
         }
+    }
+}
+
+impl<const SP_LEN: usize> fmt::Debug for Params<SP_LEN> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("Params")
+            .field("digest_byte_len", &self.digest_byte_len)
+            .field("key_byte_len", &self.key_byte_len)
+            .field("salt", &self.salt)
+            .field("personalization", &self.personalization)
+            .field("fanout", &self.fanout)
+            .field("maximum_depth", &self.maximum_depth)
+            .field("leaf_maximum_len", &self.leaf_maximum_len)
+            .field("node_offset", &self.node_offset)
+            .field("node_depth", &self.node_depth)
+            .field("inner_hash_byte_len", &self.inner_hash_byte_len)
+            .finish()
     }
 }
 
@@ -90,7 +109,7 @@ impl_blake_params!(Blake2sParams, 8);
 impl_blake_params!(Blake2bParams, 16);
 
 impl Blake2sParams {
-    pub fn to_words(&self) -> [u32; 8] {
+    pub const fn to_words(&self) -> [u32; 8] {
         let node_offset = self.node_offset.to_le();
         let salt = u64::from_le_bytes(self.salt);
         let personalization = u64::from_le_bytes(self.personalization);
@@ -124,7 +143,7 @@ impl Blake2sParams {
 }
 
 impl Blake2bParams {
-    pub fn to_words(&self) -> [u64; 8] {
+    pub const fn to_words(&self) -> [u64; 8] {
         let leaf_maximum_len = self.leaf_maximum_len.to_le_bytes();
         let salt = u128::from_le_bytes(self.salt);
         let personalization = u128::from_le_bytes(self.personalization);
