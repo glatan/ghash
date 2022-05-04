@@ -1,6 +1,6 @@
 use dev_utils::impl_short_msg_kat;
 
-impl_short_msg_kat!(blake2, Blake2s, SHORT_MSG_KAT, Blake2s::new(28));
+impl_short_msg_kat!(blake2, Blake2s, SHORT_MSG_KAT, Blake2s::with_digest_len(28));
 
 const SHORT_MSG_KAT: [(&str, &str); 255] = [
 	(

@@ -3,39 +3,12 @@ use alloc::vec::Vec;
 use utils::Hash;
 
 use super::Blake2;
-use crate::consts::IV64;
 
 pub struct Blake2b(Blake2<u64>);
 
 impl Blake2b {
-    pub fn new(n: usize) -> Self {
-        Self(Blake2::<u64>::new(n))
-    }
-    pub fn with_key(n: usize, k: usize, salt: [u64; 2], personal: [u64; 2]) -> Self {
-        Self(Blake2::<u64>::with_key(n, k, salt, personal))
-    }
-}
-
-impl Default for Blake2b {
-    fn default() -> Self {
-        Self(Blake2::<u64> {
-            f: false,
-            l: 0,
-            h: [
-                // Default parameter(0x40 bytes of output length, 0x00 byte of key length, set fanout and depth to 0x01)
-                IV64[0] ^ 0x0101_0040,
-                IV64[1],
-                IV64[2],
-                IV64[3],
-                IV64[4],
-                IV64[5],
-                IV64[6],
-                IV64[7],
-            ],
-            t: [0; 2],
-            n: 64,
-            v: [0; 16],
-        })
+    pub fn with_digest_len(n: usize) -> Self {
+        Self(Blake2::<u64>::with_digest_len(n))
     }
 }
 

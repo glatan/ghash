@@ -1,4 +1,4 @@
-use std::fmt;
+use core::fmt;
 
 pub struct Params<const SP_LEN: usize> {
     digest_byte_len: u8,
