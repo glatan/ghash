@@ -3,7 +3,7 @@ use core::cmp::Ordering;
 
 use utils::{impl_md_flow_minimal, Hash};
 
-use crate::consts::{IV, K, ch, parity, maj};
+use crate::consts::{ch, maj, parity, IV, K};
 
 pub struct Sha0 {
     status: [u32; 5],
