@@ -7,7 +7,7 @@ mod blake2s;
 mod consts;
 mod params;
 
-pub use params::{Blake2bParams, Blake2sParams};
+pub use params::{Blake2bParams, Blake2sParams, Blake2xbParams, Blake2xsParams};
 
 use crate::consts::{IV32, IV64, SIGMA};
 
@@ -54,8 +54,8 @@ macro_rules! impl_blake2 {
         for 0..$RoundLimit:expr => fn $g:ident
     ) => {
         impl Blake2<$Word> {
-            fn with_digest_len(n: u8) -> Self {
-                let params = <$Params>::default().digest_byte_len(n).to_words();
+            pub const fn with_digest_len(digest_len: u8) -> Self {
+                let params = <$Params>::with_digest_len(digest_len).to_words();
                 Self {
                     f: false,
                     l: 0,
@@ -70,7 +70,7 @@ macro_rules! impl_blake2 {
                         $IV[7],
                     ],
                     t: [0; 2],
-                    n: n as usize,
+                    n: digest_len as usize,
                     v: [0; 16],
                 }
             }

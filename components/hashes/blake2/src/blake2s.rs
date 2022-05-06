@@ -8,7 +8,7 @@ use super::Blake2;
 pub struct Blake2s(Blake2<u32>);
 
 impl Blake2s {
-    pub fn with_digest_len(n: u8) -> Self {
+    pub const fn with_digest_len(n: u8) -> Self {
         Self(Blake2::<u32>::with_digest_len(n))
     }
 }
