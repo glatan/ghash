@@ -4,10 +4,11 @@ use utils::Hash;
 
 use super::Blake2;
 
+#[derive(Debug)]
 pub struct Blake2b(Blake2<u64>);
 
 impl Blake2b {
-    pub fn with_digest_len(n: usize) -> Self {
+    pub fn with_digest_len(n: u8) -> Self {
         Self(Blake2::<u64>::with_digest_len(n))
     }
 }

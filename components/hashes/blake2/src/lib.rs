@@ -14,6 +14,31 @@ use crate::consts::{IV32, IV64, SIGMA};
 pub use blake2b::Blake2b;
 pub use blake2s::Blake2s;
 
+#[inline(always)]
+fn g32(v: &mut [u32; 16], a: usize, b: usize, c: usize, d: usize, x: u32, y: u32) {
+    v[a] = v[a].wrapping_add(v[b]).wrapping_add(x);
+    v[d] = (v[d] ^ v[a]).rotate_right(16);
+    v[c] = v[c].wrapping_add(v[d]);
+    v[b] = (v[b] ^ v[c]).rotate_right(12);
+    v[a] = v[a].wrapping_add(v[b]).wrapping_add(y);
+    v[d] = (v[d] ^ v[a]).rotate_right(8);
+    v[c] = v[c].wrapping_add(v[d]);
+    v[b] = (v[b] ^ v[c]).rotate_right(7);
+}
+
+#[inline(always)]
+fn g64(v: &mut [u64; 16], a: usize, b: usize, c: usize, d: usize, x: u64, y: u64) {
+    v[a] = v[a].wrapping_add(v[b]).wrapping_add(x);
+    v[d] = (v[d] ^ v[a]).rotate_right(32);
+    v[c] = v[c].wrapping_add(v[d]);
+    v[b] = (v[b] ^ v[c]).rotate_right(24);
+    v[a] = v[a].wrapping_add(v[b]).wrapping_add(y);
+    v[d] = (v[d] ^ v[a]).rotate_right(16);
+    v[c] = v[c].wrapping_add(v[d]);
+    v[b] = (v[b] ^ v[c]).rotate_right(63);
+}
+
+#[derive(Debug)]
 struct Blake2<T> {
     f: bool,  // finalization flag
     l: usize, // 未処理のバイト数
@@ -23,187 +48,154 @@ struct Blake2<T> {
     v: [T; 16], // state
 }
 
-impl Blake2<u32> {
-    fn with_digest_len(n: usize) -> Self {
-        if !(1..=32).contains(&n) {
-            panic!("{} is not a valid number. n must be between 1 and 32.", n);
+macro_rules! impl_blake2 {
+    (Word = $Word:ty;
+        Params = $Params:ty, IV = $IV:expr, BlockLength = $BlockLength:expr;
+        for 0..$RoundLimit:expr => fn $g:ident
+    ) => {
+        impl Blake2<$Word> {
+            fn with_digest_len(n: u8) -> Self {
+                let params = <$Params>::default().digest_byte_len(n).to_words();
+                Self {
+                    f: false,
+                    l: 0,
+                    h: [
+                        $IV[0] ^ params[0],
+                        $IV[1],
+                        $IV[2],
+                        $IV[3],
+                        $IV[4],
+                        $IV[5],
+                        $IV[6],
+                        $IV[7],
+                    ],
+                    t: [0; 2],
+                    n: n as usize,
+                    v: [0; 16],
+                }
+            }
+            #[inline(always)]
+            fn compress(&mut self, block: &[$Word; 16]) {
+                // update counter
+                if self.l > $BlockLength {
+                    self.t[0] += $BlockLength;
+                    self.l -= $BlockLength;
+                } else {
+                    self.t[0] += self.l as $Word;
+                    self.l = 0;
+                    self.f = true;
+                }
+                // initialize state
+                self.v[0] = self.h[0];
+                self.v[1] = self.h[1];
+                self.v[2] = self.h[2];
+                self.v[3] = self.h[3];
+                self.v[4] = self.h[4];
+                self.v[5] = self.h[5];
+                self.v[6] = self.h[6];
+                self.v[7] = self.h[7];
+                self.v[8] = $IV[0];
+                self.v[9] = $IV[1];
+                self.v[10] = $IV[2];
+                self.v[11] = $IV[3];
+                self.v[12] = $IV[4] ^ self.t[0];
+                self.v[13] = $IV[5] ^ self.t[1];
+                if self.f {
+                    self.v[14] = $IV[6] ^ <$Word>::MAX;
+                    self.v[15] = $IV[7] ^ <$Word>::MIN;
+                } else {
+                    self.v[14] = $IV[6];
+                    self.v[15] = $IV[7];
+                }
+                // round
+                for r in 0..$RoundLimit {
+                    $g(
+                        &mut self.v,
+                        0,
+                        4,
+                        8,
+                        12,
+                        block[SIGMA[r % 10][2 * 0]],
+                        block[SIGMA[r % 10][2 * 0 + 1]],
+                    );
+                    $g(
+                        &mut self.v,
+                        1,
+                        5,
+                        9,
+                        13,
+                        block[SIGMA[r % 10][2 * 1]],
+                        block[SIGMA[r % 10][2 * 1 + 1]],
+                    );
+                    $g(
+                        &mut self.v,
+                        2,
+                        6,
+                        10,
+                        14,
+                        block[SIGMA[r % 10][2 * 2]],
+                        block[SIGMA[r % 10][2 * 2 + 1]],
+                    );
+                    $g(
+                        &mut self.v,
+                        3,
+                        7,
+                        11,
+                        15,
+                        block[SIGMA[r % 10][2 * 3]],
+                        block[SIGMA[r % 10][2 * 3 + 1]],
+                    );
+                    $g(
+                        &mut self.v,
+                        0,
+                        5,
+                        10,
+                        15,
+                        block[SIGMA[r % 10][2 * 4]],
+                        block[SIGMA[r % 10][2 * 4 + 1]],
+                    );
+                    $g(
+                        &mut self.v,
+                        1,
+                        6,
+                        11,
+                        12,
+                        block[SIGMA[r % 10][2 * 5]],
+                        block[SIGMA[r % 10][2 * 5 + 1]],
+                    );
+                    $g(
+                        &mut self.v,
+                        2,
+                        7,
+                        8,
+                        13,
+                        block[SIGMA[r % 10][2 * 6]],
+                        block[SIGMA[r % 10][2 * 6 + 1]],
+                    );
+                    $g(
+                        &mut self.v,
+                        3,
+                        4,
+                        9,
+                        14,
+                        block[SIGMA[r % 10][2 * 7]],
+                        block[SIGMA[r % 10][2 * 7 + 1]],
+                    );
+                }
+                // finalize
+                for i in 0..8 {
+                    self.h[i] = self.h[i] ^ self.v[i] ^ self.v[i + 8];
+                }
+            }
         }
-        let params = Blake2sParams::default().digest_byte_len(n as u8).to_words();
-        Self {
-            f: false,
-            l: 0,
-            h: [
-                IV32[0] ^ params[0],
-                IV32[1],
-                IV32[2],
-                IV32[3],
-                IV32[4],
-                IV32[5],
-                IV32[6],
-                IV32[7],
-            ],
-            t: [0; 2],
-            n,
-            v: [0; 16],
-        }
-    }
-    #[inline(always)]
-    #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
-    fn g(&mut self, block: &[u32; 16], i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
-        self.v[a] = self.v[a]
-            .wrapping_add(self.v[b])
-            .wrapping_add(block[SIGMA[r][2 * i]]);
-        self.v[d] = (self.v[d] ^ self.v[a]).rotate_right(16);
-        self.v[c] = self.v[c].wrapping_add(self.v[d]);
-        self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(12);
-        self.v[a] = self.v[a]
-            .wrapping_add(self.v[b])
-            .wrapping_add(block[SIGMA[r][2 * i + 1]]);
-        self.v[d] = (self.v[d] ^ self.v[a]).rotate_right(8);
-        self.v[c] = self.v[c].wrapping_add(self.v[d]);
-        self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(7);
-    }
-    #[inline(always)]
-    fn compress(&mut self, block: &[u32; 16]) {
-        // update counter
-        if self.l > 64 {
-            self.t[0] += 64;
-            self.l -= 64;
-        } else {
-            self.t[0] += self.l as u32;
-            self.l = 0;
-            self.f = true;
-        }
-        // initialize state
-        self.v[0] = self.h[0];
-        self.v[1] = self.h[1];
-        self.v[2] = self.h[2];
-        self.v[3] = self.h[3];
-        self.v[4] = self.h[4];
-        self.v[5] = self.h[5];
-        self.v[6] = self.h[6];
-        self.v[7] = self.h[7];
-        self.v[8] = IV32[0];
-        self.v[9] = IV32[1];
-        self.v[10] = IV32[2];
-        self.v[11] = IV32[3];
-        self.v[12] = IV32[4] ^ self.t[0];
-        self.v[13] = IV32[5] ^ self.t[1];
-        if self.f {
-            self.v[14] = IV32[6] ^ u32::MAX;
-            self.v[15] = IV32[7] ^ u32::MIN;
-        } else {
-            self.v[14] = IV32[6];
-            self.v[15] = IV32[7];
-        }
-        // round
-        for r in 0..10 {
-            self.g(block, 0, r, 0, 4, 8, 12);
-            self.g(block, 1, r, 1, 5, 9, 13);
-            self.g(block, 2, r, 2, 6, 10, 14);
-            self.g(block, 3, r, 3, 7, 11, 15);
-            self.g(block, 4, r, 0, 5, 10, 15);
-            self.g(block, 5, r, 1, 6, 11, 12);
-            self.g(block, 6, r, 2, 7, 8, 13);
-            self.g(block, 7, r, 3, 4, 9, 14);
-        }
-        // finalize
-        for i in 0..8 {
-            self.h[i] = self.h[i] ^ self.v[i] ^ self.v[i + 8];
-        }
-    }
+    };
 }
 
-impl Blake2<u64> {
-    fn with_digest_len(n: usize) -> Self {
-        if !(1..=64).contains(&n) {
-            panic!("{} is not a valid number. n must be between 1 and 64.", n);
-        }
-        let params = Blake2bParams::default().digest_byte_len(n as u8).to_words();
-        Self {
-            f: false,
-            l: 0,
-            h: [
-                IV64[0] ^ params[0],
-                IV64[1],
-                IV64[2],
-                IV64[3],
-                IV64[4],
-                IV64[5],
-                IV64[6],
-                IV64[7],
-            ],
-            t: [0; 2],
-            n,
-            v: [0; 16],
-        }
-    }
-    #[inline(always)]
-    #[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
-    fn g(&mut self, block: &[u64; 16], i: usize, r: usize, a: usize, b: usize, c: usize, d: usize) {
-        // a,b,c,d: index of self.v
-        // i: number of function G
-        // r: round count
-        self.v[a] = self.v[a]
-            .wrapping_add(self.v[b])
-            .wrapping_add(block[SIGMA[r % 10][2 * i]]);
-        self.v[d] = (self.v[d] ^ self.v[a]).rotate_right(32);
-        self.v[c] = self.v[c].wrapping_add(self.v[d]);
-        self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(24);
-        self.v[a] = self.v[a]
-            .wrapping_add(self.v[b])
-            .wrapping_add(block[SIGMA[r % 10][2 * i + 1]]);
-        self.v[d] = (self.v[d] ^ self.v[a]).rotate_right(16);
-        self.v[c] = self.v[c].wrapping_add(self.v[d]);
-        self.v[b] = (self.v[b] ^ self.v[c]).rotate_right(63);
-    }
-    #[inline(always)]
-    fn compress(&mut self, block: &[u64; 16]) {
-        // update counter
-        if self.l > 128 {
-            self.t[0] += 128;
-            self.l -= 128;
-        } else {
-            self.t[0] += self.l as u64;
-            self.l = 0;
-            self.f = true;
-        }
-        // initialize state
-        self.v[0] = self.h[0];
-        self.v[1] = self.h[1];
-        self.v[2] = self.h[2];
-        self.v[3] = self.h[3];
-        self.v[4] = self.h[4];
-        self.v[5] = self.h[5];
-        self.v[6] = self.h[6];
-        self.v[7] = self.h[7];
-        self.v[8] = IV64[0];
-        self.v[9] = IV64[1];
-        self.v[10] = IV64[2];
-        self.v[11] = IV64[3];
-        self.v[12] = IV64[4] ^ self.t[0];
-        self.v[13] = IV64[5] ^ self.t[1];
-        if self.f {
-            self.v[14] = IV64[6] ^ u64::MAX;
-            self.v[15] = IV64[7] ^ u64::MIN;
-        } else {
-            self.v[14] = IV64[6];
-            self.v[15] = IV64[7];
-        }
-        // round
-        for r in 0..12 {
-            self.g(block, 0, r, 0, 4, 8, 12);
-            self.g(block, 1, r, 1, 5, 9, 13);
-            self.g(block, 2, r, 2, 6, 10, 14);
-            self.g(block, 3, r, 3, 7, 11, 15);
-            self.g(block, 4, r, 0, 5, 10, 15);
-            self.g(block, 5, r, 1, 6, 11, 12);
-            self.g(block, 6, r, 2, 7, 8, 13);
-            self.g(block, 7, r, 3, 4, 9, 14);
-        }
-        // finalize
-        for i in 0..8 {
-            self.h[i] = self.h[i] ^ self.v[i] ^ self.v[i + 8];
-        }
-    }
-}
+impl_blake2!(Word = u32;
+    Params = Blake2sParams, IV = IV32, BlockLength = 64;
+    for 0..10 => fn g32
+);
+impl_blake2!(Word = u64;
+    Params = Blake2bParams, IV = IV64, BlockLength = 128;
+    for 0..12 => fn g64
+);
