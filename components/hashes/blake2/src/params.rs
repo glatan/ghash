@@ -108,7 +108,7 @@ impl_blake_params!(pub struct Blake2sParams(Params<8,>));
 impl_blake_params!(pub struct Blake2bParams(Params<16,>));
 
 impl Blake2sParams {
-    pub const fn to_words(&self) -> [u32; 8] {
+    pub(crate) const fn to_words(&self) -> [u32; 8] {
         let node_offset = self.0.node_offset.to_le();
         let salt = u64::from_le_bytes(self.0.salt);
         let personalization = u64::from_le_bytes(self.0.personalization);
@@ -142,7 +142,7 @@ impl Blake2sParams {
 }
 
 impl Blake2bParams {
-    pub const fn to_words(&self) -> [u64; 8] {
+    pub(crate) const fn to_words(&self) -> [u64; 8] {
         let leaf_maximum_len = self.0.leaf_maximum_len.to_le_bytes();
         let salt = u128::from_le_bytes(self.0.salt);
         let personalization = u128::from_le_bytes(self.0.personalization);
@@ -310,7 +310,7 @@ impl_blake_xof_params!(
 );
 
 impl Blake2xsParams {
-    pub const fn to_words(&self) -> [u32; 8] {
+    pub(crate) const fn to_words(&self) -> [u32; 8] {
         let salt = u64::from_le_bytes(self.0.salt);
         let personalization = u64::from_le_bytes(self.0.personalization);
 
@@ -343,7 +343,7 @@ impl Blake2xsParams {
 }
 
 impl Blake2xbParams {
-    pub const fn to_words(&self) -> [u64; 8] {
+    pub(crate) const fn to_words(&self) -> [u64; 8] {
         let leaf_maximum_len = self.0.leaf_maximum_len.to_le_bytes();
         let salt = u128::from_le_bytes(self.0.salt);
         let personalization = u128::from_le_bytes(self.0.personalization);
