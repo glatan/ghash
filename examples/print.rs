@@ -31,11 +31,11 @@ fn main() {
     );
     println!(
         "BLAKE2s-256\t{:}",
-        Blake2s::default().hash_to_lowerhex(&input)
+        Blake2s::with_digest_len(32).hash_to_lowerhex(&input)
     );
     println!(
         "BLAKE2b-512\t{:}",
-        Blake2b::default().hash_to_lowerhex(&input)
+        Blake2b::with_digest_len(64).hash_to_lowerhex(&input)
     );
     println!(
         "EDON-R224\t{:}",
