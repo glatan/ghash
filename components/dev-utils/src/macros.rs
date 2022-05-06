@@ -23,6 +23,7 @@ macro_rules! impl_short_msg_kat {
             use super::$test_cases;
             use utils::Hash;
             use $module::$T;
+
             fn hex_to_bytes(s: &str) -> Vec<u8> {
                 // 上位4ビット
                 let s1: Vec<u8> = s
@@ -64,29 +65,30 @@ macro_rules! impl_short_msg_kat {
 
 #[macro_export]
 macro_rules! impl_benchmark {
-    ($module:ident, $T:ident) => {
+    (use $C:ident::$T:ident, $Hasher:expr) => {
         #[allow(non_snake_case)]
         mod $T {
             extern crate test;
             use test::Bencher;
             use utils::Hash;
-            use $module::$T;
+            use $C::$T;
+
             #[bench]
             #[allow(non_snake_case)]
             fn B064(b: &mut Bencher) {
-                b.iter(|| $T::default().hash_to_bytes(&[0; 64]));
+                b.iter(|| $Hasher.hash_to_bytes(&[0; 64]));
                 b.bytes = 64;
             }
             #[bench]
             #[allow(non_snake_case)]
             fn KB256(b: &mut Bencher) {
-                b.iter(|| $T::default().hash_to_bytes(&[0; 1024 * 256]));
+                b.iter(|| $Hasher.hash_to_bytes(&[0; 1024 * 256]));
                 b.bytes = 1024 * 256;
             }
             #[bench]
             #[allow(non_snake_case)]
             fn MB004(b: &mut Bencher) {
-                b.iter(|| $T::default().hash_to_bytes(&[0; 1024 * 1024 * 4]));
+                b.iter(|| $Hasher.hash_to_bytes(&[0; 1024 * 1024 * 4]));
                 b.bytes = 1024 * 1024 * 4;
             }
         }

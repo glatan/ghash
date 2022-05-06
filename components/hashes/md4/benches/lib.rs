@@ -2,4 +2,4 @@
 
 use dev_utils::impl_benchmark;
 
-impl_benchmark!(md4, Md4);
+impl_benchmark!(use md4::Md4, Md4::default());
