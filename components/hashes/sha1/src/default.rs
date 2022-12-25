@@ -3,7 +3,7 @@ use core::cmp::Ordering;
 
 use utils::{impl_md_flow, uint_from_bytes, Hash};
 
-use crate::consts::{IV, K, ch, parity, maj};
+use crate::consts::{ch, maj, parity, IV, K};
 
 macro_rules! init_w {
     ( $w:expr, $( $t:expr ),* ) => {
