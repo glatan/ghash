@@ -4,10 +4,11 @@ stages:
   - nightly
 
 variables:
+  UBUNTU_IMAGE: docker.io/ubuntu:kinetic
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
   MSRV: '1.50'
-  STABLE_RUST_VERSION: '1.59.0'
-  WASMTIME_VERSION: '0.34.0'
+  STABLE_RUST_VERSION: '1.66.0'
+  WASMTIME_VERSION: '4.0.0'
 
 .default_rules: &default_rules
   rules:
@@ -33,7 +34,7 @@ variables:
 # Linux
 
 .linux_cross_compile_template: &linux_cross_compile_template
-  image: ubuntu:hirsute
+  image: ${UBUNTU_IMAGE}
   cache:
     key: ${CI_JOB_STAGE}-${TARGET}
     paths:
@@ -148,7 +149,7 @@ nightly-linux:
 
 tier3-linux:
   stage: nightly
-  image: ubuntu:hirsute
+  image: ${UBUNTU_IMAGE}
   <<: *nightly_rules
   cache:
     key: ${CI_JOB_STAGE}-${TARGET}
@@ -183,7 +184,7 @@ tier3-linux:
 # WebAssembly
 
 .wasm32-wasi_template: &wasm32-wasi_template
-  image: ubuntu:hirsute
+  image: ${UBUNTU_IMAGE}
   cache:
     key: ${CI_JOB_STAGE}-wasm32-wasi
     paths:
