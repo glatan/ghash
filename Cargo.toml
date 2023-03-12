@@ -1,12 +1,16 @@
 [package]
 name = "ghash"
 version = "0.0.1"
-authors = ["glatan <glatan.edu@gmail.com>"]
-edition = "2021"
-license = "Apache-2.0 OR MIT"
 readme = "README.md"
-repository = "https://gitlab.com/glatan/ghash/"
+edition = "2021"
+
+[workspace.package]
+authors = ["glatan <glatan@protonmail.com>"]
+edition = "2021"
+rust-version = "1.64.0"
+license = "Apache-2.0 OR MIT"
 homepage = "https://gitlab.com/glatan/ghash/"
+repository = "https://gitlab.com/glatan/ghash/"
 
 [features]
 default = [
