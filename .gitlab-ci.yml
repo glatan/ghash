@@ -6,7 +6,7 @@ stages:
 variables:
   UBUNTU_IMAGE: docker.io/ubuntu:kinetic
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
-  MSRV: '1.50'
+  MSRV: '1.64'
   STABLE_RUST_VERSION: '1.68.0'
   WASMTIME_VERSION: '6.0.1'
 

@@ -4,7 +4,7 @@ WORKDIR /workdir
 
 ENV CARGO_HOME='/cargo' \
     PATH="${PATH}:/cargo/bin" \
-    MSRV='1.50' \
+    MSRV='1.64' \
     WASMTIME_VERSION='6.0.1' \
     TARGETS='\
         aarch64-unknown-linux-gnu \

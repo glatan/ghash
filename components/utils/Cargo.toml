@@ -1,5 +1,9 @@
 [package]
 name = "utils"
 version = "0.1.0"
-authors = ["glatan <glatan@protonmail.com>"]
-edition = "2018"
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
