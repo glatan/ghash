@@ -41,7 +41,7 @@ struct Sha2<T> {
 }
 
 impl Sha2<u32> {
-    fn new(iv: [u32; 8]) -> Self {
+    const fn new(iv: [u32; 8]) -> Self {
         Self { status: iv }
     }
     #[inline(always)]
@@ -125,7 +125,7 @@ impl Sha2<u32> {
 }
 
 impl Sha2<u64> {
-    fn new(iv: [u64; 8]) -> Self {
+    const fn new(iv: [u64; 8]) -> Self {
         Self { status: iv }
     }
     #[inline(always)]
