@@ -53,7 +53,7 @@ macro_rules! impl_blake32 {
             ignore_counter: bool,
         }
         impl $T {
-            pub fn new(salt: [u32; 4]) -> Self {
+            pub const fn new(salt: [u32; 4]) -> Self {
                 Self {
                     salt,
                     l: 0,
@@ -257,7 +257,7 @@ macro_rules! impl_blake64 {
             ignore_counter: bool,
         }
         impl $T {
-            pub fn new(salt: [u64; 4]) -> Self {
+            pub const fn new(salt: [u64; 4]) -> Self {
                 Self {
                     salt,
                     l: 0,
