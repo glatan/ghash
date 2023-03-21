@@ -26,7 +26,7 @@ struct EdonR<T> {
 }
 
 impl EdonR<u32> {
-    fn new(iv: [u32; 16]) -> Self {
+    const fn new(iv: [u32; 16]) -> Self {
         Self { state: iv }
     }
     #[inline(always)]
@@ -105,7 +105,7 @@ impl EdonR<u32> {
 }
 
 impl EdonR<u64> {
-    fn new(iv: [u64; 16]) -> Self {
+    const fn new(iv: [u64; 16]) -> Self {
         Self { state: iv }
     }
     #[inline(always)]
