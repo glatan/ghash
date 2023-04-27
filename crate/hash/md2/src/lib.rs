@@ -16,7 +16,7 @@ pub use minimal::Md2;
 #[cfg(test)]
 mod tests {
     use super::Md2;
-    use dev_utils::impl_test;
+    use dev_util::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 6] = [
         // https://tools.ietf.org/html/rfc1319

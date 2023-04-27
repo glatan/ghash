@@ -1,4 +1,4 @@
-use dev_utils::impl_short_msg_kat;
+use dev_util::impl_short_msg_kat;
 
 impl_short_msg_kat!(sha3, Sha3_512, SHORT_MSG_KAT, Sha3_512::default());
 

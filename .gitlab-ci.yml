@@ -191,7 +191,7 @@ tier3-linux:
       - target/wasm32-wasi
   before_script:
     - apt update -y
-    - apt install -y curl gcc make xz-utils
+    - apt install -y curl gcc make xz-util
     - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > install.sh
     - sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t wasm32-wasi
     - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" > wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz

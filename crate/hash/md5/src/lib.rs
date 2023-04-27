@@ -6,10 +6,10 @@ use alloc::vec::Vec;
 use core::cmp::Ordering;
 
 #[cfg(feature = "minimal")]
-use utils::impl_md_flow_minimal;
-use utils::Hash;
+use util::impl_md_flow_minimal;
+use util::Hash;
 #[cfg(not(feature = "minimal"))]
-use utils::{impl_md_flow, uint_from_bytes};
+use util::{impl_md_flow, uint_from_bytes};
 
 #[rustfmt::skip]
 const T: [u32; 64] = [
@@ -199,7 +199,7 @@ impl Hash for Md5 {
 #[cfg(test)]
 mod tests {
     use super::Md5;
-    use dev_utils::impl_test;
+    use dev_util::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 7] = [
         // https://tools.ietf.org/html/rfc1321

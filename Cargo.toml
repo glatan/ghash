@@ -55,7 +55,7 @@ sha0 = { path = "crate/hash/sha0", optional = true }
 sha1 = { path = "crate/hash/sha1", optional = true }
 sha2 = { path = "crate/hash/sha2", optional = true }
 sha3 = { path = "crate/hash/sha3", optional = true }
-utils = { path = "crate/utils" }
+util = { path = "crate/util" }
 
 [workspace]
 members = [
@@ -71,6 +71,6 @@ members = [
     "crate/hash/sha1",
     "crate/hash/sha2",
     "crate/hash/sha3",
-    "crate/dev-utils",
-    "crate/utils",
+    "crate/dev-util",
+    "crate/util",
 ]

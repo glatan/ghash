@@ -1,6 +1,6 @@
 use alloc::vec::Vec;
 
-use utils::Hash;
+use util::Hash;
 
 use super::{Sha2, H384};
 
@@ -32,7 +32,7 @@ impl Hash for Sha384 {
 #[cfg(test)]
 mod tests {
     use super::Sha384;
-    use dev_utils::impl_test;
+    use dev_util::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 11] = [
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA384.pdf

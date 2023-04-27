@@ -1,4 +1,4 @@
-use dev_utils::impl_short_msg_kat;
+use dev_util::impl_short_msg_kat;
 
 impl_short_msg_kat!(ripemd, Ripemd320, SHORT_MSG_KAT, Ripemd320::default());
 

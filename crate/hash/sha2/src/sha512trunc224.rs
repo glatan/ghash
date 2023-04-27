@@ -1,6 +1,6 @@
 use alloc::vec::Vec;
 
-use utils::Hash;
+use util::Hash;
 
 use super::{Sha2, H512_TRUNC224};
 
@@ -33,7 +33,7 @@ impl Hash for Sha512Trunc224 {
 #[cfg(test)]
 mod tests {
     use super::Sha512Trunc224;
-    use dev_utils::impl_test;
+    use dev_util::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 2] = [
         // https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA512_224.pdf

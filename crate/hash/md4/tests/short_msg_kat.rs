@@ -1,4 +1,4 @@
-use dev_utils::impl_short_msg_kat;
+use dev_util::impl_short_msg_kat;
 
 impl_short_msg_kat!(md4, Md4, SHORT_MSG_KAT, Md4::default());
 

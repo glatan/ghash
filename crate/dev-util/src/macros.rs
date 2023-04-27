@@ -4,7 +4,7 @@ macro_rules! impl_test {
         mod $test_name {
             use super::$self;
             use super::$test_cases;
-            use utils::Hash;
+            use util::Hash;
             #[test]
             fn lower_hex() {
                 for (m, e) in $test_cases.iter() {
@@ -21,7 +21,7 @@ macro_rules! impl_short_msg_kat {
         #[allow(non_snake_case)]
         mod $T {
             use super::$test_cases;
-            use utils::Hash;
+            use util::Hash;
             use $module::$T;
             fn hex_to_bytes(s: &str) -> Vec<u8> {
                 // 上位4ビット
@@ -69,7 +69,7 @@ macro_rules! impl_benchmark {
         mod $T {
             extern crate test;
             use test::Bencher;
-            use utils::Hash;
+            use util::Hash;
             use $module::$T;
             #[bench]
             #[allow(non_snake_case)]

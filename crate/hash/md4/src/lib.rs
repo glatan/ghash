@@ -6,10 +6,10 @@ use alloc::vec::Vec;
 use core::cmp::Ordering;
 
 #[cfg(feature = "minimal")]
-use utils::impl_md_flow_minimal;
-use utils::Hash;
+use util::impl_md_flow_minimal;
+use util::Hash;
 #[cfg(not(feature = "minimal"))]
-use utils::{impl_md_flow, uint_from_bytes};
+use util::{impl_md_flow, uint_from_bytes};
 
 #[inline(always)]
 #[allow(clippy::many_single_char_names)]
@@ -142,7 +142,7 @@ impl Hash for Md4 {
 #[cfg(test)]
 mod tests {
     use super::Md4;
-    use dev_utils::impl_test;
+    use dev_util::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 7] = [
         // https://tools.ietf.org/html/rfc1320

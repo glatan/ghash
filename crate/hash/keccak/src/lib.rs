@@ -30,7 +30,7 @@ use core::{
     {any, mem},
 };
 
-use utils::Hash;
+use util::Hash;
 
 use consts::{R1600, R200, R400, R800, RC1600, RC200, RC400, RC800};
 pub use keccak224::Keccak224;

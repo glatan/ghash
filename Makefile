@@ -27,7 +27,7 @@ test.%:
 	@$(MAKE) -C crate/hash/sha1 test.$*
 	@$(MAKE) -C crate/hash/sha2 test.$*
 	@$(MAKE) -C crate/hash/sha3 test.$*
-	@$(MAKE) -C crate/utils test.$*
+	@$(MAKE) -C crate/util test.$*
 
 test_build_std.%:
 	@$(MAKE) -C crate/hash/blake test_build_std.$*
@@ -42,7 +42,7 @@ test_build_std.%:
 	@$(MAKE) -C crate/hash/sha1 test_build_std.$*
 	@$(MAKE) -C crate/hash/sha2 test_build_std.$*
 	@$(MAKE) -C crate/hash/sha3 test_build_std.$*
-	@$(MAKE) -C crate/utils test_build_std.$*
+	@$(MAKE) -C crate/util test_build_std.$*
 
 .PHONY: p.build
 p.build:

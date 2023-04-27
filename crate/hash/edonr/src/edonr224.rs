@@ -1,6 +1,6 @@
 use alloc::vec::Vec;
 
-use utils::Hash;
+use util::Hash;
 
 use super::{EdonR, P224};
 

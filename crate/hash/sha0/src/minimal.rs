@@ -1,7 +1,7 @@
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
-use utils::{impl_md_flow_minimal, Hash};
+use util::{impl_md_flow_minimal, Hash};
 
 use crate::consts::{ch, maj, parity, IV, K};
 

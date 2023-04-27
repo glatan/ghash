@@ -12,7 +12,7 @@ repository.workspace = true
 minimal = []
 
 [dependencies]
-utils = { path = "../../utils" }
+util = { path = "../../util" }
 
 [dev-dependencies]
-dev-utils = { path = "../../dev-utils" }
+dev-util = { path = "../../dev-util" }

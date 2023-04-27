@@ -1,7 +1,7 @@
 use alloc::vec::Vec;
 
 use keccak::KeccakF1600;
-use utils::Hash;
+use util::Hash;
 
 pub struct Sha3_256(KeccakF1600);
 

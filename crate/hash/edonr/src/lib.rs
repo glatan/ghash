@@ -17,9 +17,9 @@ pub use edonr512::EdonR512;
 
 use consts::{q256, q512, P224, P256, P384, P512};
 #[cfg(not(feature = "minimal"))]
-use utils::impl_md_flow;
+use util::impl_md_flow;
 #[cfg(feature = "minimal")]
-use utils::impl_md_flow_minimal as impl_md_flow;
+use util::impl_md_flow_minimal as impl_md_flow;
 
 struct EdonR<T> {
     state: [T; 16],

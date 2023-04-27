@@ -7,7 +7,7 @@ macro_rules! impl_blake2_short_msg_kat_with_key {
         #[allow(non_snake_case)]
         mod $T {
             use super::$test_cases;
-            use utils::Hash;
+            use util::Hash;
             use $module::$T;
             fn hex_to_bytes(s: &str) -> Vec<u8> {
                 // 上位4ビット

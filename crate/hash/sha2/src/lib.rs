@@ -15,9 +15,9 @@ mod sha512trunc256;
 use core::cmp::Ordering;
 
 #[cfg(not(feature = "minimal"))]
-use utils::impl_md_flow;
+use util::impl_md_flow;
 #[cfg(feature = "minimal")]
-use utils::impl_md_flow_minimal as impl_md_flow;
+use util::impl_md_flow_minimal as impl_md_flow;
 
 use crate::consts::{
     {

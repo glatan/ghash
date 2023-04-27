@@ -1,6 +1,6 @@
 use alloc::vec::Vec;
 
-use utils::{uint_from_bytes, Hash};
+use util::{uint_from_bytes, Hash};
 
 use crate::consts::{IV32, IV64, SIGMA};
 

@@ -16,7 +16,7 @@ pub use minimal::Sha1;
 #[cfg(test)]
 mod tests {
     use super::Sha1;
-    use dev_utils::impl_test;
+    use dev_util::impl_test;
 
     const OFFICIAL: [(&[u8], &str); 4] = [
         // https://tools.ietf.org/html/rfc3174

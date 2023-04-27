@@ -1,7 +1,7 @@
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
-use utils::{uint_from_bytes, Hash};
+use util::{uint_from_bytes, Hash};
 
 use crate::consts::{C32, C64, IV224, IV256, IV384, IV512, SIGMA};
 

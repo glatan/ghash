@@ -9,7 +9,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [dependencies]
-utils = { path = "../../utils" }
+util = { path = "../../util" }
 
 [dev-dependencies]
-dev-utils = { path = "../../dev-utils" }
+dev-util = { path = "../../dev-util" }

@@ -37,7 +37,7 @@ macro_rules! impl_md_flow {
     // u64
     // 128 - 1(0x80) - 16(l) = 111
     (u32 => $self:expr, $message:ident, $from_bytes:ident, $to_bytes:ident) => {
-        use utils::uint_from_bytes;
+        use util::uint_from_bytes;
         let l = $message.len();
         let mut block = [0u32; 16];
         if l >= 64 {
@@ -138,7 +138,7 @@ macro_rules! impl_md_flow {
         }
     };
     (u64 => $self:expr, $message:ident, $from_bytes:ident, $to_bytes:ident) => {
-        use utils::uint_from_bytes;
+        use util::uint_from_bytes;
         let l = $message.len();
         let mut block = [0u64; 16];
         if l >= 128 {
