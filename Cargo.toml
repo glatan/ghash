@@ -43,34 +43,34 @@ minimal = [
 ]
 
 [dependencies]
-blake = { path = "crate/hashes/blake", optional = true }
-blake2 = { path = "crate/hashes/blake2", optional = true }
-edonr = { path = "crate/hashes/edonr", optional = true }
-keccak = { path = "crate/hashes/keccak", optional = true }
-md2 = { path = "crate/hashes/md2", optional = true }
-md4 = { path = "crate/hashes/md4", optional = true }
-md5 = { path = "crate/hashes/md5", optional = true }
-ripemd = { path = "crate/hashes/ripemd", optional = true }
-sha0 = { path = "crate/hashes/sha0", optional = true }
-sha1 = { path = "crate/hashes/sha1", optional = true }
-sha2 = { path = "crate/hashes/sha2", optional = true }
-sha3 = { path = "crate/hashes/sha3", optional = true }
+blake = { path = "crate/hash/blake", optional = true }
+blake2 = { path = "crate/hash/blake2", optional = true }
+edonr = { path = "crate/hash/edonr", optional = true }
+keccak = { path = "crate/hash/keccak", optional = true }
+md2 = { path = "crate/hash/md2", optional = true }
+md4 = { path = "crate/hash/md4", optional = true }
+md5 = { path = "crate/hash/md5", optional = true }
+ripemd = { path = "crate/hash/ripemd", optional = true }
+sha0 = { path = "crate/hash/sha0", optional = true }
+sha1 = { path = "crate/hash/sha1", optional = true }
+sha2 = { path = "crate/hash/sha2", optional = true }
+sha3 = { path = "crate/hash/sha3", optional = true }
 utils = { path = "crate/utils" }
 
 [workspace]
 members = [
-    "crate/hashes/blake",
-    "crate/hashes/blake2",
-    "crate/hashes/edonr",
-    "crate/hashes/keccak",
-    "crate/hashes/md2",
-    "crate/hashes/md4",
-    "crate/hashes/md5",
-    "crate/hashes/ripemd",
-    "crate/hashes/sha0",
-    "crate/hashes/sha1",
-    "crate/hashes/sha2",
-    "crate/hashes/sha3",
+    "crate/hash/blake",
+    "crate/hash/blake2",
+    "crate/hash/edonr",
+    "crate/hash/keccak",
+    "crate/hash/md2",
+    "crate/hash/md4",
+    "crate/hash/md5",
+    "crate/hash/ripemd",
+    "crate/hash/sha0",
+    "crate/hash/sha1",
+    "crate/hash/sha2",
+    "crate/hash/sha3",
     "crate/dev-utils",
     "crate/utils",
 ]
