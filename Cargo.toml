@@ -43,34 +43,34 @@ minimal = [
 ]
 
 [dependencies]
-blake = { path = "components/hashes/blake", optional = true }
-blake2 = { path = "components/hashes/blake2", optional = true }
-edonr = { path = "components/hashes/edonr", optional = true }
-keccak = { path = "components/hashes/keccak", optional = true }
-md2 = { path = "components/hashes/md2", optional = true }
-md4 = { path = "components/hashes/md4", optional = true }
-md5 = { path = "components/hashes/md5", optional = true }
-ripemd = { path = "components/hashes/ripemd", optional = true }
-sha0 = { path = "components/hashes/sha0", optional = true }
-sha1 = { path = "components/hashes/sha1", optional = true }
-sha2 = { path = "components/hashes/sha2", optional = true }
-sha3 = { path = "components/hashes/sha3", optional = true }
-utils = { path = "components/utils" }
+blake = { path = "crate/hashes/blake", optional = true }
+blake2 = { path = "crate/hashes/blake2", optional = true }
+edonr = { path = "crate/hashes/edonr", optional = true }
+keccak = { path = "crate/hashes/keccak", optional = true }
+md2 = { path = "crate/hashes/md2", optional = true }
+md4 = { path = "crate/hashes/md4", optional = true }
+md5 = { path = "crate/hashes/md5", optional = true }
+ripemd = { path = "crate/hashes/ripemd", optional = true }
+sha0 = { path = "crate/hashes/sha0", optional = true }
+sha1 = { path = "crate/hashes/sha1", optional = true }
+sha2 = { path = "crate/hashes/sha2", optional = true }
+sha3 = { path = "crate/hashes/sha3", optional = true }
+utils = { path = "crate/utils" }
 
 [workspace]
 members = [
-    "components/hashes/blake",
-    "components/hashes/blake2",
-    "components/hashes/edonr",
-    "components/hashes/keccak",
-    "components/hashes/md2",
-    "components/hashes/md4",
-    "components/hashes/md5",
-    "components/hashes/ripemd",
-    "components/hashes/sha0",
-    "components/hashes/sha1",
-    "components/hashes/sha2",
-    "components/hashes/sha3",
-    "components/dev-utils",
-    "components/utils",
+    "crate/hashes/blake",
+    "crate/hashes/blake2",
+    "crate/hashes/edonr",
+    "crate/hashes/keccak",
+    "crate/hashes/md2",
+    "crate/hashes/md4",
+    "crate/hashes/md5",
+    "crate/hashes/ripemd",
+    "crate/hashes/sha0",
+    "crate/hashes/sha1",
+    "crate/hashes/sha2",
+    "crate/hashes/sha3",
+    "crate/dev-utils",
+    "crate/utils",
 ]
