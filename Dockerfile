@@ -4,8 +4,9 @@ WORKDIR /workdir
 
 ENV CARGO_HOME='/cargo' \
     PATH="${PATH}:/cargo/bin" \
-    MSRV='1.64' \
-    WASMTIME_VERSION='6.0.1' \
+    MSRV='1.64.0' \
+    STABLE_RUST_VERSION='1.69.0' \
+    WASMTIME_VERSION='8.0.1' \
     TARGETS='\
         aarch64-unknown-linux-gnu \
         aarch64-unknown-linux-musl \
@@ -43,12 +44,12 @@ ENV CARGO_HOME='/cargo' \
         wasm32-wasi'
 
 RUN \
-    apt update -y && \
-    apt install -y \
+    apt-get update -y && \
+    apt-get install -y \
         curl \
         make \
         qemu-user \
-        xz-util \
+        xz-utils \
         gcc-aarch64-linux-gnu \
         gcc-arm-linux-gnueabi \
         gcc-arm-linux-gnueabihf \
@@ -76,7 +77,7 @@ RUN \
 
 RUN \
     curl https://sh.rustup.rs -sSf > install.sh && \
-    sh install.sh -y --default-toolchain stable --profile minimal && \
+    sh install.sh -y --default-toolchain ${STABLE_RUST_VERSION} --profile minimal && \
     rustup target add ${TARGETS} && \
     rustup default "${MSRV}" && \
     rustup target add ${TARGETS} && \
