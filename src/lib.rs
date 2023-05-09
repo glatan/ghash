@@ -15,4 +15,4 @@ pub use sha1::Sha1;
 pub use sha2::{Sha224, Sha256, Sha384, Sha512, Sha512Trunc224, Sha512Trunc256};
 pub use sha3::{Sha3_224, Sha3_256, Sha3_384, Sha3_512, Shake128, Shake256};
 
-pub use utils::Hash;
+pub use util::Hash;
