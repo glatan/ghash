@@ -48,7 +48,7 @@ RUN \
         curl \
         make \
         qemu-user \
-        xz-utils \
+        xz-util \
         gcc-aarch64-linux-gnu \
         gcc-arm-linux-gnueabi \
         gcc-arm-linux-gnueabihf \

@@ -15,34 +15,34 @@ bench:
 test_all: test.x86_64-unknown-linux-gnu test.i686-unknown-linux-gnu test.wasm32-wasi
 
 test.%:
-	@$(MAKE) -C components/hashes/blake test.$*
-	@$(MAKE) -C components/hashes/blake2 test.$*
-	@$(MAKE) -C components/hashes/edonr test.$*
-	@$(MAKE) -C components/hashes/keccak test.$*
-	@$(MAKE) -C components/hashes/md2 test.$*
-	@$(MAKE) -C components/hashes/md4 test.$*
-	@$(MAKE) -C components/hashes/md5 test.$*
-	@$(MAKE) -C components/hashes/ripemd test.$*
-	@$(MAKE) -C components/hashes/sha0 test.$*
-	@$(MAKE) -C components/hashes/sha1 test.$*
-	@$(MAKE) -C components/hashes/sha2 test.$*
-	@$(MAKE) -C components/hashes/sha3 test.$*
-	@$(MAKE) -C components/utils test.$*
+	@$(MAKE) -C crate/hash/blake test.$*
+	@$(MAKE) -C crate/hash/blake2 test.$*
+	@$(MAKE) -C crate/hash/edonr test.$*
+	@$(MAKE) -C crate/hash/keccak test.$*
+	@$(MAKE) -C crate/hash/md2 test.$*
+	@$(MAKE) -C crate/hash/md4 test.$*
+	@$(MAKE) -C crate/hash/md5 test.$*
+	@$(MAKE) -C crate/hash/ripemd test.$*
+	@$(MAKE) -C crate/hash/sha0 test.$*
+	@$(MAKE) -C crate/hash/sha1 test.$*
+	@$(MAKE) -C crate/hash/sha2 test.$*
+	@$(MAKE) -C crate/hash/sha3 test.$*
+	@$(MAKE) -C crate/util test.$*
 
 test_build_std.%:
-	@$(MAKE) -C components/hashes/blake test_build_std.$*
-	@$(MAKE) -C components/hashes/blake2 test_build_std.$*
-	@$(MAKE) -C components/hashes/edonr test_build_std.$*
-	@$(MAKE) -C components/hashes/keccak test_build_std.$*
-	@$(MAKE) -C components/hashes/md2 test_build_std.$*
-	@$(MAKE) -C components/hashes/md4 test_build_std.$*
-	@$(MAKE) -C components/hashes/md5 test_build_std.$*
-	@$(MAKE) -C components/hashes/ripemd test_build_std.$*
-	@$(MAKE) -C components/hashes/sha0 test_build_std.$*
-	@$(MAKE) -C components/hashes/sha1 test_build_std.$*
-	@$(MAKE) -C components/hashes/sha2 test_build_std.$*
-	@$(MAKE) -C components/hashes/sha3 test_build_std.$*
-	@$(MAKE) -C components/utils test_build_std.$*
+	@$(MAKE) -C crate/hash/blake test_build_std.$*
+	@$(MAKE) -C crate/hash/blake2 test_build_std.$*
+	@$(MAKE) -C crate/hash/edonr test_build_std.$*
+	@$(MAKE) -C crate/hash/keccak test_build_std.$*
+	@$(MAKE) -C crate/hash/md2 test_build_std.$*
+	@$(MAKE) -C crate/hash/md4 test_build_std.$*
+	@$(MAKE) -C crate/hash/md5 test_build_std.$*
+	@$(MAKE) -C crate/hash/ripemd test_build_std.$*
+	@$(MAKE) -C crate/hash/sha0 test_build_std.$*
+	@$(MAKE) -C crate/hash/sha1 test_build_std.$*
+	@$(MAKE) -C crate/hash/sha2 test_build_std.$*
+	@$(MAKE) -C crate/hash/sha3 test_build_std.$*
+	@$(MAKE) -C crate/util test_build_std.$*
 
 .PHONY: p.build
 p.build:

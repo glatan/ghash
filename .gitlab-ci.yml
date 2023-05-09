@@ -14,10 +14,10 @@ variables:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       changes:
-        - .gitlab-ci.yml
+        - .gitlab-ci.ymlut
         - .cargo/config.toml
         - Cargo.toml
-        - components/**/*.rs
+        - crate/**/*.rs
         - src/lib.rs
 
 # FORCE_RUNをtrueにして手動で実行すればNightlyのテストも動く
