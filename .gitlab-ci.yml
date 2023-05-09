@@ -6,9 +6,9 @@ stages:
 variables:
   UBUNTU_IMAGE: docker.io/ubuntu:kinetic
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
-  MSRV: '1.64'
-  STABLE_RUST_VERSION: '1.68.0'
-  WASMTIME_VERSION: '6.0.1'
+  MSRV: '1.64.0'
+  STABLE_RUST_VERSION: '1.69.0'
+  WASMTIME_VERSION: '8.0.1'
 
 .default_rules: &default_rules
   rules:
@@ -41,13 +41,13 @@ variables:
       - target/${TARGET}
   before_script:
     - set -ex
-    - apt update -y
-    - apt install -y curl make 
+    - apt-get update -y
+    - apt-get install -y curl make 
     - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > install.sh
     - sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t ${TARGET}
     - >
       if [[ ${#PACKAGES[@]} -ne 0 ]]; then
-        apt install -y qemu-user ${PACKAGES};
+        apt-get install -y qemu-user ${PACKAGES};
       fi
     - export PATH="${PATH}:${CARGO_HOME}/bin"
   script:
@@ -156,13 +156,13 @@ tier3-linux:
     paths:
       - target/${TARGET}
   before_script:
-    - apt update -y
-    - apt install -y curl gcc make
+    - apt-get update -y
+    - apt-get install -y curl gcc make
     - curl https://sh.rustup.rs -sSf > install.sh
     - sh install.sh -y --default-toolchain nightly --profile minimal -t ${TARGET}
     - >
       if [[ ${#PACKAGES[@]} -ne 0 ]]; then
-        apt install -y qemu-user ${PACKAGES};
+        apt-get install -y qemu-user ${PACKAGES};
       fi
     - export PATH="${PATH}:${CARGO_HOME}/bin"
     - rustup component add rust-src
@@ -190,8 +190,8 @@ tier3-linux:
     paths:
       - target/wasm32-wasi
   before_script:
-    - apt update -y
-    - apt install -y curl gcc make xz-utils
+    - apt-get update -y
+    - apt-get install -y curl gcc make xz-utils
     - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > install.sh
     - sh install.sh -y --default-toolchain ${CHANNEL} --profile minimal -t wasm32-wasi
     - curl -L "https://github.com/bytecodealliance/wasmtime/releases/download/v${WASMTIME_VERSION}/wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz" > wasmtime-v${WASMTIME_VERSION}-x86_64-linux.tar.xz
