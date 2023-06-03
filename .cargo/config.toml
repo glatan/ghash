@@ -69,7 +69,6 @@ runner = 'qemu-mips -L /usr/mips-linux-gnu/'
 [target.mips-unknown-linux-musl]
 linker = 'mips-linux-gnu-gcc'
 runner = 'qemu-mips -L /usr/mips-linux-gnu/'
-rustflags = ["-C", "target-feature=+crt-static"]
 
 [target.mips64-unknown-linux-gnuabi64]
 linker = 'mips64-linux-gnuabi64-gcc'
@@ -94,7 +93,6 @@ runner = 'qemu-mipsel -L /usr/mipsel-linux-gnu/'
 [target.mipsel-unknown-linux-musl]
 linker = 'mipsel-linux-gnu-gcc'
 runner = 'qemu-mipsel -L /usr/mipsel-linux-gnu/'
-rustflags = ["-C", "target-feature=+crt-static"]
 
 [target.powerpc-unknown-linux-gnu]
 linker = 'powerpc-linux-gnu-gcc'
