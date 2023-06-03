@@ -35,7 +35,7 @@ struct Blake<T> {
 }
 
 impl Blake<u32> {
-    fn new(h: [u32; 8], salt: [u32; 4], round_limit: usize) -> Self {
+    const fn new(h: [u32; 8], salt: [u32; 4], round_limit: usize) -> Self {
         Self {
             salt,
             l: 0,
@@ -197,7 +197,7 @@ impl Blake<u32> {
 }
 
 impl Blake<u64> {
-    fn new(h: [u64; 8], salt: [u64; 4], round_limit: usize) -> Self {
+    const fn new(h: [u64; 8], salt: [u64; 4], round_limit: usize) -> Self {
         Self {
             salt,
             l: 0,

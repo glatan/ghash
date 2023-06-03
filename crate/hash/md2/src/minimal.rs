@@ -21,7 +21,7 @@ impl Md2 {
         let mut t = 0;
         for i in 0..18 {
             for k in 0..48 {
-                self.state[k] ^= STABLE[t as usize];
+                self.state[k] ^= STABLE[t];
                 t = self.state[k] as usize;
             }
             t = (t + i) % 256;

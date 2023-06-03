@@ -8,7 +8,7 @@ pub struct Blake512(Blake<u64>);
 
 impl Blake512 {
     #[rustfmt::skip]
-    pub fn new(salt: [u64; 4]) -> Self {
+    pub const fn new(salt: [u64; 4]) -> Self {
         Self(Blake::<u64>::new(IV512, salt, 16))
     }
 }
