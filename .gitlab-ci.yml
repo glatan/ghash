@@ -4,7 +4,7 @@ stages:
   - nightly
 
 variables:
-  UBUNTU_IMAGE: docker.io/ubuntu:kinetic
+  UBUNTU_IMAGE: docker.io/ubuntu:23.04
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
   MSRV: '1.64.0'
   STABLE_RUST_VERSION: '1.70.0'

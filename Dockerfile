@@ -1,4 +1,4 @@
-FROM docker.io/ubuntu:kinetic
+FROM docker.io/ubuntu:23.04
 
 WORKDIR /workdir
 
