@@ -8,7 +8,7 @@ variables:
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
   MSRV: '1.64.0'
   STABLE_RUST_VERSION: '1.70.0'
-  WASMTIME_VERSION: '8.0.1'
+  WASMTIME_VERSION: '9.0.3'
 
 .default_rules: &default_rules
   rules:
