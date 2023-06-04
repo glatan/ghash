@@ -4,21 +4,21 @@ stages:
   - nightly
 
 variables:
-  UBUNTU_IMAGE: docker.io/ubuntu:kinetic
+  UBUNTU_IMAGE: docker.io/ubuntu:23.04
   CARGO_HOME: ${CI_PROJECT_DIR}/cargo
   MSRV: '1.64.0'
-  STABLE_RUST_VERSION: '1.69.0'
-  WASMTIME_VERSION: '8.0.1'
+  STABLE_RUST_VERSION: '1.70.0'
+  WASMTIME_VERSION: '9.0.3'
 
 .default_rules: &default_rules
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "push"'
       changes:
-        - .gitlab-ci.ymlut
+        - .gitlab-ci.yml
         - .cargo/config.toml
         - Cargo.toml
         - crate/**/*.rs
-        - src/lib.rs
+        - src/**/*.rs
 
 # FORCE_RUNをtrueにして手動で実行すればNightlyのテストも動く
 .nightly_rules: &nightly_rules

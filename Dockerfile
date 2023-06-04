@@ -1,12 +1,12 @@
-FROM docker.io/ubuntu:kinetic
+FROM docker.io/ubuntu:23.04
 
 WORKDIR /workdir
 
 ENV CARGO_HOME='/cargo' \
     PATH="${PATH}:/cargo/bin" \
     MSRV='1.64.0' \
-    STABLE_RUST_VERSION='1.69.0' \
-    WASMTIME_VERSION='8.0.1' \
+    STABLE_RUST_VERSION='1.70.0' \
+    WASMTIME_VERSION='9.0.3' \
     TARGETS='\
         aarch64-unknown-linux-gnu \
         aarch64-unknown-linux-musl \
